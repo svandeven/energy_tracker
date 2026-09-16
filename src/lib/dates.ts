@@ -57,6 +57,36 @@ export function formatAxisDate(date: LocalDate): string {
   return `${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`;
 }
 
+export function isToday(date: LocalDate): boolean {
+  return date === today();
+}
+
+/** True for any date after today — you can't log energy you haven't had yet. */
+export function isFuture(date: LocalDate): boolean {
+  return date > today();
+}
+
+/** Whole days from `date` up to today; 0 for today, 1 for yesterday. */
+export function daysAgo(date: LocalDate): number {
+  const ms = parseLocalDate(today()).getTime() - parseLocalDate(date).getTime();
+  return Math.round(ms / 86_400_000);
+}
+
+/** "Today" / "Yesterday" / "Mon, May 13" for backfill lists and headers. */
+export function formatDayLabel(date: LocalDate): string {
+  const ago = daysAgo(date);
+  if (ago === 0) return 'Today';
+  if (ago === 1) return 'Yesterday';
+  return formatShortDate(date);
+}
+
+/** Basic shape check so a hand-edited URL can't produce an invalid query. */
+export function isValidLocalDate(value: string | undefined): value is LocalDate {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = parseLocalDate(value);
+  return !Number.isNaN(d.getTime()) && toLocalDate(d) === value;
+}
+
 /** "Good morning" / "Good afternoon" / "Good evening" for the dashboard greeting. */
 export function greeting(now = new Date()): string {
   const h = now.getHours();

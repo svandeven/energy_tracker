@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppHeader } from '../components/AppHeader';
@@ -10,15 +10,32 @@ import { Card } from '../components/Card';
 import { CategoryIcon } from '../components/CategoryIcon';
 import { Text } from '../components/Text';
 import { colors, radii } from '../theme';
-import { formatLongDate, today } from '../lib/dates';
+import {
+  addDays,
+  formatLongDate,
+  isFuture,
+  isToday,
+  isValidLocalDate,
+  today,
+  type LocalDate,
+} from '../lib/dates';
 import { dayTotal, maxDailyScore, summaryMessage } from '../lib/scoring';
-import { useData } from '../providers/DataProvider';
+import { HISTORY_WINDOW_DAYS, useData } from '../providers/DataProvider';
+
+/** Mirrors the check-in screen's guard so a bad `?date=` falls back to today. */
+function resolveDate(raw: string | undefined): LocalDate {
+  if (!isValidLocalDate(raw)) return today();
+  if (isFuture(raw)) return today();
+  if (raw < addDays(today(), -HISTORY_WINDOW_DAYS)) return today();
+  return raw;
+}
 
 export default function SummaryScreen() {
   const router = useRouter();
+  const { date: dateParam } = useLocalSearchParams<{ date?: string }>();
   const { questions, checkins } = useData();
 
-  const date = today();
+  const date = resolveDate(dateParam);
   const day = useMemo(() => dayTotal(checkins, questions, date), [checkins, questions, date]);
   const max = maxDailyScore(questions);
   const complete = day.answered === questions.length && questions.length > 0;
@@ -31,7 +48,7 @@ export default function SummaryScreen() {
           <Ionicons name="checkmark" size={30} color={complete ? colors.green : colors.inkFaint} />
         </View>
         <Text variant="title" center>
-          Today&apos;s summary
+          {isToday(date) ? "Today's summary" : 'Day summary'}
         </Text>
         <Text variant="small" color={colors.inkMuted} center style={styles.date}>
           {formatLongDate(date)}
@@ -67,18 +84,20 @@ export default function SummaryScreen() {
           <Text variant="small" color={colors.onMint} center>
             {complete
               ? summaryMessage(day.total, max)
-              : `${questions.length - day.answered} check-in${
-                  questions.length - day.answered === 1 ? '' : 's'
-                } still to go — this total will keep climbing.`}
+              : isToday(date)
+                ? `${questions.length - day.answered} check-in${
+                    questions.length - day.answered === 1 ? '' : 's'
+                  } still to go — this total will keep climbing.`
+                : `${day.answered} of ${questions.length} logged for this day.`}
           </Text>
         </View>
 
         <View style={styles.actions}>
           <Button label="View History" onPress={() => router.replace('/history')} />
           <Button
-            label="Back to dashboard"
+            label={isToday(date) ? 'Back to dashboard' : 'Back to history'}
             variant="secondary"
-            onPress={() => router.replace('/')}
+            onPress={() => router.replace(isToday(date) ? '/' : '/history')}
           />
         </View>
       </ScrollView>

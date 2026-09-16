@@ -9,20 +9,42 @@ import { AppHeader } from '../../components/AppHeader';
 import { Button } from '../../components/Button';
 import { Text } from '../../components/Text';
 import { colors, radii } from '../../theme';
-import { today } from '../../lib/dates';
+import {
+  addDays,
+  formatDayLabel,
+  isFuture,
+  isToday,
+  isValidLocalDate,
+  today,
+  type LocalDate,
+} from '../../lib/dates';
 import { scoresForDate } from '../../lib/scoring';
-import { useData } from '../../providers/DataProvider';
+import { HISTORY_WINDOW_DAYS, useData } from '../../providers/DataProvider';
 
 /** Options are shown best-first (2, 1, 0) exactly as in the mockup. */
 const OPTION_ORDER = [2, 1, 0] as const;
 
+/**
+ * Falls back to today for anything missing, malformed, in the future, or older
+ * than the loaded window — a bad `?date=` should never silently write to the
+ * wrong day.
+ */
+function resolveDate(raw: string | undefined): LocalDate {
+  if (!isValidLocalDate(raw)) return today();
+  if (isFuture(raw)) return today();
+  if (raw < addDays(today(), -HISTORY_WINDOW_DAYS)) return today();
+  return raw;
+}
+
 export default function CheckInScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, date: dateParam } = useLocalSearchParams<{ id: string; date?: string }>();
   const { questions, checkins, saveScore } = useData();
 
-  const date = today();
+  const date = resolveDate(dateParam);
+  const backfilling = !isToday(date);
   const question = questions.find((q) => q.id === id);
+
   const existingScore = useMemo(
     () => scoresForDate(checkins, date).get(id ?? '') ?? null,
     [checkins, date, id],
@@ -68,12 +90,19 @@ export default function CheckInScreen() {
     try {
       await saveScore(question.id, selected, date);
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      // Walk the user to the next unanswered category, or to the summary if
-      // this was the last one — the mockup's "5 of 5" flow.
+      // Walk to the next unanswered category for *this* day, then to its
+      // summary — the same chain whether you're logging today or backfilling.
       const answered = scoresForDate(checkins, date);
       answered.set(question.id, selected);
       const next = questions.find((q) => !answered.has(q.id));
-      router.replace(next ? `/check-in/${next.id}` : '/summary');
+      // Object form rather than a template string: expo-router's typed routes
+      // reject interpolated paths.
+      const carry = backfilling ? { date } : {};
+      if (next) {
+        router.replace({ pathname: '/check-in/[id]', params: { id: next.id, ...carry } });
+      } else {
+        router.replace({ pathname: '/summary', params: carry });
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save that. Try again.');
     } finally {
@@ -85,6 +114,15 @@ export default function CheckInScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <AppHeader onBackground="surface" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {backfilling && (
+          <View style={styles.backfillBanner}>
+            <Ionicons name="calendar-outline" size={15} color={colors.onMint} />
+            <Text variant="smallStrong" color={colors.onMint}>
+              Logging {formatDayLabel(date)}
+            </Text>
+          </View>
+        )}
+
         <Text variant="label">
           Category {index + 1} of {questions.length}
         </Text>
@@ -92,7 +130,9 @@ export default function CheckInScreen() {
           {question.title}
         </Text>
         <Text variant="body" color={colors.inkMuted}>
-          Choose what best matches your day.
+          {backfilling
+            ? `How was this on ${formatDayLabel(date).toLowerCase()}?`
+            : 'Choose what best matches your day.'}
         </Text>
 
         <View style={styles.options}>
@@ -115,7 +155,11 @@ export default function CheckInScreen() {
                     {score}
                   </Text>
                 </View>
-                <Text variant="body" style={styles.optionLabel} color={active ? colors.onMint : colors.ink}>
+                <Text
+                  variant="body"
+                  style={styles.optionLabel}
+                  color={active ? colors.onMint : colors.ink}
+                >
                   {question.score_labels[score] || `Score ${score}`}
                 </Text>
                 {active ? (
@@ -127,6 +171,12 @@ export default function CheckInScreen() {
             );
           })}
         </View>
+
+        {existingScore != null && (
+          <Text variant="caption" color={colors.inkMuted} style={styles.existingNote}>
+            Already logged as {existingScore}. Saving replaces it.
+          </Text>
+        )}
 
         {error && (
           <Text variant="small" color="#C4342B" style={styles.error}>
@@ -141,9 +191,9 @@ export default function CheckInScreen() {
           <Text variant="small" color={colors.inkMuted}>
             Not ready?{' '}
           </Text>
-          <Pressable onPress={() => router.replace('/')} hitSlop={8}>
+          <Pressable onPress={() => router.replace(backfilling ? '/history' : '/')} hitSlop={8}>
             <Text variant="smallStrong" color={colors.teal}>
-              Back to dashboard
+              {backfilling ? 'Back to history' : 'Back to dashboard'}
             </Text>
           </Pressable>
         </View>
@@ -155,6 +205,17 @@ export default function CheckInScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
   content: { paddingHorizontal: 20, paddingBottom: 24 },
+  backfillBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 6,
+    backgroundColor: colors.mint,
+    borderRadius: radii.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: 14,
+  },
   title: { marginTop: 2, marginBottom: 4 },
   options: { marginTop: 20, gap: 14 },
   option: {
@@ -187,6 +248,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.border,
   },
+  existingNote: { marginTop: 14 },
   error: { marginTop: 14 },
   footer: { paddingHorizontal: 20, paddingBottom: 20, gap: 10 },
   backRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },

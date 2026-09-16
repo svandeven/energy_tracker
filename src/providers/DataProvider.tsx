@@ -6,8 +6,13 @@ import { type LocalDate, addDays, today } from '../lib/dates';
 import { useAuth } from './AuthProvider';
 import { DEFAULT_QUESTIONS } from '../features/defaultQuestions';
 
-/** The chart needs 30 days and the week-over-week delta needs 14; fetch a little more. */
-const HISTORY_WINDOW_DAYS = 45;
+/**
+ * The chart needs 30 days and the week-over-week delta needs 14; fetch a little
+ * more. This is also the backfill limit — screens only ever see check-ins from
+ * inside this window, so letting someone log an older day would upsert against
+ * data we never loaded and could silently overwrite a real score.
+ */
+export const HISTORY_WINDOW_DAYS = 45;
 
 interface DataValue {
   questions: QuestionRow[];
