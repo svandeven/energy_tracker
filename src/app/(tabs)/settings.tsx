@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppHeader } from '../../components/AppHeader';
@@ -15,6 +16,7 @@ import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const { profile, setPushEnabled, signOut } = useAuth();
   const { questions, updateQuestion, addQuestion, deleteQuestion } = useData();
   const [editingTimeFor, setEditingTimeFor] = useState<QuestionRow | null>(null);
@@ -114,6 +116,27 @@ export default function SettingsScreen() {
               </Pressable>
             </View>
           ))}
+        </Card>
+
+        <Text variant="heading" style={styles.accountTitle}>
+          Account
+        </Text>
+
+        <Card style={styles.accountCard} padded={false}>
+          <Pressable
+            onPress={() => router.push('/change-password')}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.accountRow, pressed && styles.pressed]}
+          >
+            <Ionicons name="lock-closed-outline" size={20} color={colors.teal} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong">Change password</Text>
+              <Text variant="small" color={colors.inkMuted}>
+                {profile?.display_name ? `Signed in as ${profile.display_name}` : 'Update your password'}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
         </Card>
 
         <Pressable
@@ -261,6 +284,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
-  signOut: { marginTop: 32, paddingVertical: 14 },
+  accountTitle: { marginTop: 32, marginBottom: 12 },
+  accountCard: {},
+  accountRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
+  accountText: { flex: 1 },
+  signOut: { marginTop: 18, paddingVertical: 14 },
   pressed: { opacity: 0.7 },
 });

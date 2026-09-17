@@ -46,16 +46,24 @@ export default function RootLayout() {
 
 /** Bounces signed-out users to the welcome screen and signed-in users to the tabs. */
 function AuthGate() {
-  const { session, initializing } = useAuth();
+  const { session, initializing, recovering } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
     if (initializing) return;
     const inAuthFlow = segments[0] === '(auth)';
+
+    // A recovery session is authenticated but still owes us a new password, so
+    // it must not fall through to the normal "signed in -> dashboard" rule.
+    if (recovering) {
+      if (segments[1] !== 'reset-password') router.replace('/reset-password');
+      return;
+    }
+
     if (!session && !inAuthFlow) router.replace('/welcome');
     else if (session && inAuthFlow) router.replace('/');
-  }, [session, initializing, segments, router]);
+  }, [session, initializing, recovering, segments, router]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -63,6 +71,7 @@ function AuthGate() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="check-in/[id]" options={{ presentation: 'card' }} />
       <Stack.Screen name="summary" />
+      <Stack.Screen name="change-password" options={{ presentation: 'card' }} />
     </Stack>
   );
 }

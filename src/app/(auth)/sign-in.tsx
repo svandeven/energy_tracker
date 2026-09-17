@@ -202,6 +202,18 @@ export default function SignInScreen() {
             </Text>
           )}
 
+          {mode === 'login' && (
+            <Pressable
+              onPress={() => router.push('/forgot-password')}
+              style={styles.forgotLink}
+              hitSlop={6}
+            >
+              <Text variant="smallStrong" color={colors.teal}>
+                Forgot password?
+              </Text>
+            </Pressable>
+          )}
+
           <Button
             label="Continue"
             onPress={submit}
@@ -327,6 +339,7 @@ const styles = StyleSheet.create({
     padding: 12,
     overflow: 'hidden',
   },
+  forgotLink: { alignSelf: 'flex-end', marginBottom: 14, paddingVertical: 2 },
   continue: { marginTop: 4 },
   dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 22 },
   dividerLine: { flex: 1, height: 1, backgroundColor: colors.border },

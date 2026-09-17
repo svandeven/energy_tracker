@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import * as AuthSession from 'expo-auth-session';
+import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
 import { supabase } from '../lib/supabase';
@@ -21,6 +22,28 @@ interface AuthValue {
   signOut(): Promise<void>;
   setPushEnabled(enabled: boolean): Promise<void>;
   refreshProfile(): Promise<void>;
+  /** Emails a recovery link and a 6-digit code. */
+  requestPasswordReset(email: string): Promise<void>;
+  /** Exchanges the 6-digit code from the recovery email for a session. */
+  verifyRecoveryCode(email: string, code: string): Promise<void>;
+  /** Sets a new password for the currently authenticated user. */
+  updatePassword(password: string): Promise<void>;
+  /**
+   * Changes the password for a signed-in user, verifying the current one first.
+   * `updateUser` alone does not require the old password, so without the
+   * re-auth step anyone holding an unlocked phone could take over the account.
+   */
+  changePassword(currentPassword: string, newPassword: string): Promise<void>;
+  /** 'email' for password accounts, otherwise the OAuth provider that owns it. */
+  authProvider: string;
+  /**
+   * True while the user holds a recovery session and still owes us a new
+   * password. Tracked explicitly rather than read off an auth event: the PKCE
+   * code exchange reports a plain sign-in, so there is no reliable
+   * "PASSWORD_RECOVERY" signal to key off.
+   */
+  recovering: boolean;
+  endRecovery(): void;
 }
 
 const AuthContext = createContext<AuthValue | null>(null);
@@ -34,9 +57,15 @@ function oauthRedirectUri() {
   return AuthSession.makeRedirectUri({ path: 'auth-callback' });
 }
 
+/** Where the emailed password-recovery link should land. */
+function recoveryRedirectUri() {
+  return AuthSession.makeRedirectUri({ path: 'reset-password' });
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [recovering, setRecovering] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -48,6 +77,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(next ?? null);
     });
     return () => sub.subscription.unsubscribe();
+  }, []);
+
+  // Recovery (and OAuth) links come back into the app as a deep link carrying a
+  // PKCE `code`. Exchange it for a session here; if the link was the
+  // reset-password one, remember that a new password is still owed.
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    const handleUrl = async (url: string | null) => {
+      if (!url) return;
+      let parsed: Linking.ParsedURL;
+      try {
+        parsed = Linking.parse(url);
+      } catch {
+        return;
+      }
+      const code = parsed.queryParams?.code;
+      const isRecovery =
+        (parsed.path ?? '').includes('reset-password') ||
+        parsed.queryParams?.type === 'recovery';
+      if (typeof code !== 'string') return;
+
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (!error && isRecovery) setRecovering(true);
+    };
+
+    // Cold start: the link that launched the app.
+    void Linking.getInitialURL().then(handleUrl);
+    // Warm start: app already running.
+    const sub = Linking.addEventListener('url', ({ url }) => void handleUrl(url));
+    return () => sub.remove();
   }, []);
 
   const userId = session?.user?.id ?? null;
@@ -129,9 +189,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (exchangeError) throw exchangeError;
   }, []);
 
+  const requestPasswordReset = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: recoveryRedirectUri(),
+    });
+    if (error) throw error;
+  }, []);
+
+  const verifyRecoveryCode = useCallback(async (email: string, code: string) => {
+    const { error } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: code.trim(),
+      type: 'recovery',
+    });
+    if (error) throw error;
+    setRecovering(true);
+  }, []);
+
+  const updatePassword = useCallback(async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+    setRecovering(false);
+  }, []);
+
+  const endRecovery = useCallback(() => setRecovering(false), []);
+
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      const email = session?.user?.email;
+      if (!email) throw new Error('This account has no email address.');
+
+      const { error: reauthError } = await supabase.auth.signInWithPassword({
+        email,
+        password: currentPassword,
+      });
+      if (reauthError) throw new Error('That current password is not correct.');
+
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+    },
+    [session?.user?.email],
+  );
+
+  // Google/Apple accounts have no password to change.
+  const authProvider =
+    (session?.user?.app_metadata?.provider as string | undefined) ?? 'email';
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setProfile(null);
+    setRecovering(false);
   }, []);
 
   const setPushEnabled = useCallback(
@@ -161,8 +268,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signOut,
       setPushEnabled,
       refreshProfile,
+      requestPasswordReset,
+      verifyRecoveryCode,
+      updatePassword,
+      changePassword,
+      authProvider,
+      recovering,
+      endRecovery,
     }),
-    [session, profile, signIn, signUp, signInWithProvider, signOut, setPushEnabled, refreshProfile],
+    [
+      session,
+      profile,
+      signIn,
+      signUp,
+      signInWithProvider,
+      signOut,
+      setPushEnabled,
+      refreshProfile,
+      requestPasswordReset,
+      verifyRecoveryCode,
+      updatePassword,
+      changePassword,
+      authProvider,
+      recovering,
+      endRecovery,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
