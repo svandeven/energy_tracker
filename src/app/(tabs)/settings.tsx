@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { AppHeader } from '../../components/AppHeader';
 import { Card } from '../../components/Card';
 import { CategoryIcon } from '../../components/CategoryIcon';
+import { TimePicker } from '../../components/TimePicker';
 import { Text } from '../../components/Text';
 import { colors, fonts, radii } from '../../theme';
-import { formatTime, parseTime } from '../../lib/dates';
+import { formatTime } from '../../lib/dates';
 import type { QuestionRow } from '../../lib/database.types';
 import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
@@ -34,16 +34,6 @@ export default function SettingsScreen() {
         },
       ],
     );
-  };
-
-  const onTimeChange = (event: { type: string }, selected?: Date) => {
-    const question = editingTimeFor;
-    if (Platform.OS === 'android') setEditingTimeFor(null);
-    if (event.type === 'dismissed' || !selected || !question) return;
-    const hh = String(selected.getHours()).padStart(2, '0');
-    const mm = String(selected.getMinutes()).padStart(2, '0');
-    void updateQuestion(question.id, { reminder_time: `${hh}:${mm}:00` });
-    if (Platform.OS === 'ios') setEditingTimeFor(null);
   };
 
   return (
@@ -138,21 +128,15 @@ export default function SettingsScreen() {
       </ScrollView>
 
       {editingTimeFor && (
-        <View style={Platform.OS === 'ios' ? styles.pickerSheet : undefined}>
-          <DateTimePicker
-            value={timeToDate(editingTimeFor.reminder_time)}
-            mode="time"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={onTimeChange}
-          />
-          {Platform.OS === 'ios' && (
-            <Pressable onPress={() => setEditingTimeFor(null)} style={styles.pickerDone}>
-              <Text variant="bodyStrong" color={colors.teal} center>
-                Done
-              </Text>
-            </Pressable>
-          )}
-        </View>
+        <TimePicker
+          value={editingTimeFor.reminder_time}
+          onChange={(next) => {
+            void updateQuestion(editingTimeFor.id, { reminder_time: next });
+            // Keep the sheet's own value in step while it stays open on iOS.
+            setEditingTimeFor((q) => (q ? { ...q, reminder_time: next } : q));
+          }}
+          onDismiss={() => setEditingTimeFor(null)}
+        />
       )}
     </SafeAreaView>
   );
@@ -231,13 +215,6 @@ function QuestionEditor({
   );
 }
 
-function timeToDate(time: string) {
-  const { hour, minute } = parseTime(time);
-  const d = new Date();
-  d.setHours(hour, minute, 0, 0);
-  return d;
-}
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
   content: { paddingHorizontal: 20, paddingBottom: 40 },
@@ -286,11 +263,4 @@ const styles = StyleSheet.create({
   },
   signOut: { marginTop: 32, paddingVertical: 14 },
   pressed: { opacity: 0.7 },
-  pickerSheet: {
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingBottom: 8,
-  },
-  pickerDone: { paddingVertical: 12 },
 });
