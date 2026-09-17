@@ -103,10 +103,14 @@ try {
     ok('auth endpoint reachable');
     info(`email signup enabled: ${s.external?.email ?? 'unknown'}`);
     if (s.mailer_autoconfirm === false) {
-      info('email confirmation is ON — you must click the emailed link to log in');
-      info('turn it off while developing: Authentication -> Sign In / Providers -> Email');
+      ok('email confirmation is ON — addresses are verified before sign-in');
+      info('new sign-ups must click the emailed link; in Expo Go that link is an');
+      info('exp:// URL that changes per session, so confirm from the dashboard instead');
+      info('(Authentication -> Users -> ... -> Confirm email) while developing.');
     } else {
-      ok('email auto-confirm is on — sign-up logs you straight in');
+      bad('email confirmation is OFF — anyone can sign up with an address they do not own');
+      info('With password reset enabled that lets them claim the account.');
+      info('Enable it: Authentication -> Sign In / Providers -> Email -> Confirm email');
     }
   }
 } catch { /* non-fatal */ }
