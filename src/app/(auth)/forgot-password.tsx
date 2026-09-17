@@ -11,7 +11,7 @@ import { useAuth } from '../../providers/AuthProvider';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
-  const { requestPasswordReset, verifyRecoveryCode } = useAuth();
+  const { requestPasswordReset, verifyRecovery } = useAuth();
 
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -37,14 +37,19 @@ export default function ForgotPasswordScreen() {
   };
 
   const verify = async () => {
-    if (code.trim().length < 6) {
-      setError('Enter the 6-digit code from the email.');
+    const input = code.trim();
+    if (!input) {
+      setError('Paste the link from the email, or enter the 6-digit code.');
+      return;
+    }
+    if (!input.includes('://') && input.length < 6) {
+      setError('That code looks too short — it should be 6 digits.');
       return;
     }
     setError(null);
     setBusy('verify');
     try {
-      await verifyRecoveryCode(email, code);
+      await verifyRecovery(email, input);
       // The auth gate sends us to /reset-password once recovery is active.
     } catch (e) {
       setError(e instanceof Error ? e.message : 'That code was not accepted.');
@@ -65,7 +70,7 @@ export default function ForgotPasswordScreen() {
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.lead}>
             {sent
-              ? 'We sent you an email. Tap the link in it, or enter the 6-digit code below.'
+              ? 'We sent you an email. Paste the link from it below — or the 6-digit code, if your email contains one.'
               : "Enter your email and we'll send you a link and a code."}
           </Text>
 
@@ -89,19 +94,23 @@ export default function ForgotPasswordScreen() {
 
           {sent && (
             <View style={styles.field}>
-              <Text variant="label">6-digit code</Text>
-              <View style={styles.inputRow}>
-                <Ionicons name="keypad-outline" size={18} color={colors.inkFaint} />
+              <Text variant="label">Link or code from the email</Text>
+              <View style={[styles.inputRow, styles.inputRowTall]}>
+                <Ionicons name="link-outline" size={18} color={colors.inkFaint} />
                 <TextInput
                   value={code}
-                  onChangeText={(v) => setCode(v.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="123456"
+                  onChangeText={setCode}
+                  placeholder="Paste the link, or type the 6-digit code"
                   placeholderTextColor={colors.inkFaint}
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  style={[styles.input, styles.codeInput]}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  multiline
+                  style={[styles.input, styles.linkInput]}
                 />
               </View>
+              <Text variant="caption" color={colors.inkMuted}>
+                In the email, long-press the button and choose Copy Link.
+              </Text>
             </View>
           )}
 
@@ -162,7 +171,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   input: { flex: 1, fontFamily: fonts.regular, fontSize: 15, color: colors.ink },
-  codeInput: { fontFamily: fonts.bold, fontSize: 20, letterSpacing: 6 },
+  inputRowTall: { height: undefined, minHeight: 52, paddingVertical: 10, alignItems: 'flex-start' },
+  linkInput: { fontSize: 14, minHeight: 32 },
   message: { marginBottom: 12 },
   resend: { marginTop: 14, paddingVertical: 6 },
   backLink: { marginTop: 22, paddingVertical: 6 },

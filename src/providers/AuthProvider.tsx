@@ -24,8 +24,12 @@ interface AuthValue {
   refreshProfile(): Promise<void>;
   /** Emails a recovery link and a 6-digit code. */
   requestPasswordReset(email: string): Promise<void>;
-  /** Exchanges the 6-digit code from the recovery email for a session. */
-  verifyRecoveryCode(email: string, code: string): Promise<void>;
+  /**
+   * Accepts either the 6-digit code or the whole recovery link pasted out of
+   * the email. Supabase's default template only contains the link, so pasting
+   * it has to work without the user editing any email templates.
+   */
+  verifyRecovery(email: string, codeOrLink: string): Promise<void>;
   /** Sets a new password for the currently authenticated user. */
   updatePassword(password: string): Promise<void>;
   /**
@@ -196,10 +200,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   }, []);
 
-  const verifyRecoveryCode = useCallback(async (email: string, code: string) => {
+  const verifyRecovery = useCallback(async (email: string, codeOrLink: string) => {
+    const input = codeOrLink.trim();
+
+    // A pasted link. Supabase's own verify URL carries ?token=<hash>; a link
+    // that has already bounced through a redirect may carry ?code= instead.
+    if (input.includes('://')) {
+      let url: URL;
+      try {
+        url = new URL(input);
+      } catch {
+        throw new Error("That doesn't look like a link from the email.");
+      }
+
+      const code = url.searchParams.get('code');
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) throw error;
+        setRecovering(true);
+        return;
+      }
+
+      const tokenHash = url.searchParams.get('token') ?? url.searchParams.get('token_hash');
+      if (!tokenHash) {
+        throw new Error(
+          "Couldn't find a token in that link. Copy the whole link from the email.",
+        );
+      }
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: 'recovery',
+      });
+      if (error) throw error;
+      setRecovering(true);
+      return;
+    }
+
+    // A 6-digit code, which only appears if {{ .Token }} was added to the
+    // Reset Password email template.
     const { error } = await supabase.auth.verifyOtp({
       email: email.trim(),
-      token: code.trim(),
+      token: input,
       type: 'recovery',
     });
     if (error) throw error;
@@ -269,7 +310,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setPushEnabled,
       refreshProfile,
       requestPasswordReset,
-      verifyRecoveryCode,
+      verifyRecovery,
       updatePassword,
       changePassword,
       authProvider,
@@ -286,7 +327,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setPushEnabled,
       refreshProfile,
       requestPasswordReset,
-      verifyRecoveryCode,
+      verifyRecovery,
       updatePassword,
       changePassword,
       authProvider,
