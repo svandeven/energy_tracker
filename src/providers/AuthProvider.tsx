@@ -77,8 +77,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     supabase.auth.getSession().then(({ data }) => setSession(data.session ?? null));
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
       setSession(next ?? null);
+      // On web, supabase-js detects the recovery link in the address bar itself
+      // and reports it here — this is the only place that signal arrives.
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true);
     });
     return () => sub.subscription.unsubscribe();
   }, []);

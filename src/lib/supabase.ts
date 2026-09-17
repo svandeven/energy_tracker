@@ -14,9 +14,11 @@ export const supabase = createClient<Database>(
       storage: AsyncStorage,
       autoRefreshToken: true,
       persistSession: true,
-      // There is no URL bar in a native app; we hand the OAuth code to
-      // exchangeCodeForSession() ourselves in AuthProvider.
-      detectSessionInUrl: false,
+      // On web the recovery/magic link lands in the address bar, so let
+      // supabase-js pick the session up itself. On native there is no URL bar —
+      // the link arrives as a deep link and AuthProvider hands the code to
+      // exchangeCodeForSession() instead.
+      detectSessionInUrl: Platform.OS === 'web',
       flowType: 'pkce',
     },
   },
