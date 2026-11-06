@@ -7,6 +7,7 @@ import * as WebBrowser from 'expo-web-browser';
 
 import { supabase } from '../lib/supabase';
 import { isSupabaseConfigured } from '../lib/env';
+import { cancelReminders } from '../features/notifications';
 import type { ProfileRow } from '../lib/database.types';
 
 export type OAuthProvider = 'google' | 'apple';
@@ -39,6 +40,12 @@ interface AuthValue {
    * re-auth step anyone holding an unlocked phone could take over the account.
    */
   changePassword(currentPassword: string, newPassword: string): Promise<void>;
+  /**
+   * Permanently deletes the signed-in user and, by cascade, every row they own.
+   * Password accounts must re-enter their password first, for the same
+   * unlocked-phone reason as `changePassword`.
+   */
+  deleteAccount(currentPassword?: string): Promise<void>;
   /** 'email' for password accounts, otherwise the OAuth provider that owns it. */
   authProvider: string;
   /**
@@ -298,6 +305,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setRecovering(false);
   }, []);
 
+  const deleteAccount = useCallback(
+    async (currentPassword?: string) => {
+      if (authProvider === 'email') {
+        const email = session?.user?.email;
+        if (!email || !currentPassword) throw new Error('Enter your password to continue.');
+        const { error: reauthError } = await supabase.auth.signInWithPassword({
+          email,
+          password: currentPassword,
+        });
+        if (reauthError) throw new Error('That password is not correct.');
+      }
+
+      const { error } = await supabase.rpc('delete_account');
+      if (error) throw error;
+
+      // The user no longer exists, so the server-side sign-out would only fail;
+      // clearing the local session is what sends the auth gate back to welcome.
+      await cancelReminders();
+      await supabase.auth.signOut({ scope: 'local' });
+      setProfile(null);
+      setRecovering(false);
+    },
+    [authProvider, session?.user?.email],
+  );
+
   const setPushEnabled = useCallback(
     async (enabled: boolean) => {
       if (!userId) return;
@@ -329,6 +361,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       verifyRecovery,
       updatePassword,
       changePassword,
+      deleteAccount,
       authProvider,
       recovering,
       endRecovery,
@@ -346,6 +379,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       verifyRecovery,
       updatePassword,
       changePassword,
+      deleteAccount,
       authProvider,
       recovering,
       endRecovery,

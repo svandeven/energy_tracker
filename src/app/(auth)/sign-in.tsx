@@ -249,7 +249,16 @@ export default function SignInScreen() {
           />
 
           <Text variant="caption" color={colors.inkFaint} center style={styles.terms}>
-            By continuing you agree to our Terms &amp; Privacy Policy.
+            By continuing you agree to our{' '}
+            <Text
+              variant="caption"
+              color={colors.teal}
+              onPress={() => router.push('/terms')}
+              accessibilityRole="link"
+            >
+              Terms &amp; Privacy Policy
+            </Text>
+            .
           </Text>
 
           <Pressable onPress={() => router.replace('/welcome')} style={styles.backLink}>

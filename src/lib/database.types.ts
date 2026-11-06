@@ -72,7 +72,9 @@ export type Database = {
     // is empty — otherwise every table name also matches supabase-js's view
     // overload of `.from()` and insert/update types collapse to `never`.
     Views: Record<never, never>;
-    Functions: Record<never, never>;
+    Functions: {
+      delete_account: { Args: Record<string, never>; Returns: undefined };
+    };
     Enums: Record<never, never>;
     CompositeTypes: Record<never, never>;
   };

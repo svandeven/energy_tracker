@@ -15,6 +15,8 @@ import type { QuestionRow } from '../../lib/database.types';
 import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
 
+const DANGER = '#C4342B';
+
 export default function SettingsScreen() {
   const router = useRouter();
   const { profile, setPushEnabled, signOut } = useAuth();
@@ -133,6 +135,36 @@ export default function SettingsScreen() {
               <Text variant="bodyStrong">Change password</Text>
               <Text variant="small" color={colors.inkMuted}>
                 {profile?.display_name ? `Signed in as ${profile.display_name}` : 'Update your password'}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/terms')}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.accountRow, styles.rowDivider, pressed && styles.pressed]}
+          >
+            <Ionicons name="document-text-outline" size={20} color={colors.teal} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong">Terms &amp; Privacy</Text>
+              <Text variant="small" color={colors.inkMuted}>
+                How we handle your data
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/delete-account')}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.accountRow, styles.rowDivider, pressed && styles.pressed]}
+          >
+            <Ionicons name="trash-outline" size={20} color={DANGER} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong" color={DANGER}>
+                Delete account
+              </Text>
+              <Text variant="small" color={colors.inkMuted}>
+                Permanently erase your account and data
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
@@ -288,6 +320,7 @@ const styles = StyleSheet.create({
   accountCard: {},
   accountRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
   accountText: { flex: 1 },
+  rowDivider: { borderTopWidth: 1, borderTopColor: colors.surface },
   signOut: { marginTop: 18, paddingVertical: 14 },
   pressed: { opacity: 0.7 },
 });

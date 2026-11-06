@@ -21,13 +21,15 @@ totals **/10**. Add or remove categories in Settings and the denominator follows
 | History | `/history` | `src/app/(tabs)/history.tsx` |
 | Settings | `/settings` | `src/app/(tabs)/settings.tsx` |
 
-Plus three screens with no mockup of their own, following the same visual language:
+Plus five screens with no mockup of their own, following the same visual language:
 
 | Screen | Route | File |
 | --- | --- | --- |
 | Forgot password | `/forgot-password` | `src/app/(auth)/forgot-password.tsx` |
 | Set new password | `/reset-password` | `src/app/(auth)/reset-password.tsx` |
 | Change password | `/change-password` | `src/app/change-password.tsx` |
+| Delete account | `/delete-account` | `src/app/delete-account.tsx` |
+| Terms & Privacy | `/terms` | `src/app/terms.tsx` |
 
 ## Setup
 
@@ -105,6 +107,23 @@ new-password screen. Two Supabase settings are required:
 
 In Expo Go the redirect is an `exp://` URL that changes every session, so the
 link path is unreliable there and the 6-digit code is the one that works.
+
+## Account deletion and terms
+
+**Delete account** is at Settings → Account → Delete account, as App Store
+guideline 5.1.1(v) requires. Password accounts re-enter their password; every
+account types `DELETE` to confirm. The app calls the `delete_account()` RPC in
+`supabase/schema.sql`, a `security definer` function that deletes the caller's
+`auth.users` row (the id comes from the JWT, so it can never delete anyone
+else). Profiles, questions and check-ins go with it via `on delete cascade`.
+If your project predates this function, re-run that block of the schema in the
+SQL editor, or deletion fails with "Could not find the function".
+
+**Terms & Privacy** (`/terms`) is linked from the sign-in footer and from
+Settings, and opens signed out too. Before you submit to the App Store, replace
+`CONTACT_EMAIL` in `src/app/terms.tsx` with a real address and have the text
+reviewed. App Store Connect also wants the privacy policy at a public URL;
+`https://energy-score.expo.app/terms` works once the web build is redeployed.
 
 ## Deploying the web version
 
