@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Platform } from 'react-native';
 import type { Session } from '@supabase/supabase-js';
 import * as AuthSession from 'expo-auth-session';
 import * as Linking from 'expo-linking';
@@ -174,6 +175,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithProvider = useCallback(async (provider: OAuthProvider) => {
     const redirectTo = oauthRedirectUri();
+
+    // On web, navigate the whole tab and let supabase-js pick the code up out of
+    // the address bar on the way back (`detectSessionInUrl`). The popup variant
+    // below cannot work here: completing it requires the redirect page to call
+    // WebBrowser.maybeCompleteAuthSession(), and the page we land on is a plain
+    // route with no opener to post back to once the tab has been replaced.
+    if (Platform.OS === 'web') {
+      const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+      if (error) throw error;
+      return; // the tab is already on its way to the provider
+    }
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo, skipBrowserRedirect: true },
