@@ -38,7 +38,7 @@ const META = [
 
 let html = readFileSync(FILE, 'utf8');
 
-if (html.includes('energy-score-web-tweaks')) {
+if (html.includes('fettle-web-tweaks')) {
   console.log('dist/index.html already processed — nothing to do');
   process.exit(0);
 }
@@ -51,7 +51,7 @@ if (!html.includes(RESET_CLOSE)) {
 }
 html = html.replace(
   RESET_CLOSE,
-  `${RESET_CLOSE}\n    <style id="energy-score-web-tweaks">${CSS}\n    </style>`,
+  `${RESET_CLOSE}\n    <style id="fettle-web-tweaks">${CSS}\n    </style>`,
 );
 html = html.replace('</head>', `  ${META}\n  </head>`);
 

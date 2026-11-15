@@ -35,7 +35,7 @@ export default function ChangePasswordScreen() {
           </Text>
           <Text variant="small" color={colors.inkMuted} center>
             You sign in with {label}, so your password is managed there rather than in
-            Energy Score.
+            Fettle.
           </Text>
           <Button
             label="Back to settings"

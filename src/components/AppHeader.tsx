@@ -7,7 +7,7 @@ import { Text } from './Text';
 
 /**
  * The persistent header from the mockups: history glyph on the left, the
- * "⚡ Energy Score" wordmark centered, settings gear on the right.
+ * "⚡ Fettle" wordmark centered, settings gear on the right.
  */
 export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' | 'surface' }) {
   const router = useRouter();
@@ -31,7 +31,7 @@ export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' |
         <Text variant="caption" style={styles.bolt}>
           ⚡
         </Text>
-        <Text variant="bodyStrong">Energy Score</Text>
+        <Text variant="bodyStrong">Fettle</Text>
       </View>
 
       <Pressable

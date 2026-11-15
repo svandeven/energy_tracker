@@ -104,7 +104,7 @@ export default function SignInScreen() {
             <Ionicons name="flash" size={30} color={colors.ink} />
           </View>
           <Text variant="title" center>
-            Energy Score
+            Fettle
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.tagline}>
             Track your daily energy, calmly.
@@ -249,7 +249,16 @@ export default function SignInScreen() {
           />
 
           <Text variant="caption" color={colors.inkFaint} center style={styles.terms}>
-            By continuing you agree to our Terms &amp; Privacy Policy.
+            By continuing you agree to our{' '}
+            <Text
+              variant="caption"
+              color={colors.teal}
+              onPress={() => router.push('/terms')}
+              accessibilityRole="link"
+            >
+              Terms &amp; Privacy Policy
+            </Text>
+            .
           </Text>
 
           <Pressable onPress={() => router.replace('/welcome')} style={styles.backLink}>

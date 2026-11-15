@@ -53,6 +53,8 @@ function AuthGate() {
   useEffect(() => {
     if (initializing) return;
     const inAuthFlow = segments[0] === '(auth)';
+    // Terms are linked from the sign-in screen, so they must open either way.
+    const isPublic = segments[0] === 'terms';
 
     // A recovery session is authenticated but still owes us a new password, so
     // it must not fall through to the normal "signed in -> dashboard" rule.
@@ -61,6 +63,7 @@ function AuthGate() {
       return;
     }
 
+    if (isPublic) return;
     if (!session && !inAuthFlow) router.replace('/welcome');
     else if (session && inAuthFlow) router.replace('/');
   }, [session, initializing, recovering, segments, router]);
@@ -72,6 +75,8 @@ function AuthGate() {
       <Stack.Screen name="check-in/[id]" options={{ presentation: 'card' }} />
       <Stack.Screen name="summary" />
       <Stack.Screen name="change-password" options={{ presentation: 'card' }} />
+      <Stack.Screen name="delete-account" options={{ presentation: 'card' }} />
+      <Stack.Screen name="terms" options={{ presentation: 'card' }} />
     </Stack>
   );
 }

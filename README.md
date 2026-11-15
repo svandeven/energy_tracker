@@ -1,10 +1,12 @@
-# Energy Score
+# Fettle
+
+Ships as **Fettle**, and as **Lekker Bezig** on devices set to Dutch (`locales/nl.json`).
 
 A React Native (Expo) app for tracking daily energy across five quick check-ins,
 built from a design mockup that is kept locally and deliberately not committed
 (`design/` is gitignored).
 
-**Web version: https://energy-score.expo.app**
+**Web version: https://fettle-life.com**
 
 Each of the five categories is scored **0, 1 or 2** once per day, so a full day
 totals **/10**. Add or remove categories in Settings and the denominator follows.
@@ -21,13 +23,15 @@ totals **/10**. Add or remove categories in Settings and the denominator follows
 | History | `/history` | `src/app/(tabs)/history.tsx` |
 | Settings | `/settings` | `src/app/(tabs)/settings.tsx` |
 
-Plus three screens with no mockup of their own, following the same visual language:
+Plus five screens with no mockup of their own, following the same visual language:
 
 | Screen | Route | File |
 | --- | --- | --- |
 | Forgot password | `/forgot-password` | `src/app/(auth)/forgot-password.tsx` |
 | Set new password | `/reset-password` | `src/app/(auth)/reset-password.tsx` |
 | Change password | `/change-password` | `src/app/change-password.tsx` |
+| Delete account | `/delete-account` | `src/app/delete-account.tsx` |
+| Terms & Privacy | `/terms` | `src/app/terms.tsx` |
 
 ## Setup
 
@@ -100,20 +104,43 @@ new-password screen. Two Supabase settings are required:
    ```
 
 2. **Authentication → URL Configuration → Redirect URLs** — add
-   `energyscore://reset-password`, plus the `exp://…/--/reset-password` variant
+   `fettle://reset-password`, plus the `exp://…/--/reset-password` variant
    for Expo Go.
 
 In Expo Go the redirect is an `exp://` URL that changes every session, so the
 link path is unreliable there and the 6-digit code is the one that works.
 
+## Account deletion and terms
+
+**Delete account** is at Settings → Account → Delete account, as App Store
+guideline 5.1.1(v) requires. Password accounts re-enter their password; every
+account types `DELETE` to confirm. The app calls the `delete_account()` RPC in
+`supabase/schema.sql`, a `security definer` function that deletes the caller's
+`auth.users` row (the id comes from the JWT, so it can never delete anyone
+else). Profiles, questions and check-ins go with it via `on delete cascade`.
+If your project predates this function, re-run that block of the schema in the
+SQL editor, or deletion fails with "Could not find the function".
+
+**Terms & Privacy** (`/terms`) is linked from the sign-in footer and from
+Settings, and opens signed out too. `CONTACT_EMAIL` in `src/app/terms.tsx` is
+support@fettle-life.com; have the text reviewed before you submit. App Store
+Connect also wants the privacy policy at a public URL — `/terms` on the web
+build (eventually `https://fettle-life.com/terms`).
+
 ## Deploying the web version
 
 ```bash
-npm run build:web                # export to dist/ + inject document tweaks
-npx eas-cli deploy --prod        # publish to EAS Hosting
+npm run deploy:web               # build:web, then wrangler deploy
 ```
 
-Live at **https://energy-score.expo.app**.
+Live at **https://fettle-life.com** and `www.fettle-life.com`, served as the
+Cloudflare Worker `fettle` (`wrangler.jsonc`; also at
+`fettle.susan-vandeven.workers.dev`). The first `wrangler` run opens a browser
+to log in to Cloudflare. The domains are registered at GoDaddy with their nameservers pointed
+at Cloudflare; `lekkerbezig.eu` redirects to `fettle-life.com` via a Cloudflare
+Redirect Rule. Supabase's Site URL is `https://fettle-life.com`, and
+`https://fettle-life.com/**` must stay in its Redirect URLs, or web sign-in and
+password recovery break.
 
 `npm run build:web` runs `expo export --platform web` and then
 `scripts/postexport-web.mjs`, which injects the phone-width centred frame,
@@ -122,9 +149,9 @@ because Expo Router's `+html.tsx` hook only runs for `output: "static"`, and
 this app uses `output: "single"` — static rendering prerenders every route in
 Node, where Supabase's storage adapter touches `window` and crashes.
 
-`dist/` is gitignored. The EAS Hosting free tier covers 100k requests/month,
-1 GB storage and 7 days of log retention, with **no custom domain support** —
-the same `dist/` deploys to Cloudflare Pages or Vercel if you need one.
+`dist/` is gitignored. `wrangler.jsonc` sets `not_found_handling` to
+`single-page-application`, so deep links like `/terms` serve `index.html`. The old EAS Hosting site (`energy-score.expo.app`) is no longer the
+primary; EAS Hosting's free tier has no custom domain support.
 
 On web, notifications and haptics silently no-op, and the reminder time picker
 falls back to the browser's `<input type="time">`
@@ -143,7 +170,7 @@ Supabase's OAuth flow through an in-app browser, which needs two extra steps:
    (Google needs a Google Cloud OAuth client; Apple needs an Apple Services ID).
 2. **Allowlist the redirect URLs** under **Authentication → URL Configuration →
    Redirect URLs**. Add both:
-   - `energyscore://auth-callback` — dev builds and production
+   - `fettle://auth-callback` — dev builds and production
    - `exp://127.0.0.1:8081/--/auth-callback` — Expo Go (swap in the LAN IP that
      `npx expo start` prints if you are on a device rather than the simulator)
 

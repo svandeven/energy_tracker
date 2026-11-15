@@ -1,4 +1,4 @@
--- Energy Score — database schema
+-- Fettle — database schema
 -- Run this once in the Supabase dashboard: SQL Editor -> New query -> Run.
 -- Safe to re-run: everything is guarded with IF NOT EXISTS / DROP IF EXISTS.
 
@@ -127,6 +127,29 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ---------------------------------------------------------------------------
+-- Account deletion (required by App Store guideline 5.1.1(v)).
+-- Deleting the auth.users row cascades to profiles, questions and checkins.
+-- Clients cannot touch the auth schema, so this runs as its owner; it can only
+-- ever delete the caller, because the id comes from the verified JWT.
+-- ---------------------------------------------------------------------------
+create or replace function public.delete_account()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Not signed in';
+  end if;
+  delete from auth.users where id = auth.uid();
+end;
+$$;
+
+revoke execute on function public.delete_account() from public, anon;
+grant execute on function public.delete_account() to authenticated;
 
 -- Keep checkins.updated_at honest when a score is changed.
 create or replace function public.touch_updated_at()

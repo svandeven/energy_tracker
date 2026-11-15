@@ -30,7 +30,7 @@ try {
 const url = env.EXPO_PUBLIC_SUPABASE_URL;
 const key = env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-console.log('\nEnergy Score — backend check\n');
+console.log('\nFettle — backend check\n');
 
 if (!url || PLACEHOLDERS.includes(url)) {
   bad('EXPO_PUBLIC_SUPABASE_URL is missing or still the placeholder');
@@ -94,6 +94,32 @@ for (const table of ['profiles', 'questions', 'checkins']) {
     process.exit(1);
   }
 }
+
+// Called as anon on purpose: execute is revoked from anon, so a live function
+// answers "permission denied" without running. Even if the grant were wrong,
+// auth.uid() is null for anon and the function raises before deleting.
+try {
+  const res = await fetch(`${url}/rest/v1/rpc/delete_account`, {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: '{}',
+  });
+  const body = await res.text();
+  if (body.includes('42501')) {
+    ok('function "delete_account" exists and is closed to anon');
+  } else if (body.includes('PGRST202') || res.status === 404) {
+    bad('function "delete_account" not found — account deletion will fail');
+    info('Run the delete_account block of schema.sql in the SQL Editor.');
+    failed = true;
+  } else if (body.includes('Not signed in')) {
+    bad('function "delete_account" exists but anon can execute it');
+    info('Re-run the revoke/grant lines under it in schema.sql.');
+    failed = true;
+  } else {
+    bad(`function "delete_account": HTTP ${res.status} ${body.slice(0, 120)}`);
+    failed = true;
+  }
+} catch { /* reachability was already proven above */ }
 
 // The sign-up trigger is what seeds the five default questions.
 try {
