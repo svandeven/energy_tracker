@@ -7,7 +7,7 @@ import { Text } from '../components/Text';
 import { colors } from '../theme';
 
 // TODO: replace with a real support address before submitting to the App Store.
-const CONTACT_EMAIL = 'support@energyscore.app';
+const CONTACT_EMAIL = 'support@fettle-life.com';
 const LAST_UPDATED = '6 November 2026';
 
 /**
@@ -45,14 +45,14 @@ export default function TermsScreen() {
         </Text>
 
         <Section title="The short version">
-          Energy Score helps you notice how your energy changes through the day. Your
+          Fettle helps you notice how your energy changes through the day. Your
           check-ins belong to you, we never sell or share them, there are no ads or
           trackers, and you can delete everything at any time from Settings.
         </Section>
 
         <Heading>Terms of Use</Heading>
 
-        <Section title="Using Energy Score">
+        <Section title="Using Fettle">
           By creating an account or using the app you agree to these terms. You need to
           be at least 13 years old, or the minimum age for digital consent where you
           live, to use it. Please keep your sign-in details to yourself; you are
@@ -60,7 +60,7 @@ export default function TermsScreen() {
         </Section>
 
         <Section title="Not medical advice">
-          Energy Score is a self-reflection tool. Scores, averages and trends are not a
+          Fettle is a self-reflection tool. Scores, averages and trends are not a
           diagnosis and are not a substitute for advice from a doctor or other qualified
           professional. If you are worried about your health, please talk to one.
         </Section>
@@ -71,7 +71,7 @@ export default function TermsScreen() {
         </Section>
 
         <Section title="The service">
-          We work to keep Energy Score available and your data safe, but the app is
+          We work to keep Fettle available and your data safe, but the app is
           provided “as is”, without warranties of any kind. To the extent the law allows,
           we are not liable for indirect or consequential losses arising from its use.
           We may change or discontinue features, and will update these terms when we
@@ -80,7 +80,7 @@ export default function TermsScreen() {
         </Section>
 
         <Section title="Ending your account">
-          You can stop using Energy Score whenever you like. Settings → Delete account
+          You can stop using Fettle whenever you like. Settings → Delete account
           removes your account and all of its data permanently.
         </Section>
 

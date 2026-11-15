@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Lekker Bezig",
+    "CFBundleName": "Lekker Bezig"
+  },
+  "android": {
+    "app_name": "Lekker Bezig"
+  }
+}

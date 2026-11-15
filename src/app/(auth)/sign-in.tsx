@@ -104,7 +104,7 @@ export default function SignInScreen() {
             <Ionicons name="flash" size={30} color={colors.ink} />
           </View>
           <Text variant="title" center>
-            Energy Score
+            Fettle
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.tagline}>
             Track your daily energy, calmly.

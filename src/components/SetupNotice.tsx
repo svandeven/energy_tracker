@@ -16,7 +16,7 @@ export function SetupNotice() {
           One setup step left
         </Text>
         <Text variant="body" color={colors.inkMuted} center style={styles.lead}>
-          Energy Score needs your Supabase project before it can sign anyone in.
+          Fettle needs your Supabase project before it can sign anyone in.
         </Text>
 
         <Step n={1} text="Create a free project at supabase.com." />

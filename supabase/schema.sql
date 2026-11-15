@@ -1,4 +1,4 @@
--- Energy Score — database schema
+-- Fettle — database schema
 -- Run this once in the Supabase dashboard: SQL Editor -> New query -> Run.
 -- Safe to re-run: everything is guarded with IF NOT EXISTS / DROP IF EXISTS.
 

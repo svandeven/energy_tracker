@@ -1,0 +1,15 @@
+// Serves the static web build (npm run build:web -> dist/) as a Cloudflare Worker.
+{
+  "name": "fettle",
+  "compatibility_date": "2026-11-13",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "fettle-life.com", "custom_domain": true },
+    { "pattern": "www.fettle-life.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./dist",
+    // output: "single" — every unknown path falls back to index.html
+    "not_found_handling": "single-page-application"
+  }
+}

@@ -16,7 +16,7 @@ export default function WelcomeScreen() {
         <Text variant="caption" style={styles.leaf}>
           🌿
         </Text>
-        <Text variant="bodyStrong">Energy Score</Text>
+        <Text variant="bodyStrong">Fettle</Text>
       </View>
 
       <View style={styles.hero}>
@@ -32,7 +32,7 @@ export default function WelcomeScreen() {
 
       <View style={styles.copy}>
         <Text variant="title" center>
-          Welcome to Energy Score
+          Welcome to Fettle
         </Text>
         <Text variant="body" color={colors.ink} center style={styles.lead}>
           Track daily energy in 5 quick check-ins.

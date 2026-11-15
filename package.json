@@ -42,7 +42,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "wrangler": "^4.162.0"
   },
   "scripts": {
     "start": "expo start",
@@ -52,7 +53,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:web": "expo export --platform web && node scripts/postexport-web.mjs",
-    "verify:backend": "node scripts/verify-backend.mjs"
+    "verify:backend": "node scripts/verify-backend.mjs",
+    "deploy:web": "npm run build:web && wrangler deploy"
   },
   "private": true
 }
