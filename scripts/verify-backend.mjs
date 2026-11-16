@@ -30,7 +30,7 @@ try {
 const url = env.EXPO_PUBLIC_SUPABASE_URL;
 const key = env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-console.log('\nFettle — backend check\n');
+console.log('\nSun Steps — backend check\n');
 
 if (!url || PLACEHOLDERS.includes(url)) {
   bad('EXPO_PUBLIC_SUPABASE_URL is missing or still the placeholder');
@@ -135,7 +135,11 @@ try {
     failed = true;
   }
 
-  for (const [table, column] of [['profiles', 'role'], ['questions', 'default_key']]) {
+  for (const [table, column] of [
+    ['profiles', 'role'],
+    ['questions', 'default_key'],
+    ['questions', 'reminder_next_day'],
+  ]) {
     const col = await fetch(`${url}/rest/v1/${table}?select=${column}&limit=1`, { headers });
     if (col.ok) ok(`column "${table}.${column}" exists`);
     else {

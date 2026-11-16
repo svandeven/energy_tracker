@@ -1,5 +1,14 @@
 import type { CheckinRow, QuestionRow } from './database.types';
-import { type LocalDate, addDays } from './dates';
+import { type LocalDate, addDays, today } from './dates';
+
+/**
+ * Whether a question is expected to be answered for `date` yet. Next-day
+ * questions aren't due until the morning after: they can still be answered on
+ * the day itself, but a day counts as done without them until then.
+ */
+export function isDue(question: QuestionRow, date: LocalDate, now: LocalDate = today()): boolean {
+  return !question.reminder_next_day || date < now;
+}
 
 /** Each question contributes 0–2, so a full day is 2 x (active questions). */
 export const MAX_PER_QUESTION = 2;

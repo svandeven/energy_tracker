@@ -73,7 +73,16 @@ const styles = StyleSheet.create({
   sun: { marginRight: 5 },
   // design/welcome_image.png, scaled down. The ratio sits on the wrapper
   // because react-native-web's Image ignores aspectRatio.
-  hero: { marginTop: 24, width: '100%', aspectRatio: 1200 / 827, borderRadius: radii.xl, overflow: 'hidden' },
+  // Capped so the picture doesn't push the buttons off a wide desktop column.
+  hero: {
+    marginTop: 24,
+    width: '100%',
+    maxWidth: 560,
+    alignSelf: 'center',
+    aspectRatio: 1200 / 827,
+    borderRadius: radii.xl,
+    overflow: 'hidden',
+  },
   illustration: { width: '100%', height: '100%' },
   copy: { marginTop: 28 },
   lead: { marginTop: 12 },

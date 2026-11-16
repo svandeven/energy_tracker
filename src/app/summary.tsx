@@ -18,7 +18,7 @@ import {
   today,
   type LocalDate,
 } from '../lib/dates';
-import { dayTotal, maxDailyScore, summaryMessageKey } from '../lib/scoring';
+import { dayTotal, isDue, maxDailyScore, summaryMessageKey } from '../lib/scoring';
 import { HISTORY_WINDOW_DAYS, useData } from '../providers/DataProvider';
 import { useI18n } from '../i18n';
 
@@ -40,6 +40,10 @@ export default function SummaryScreen() {
   const day = useMemo(() => dayTotal(checkins, questions, date), [checkins, questions, date]);
   const max = maxDailyScore(questions);
   const complete = day.answered === questions.length && questions.length > 0;
+  const unanswered = questions.filter((q) => !day.scores.has(q.id));
+  const toGo = unanswered.filter((q) => isDue(q, date)).length;
+  // Next-day questions still waiting for tomorrow morning.
+  const later = unanswered.length - toGo;
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -85,11 +89,15 @@ export default function SummaryScreen() {
           <Text variant="small" color={colors.onTint} center>
             {complete
               ? t(summaryMessageKey(day.total, max))
-              : isToday(date)
-                ? questions.length - day.answered === 1
+              : isToday(date) && toGo > 0
+                ? toGo === 1
                   ? t('summary.toGoOne')
-                  : t('summary.toGoOther', { count: questions.length - day.answered })
-                : t('summary.partial', { answered: day.answered, total: questions.length })}
+                  : t('summary.toGoOther', { count: toGo })
+                : isToday(date) && later > 0
+                  ? later === 1
+                    ? t('summary.laterOne')
+                    : t('summary.laterOther', { count: later })
+                  : t('summary.partial', { answered: day.answered, total: questions.length })}
           </Text>
         </View>
 

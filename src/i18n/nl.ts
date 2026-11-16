@@ -52,7 +52,7 @@ export const nl: Record<TranslationKey, string> = {
   'error.loadData': 'Je gegevens konden niet worden geladen.',
 
   // Welcome
-  'welcome.title': 'Welkom bij Fettle',
+  'welcome.title': 'Welkom bij Lekker Bezig',
   'welcome.lead': 'Volg je energie met 5 korte check-ins per dag.',
   'welcome.sub': 'Kleine momenten, veel inzicht — voel hoe je dag loopt.',
   'welcome.getStarted': 'Aan de slag',
@@ -125,6 +125,12 @@ export const nl: Record<TranslationKey, string> = {
   'dashboard.remainingOne': 'Vul je laatste check-in in om vandaag af te ronden.',
   'dashboard.remainingOther': 'Vul je laatste {count} check-ins in om vandaag af te ronden.',
   'dashboard.viewSummary': 'Bekijk het overzicht van vandaag',
+  'dashboard.logTomorrow': 'Nu of morgenochtend',
+  'dashboard.finishYesterday': 'Gisteren afronden',
+  'dashboard.finishYesterdayBody': 'Deze vul je de ochtend erna in.',
+  'dashboard.allDoneForNow': 'Klaar voor nu!',
+  'dashboard.laterOne': 'Morgenochtend volgt nog één check-in — of vul hem nu al in.',
+  'dashboard.laterOther': 'Morgenochtend volgen nog {count} check-ins — of vul ze nu al in.',
 
   // Check-in
   'checkIn.unavailable': 'Die check-in is niet meer beschikbaar.',
@@ -145,6 +151,8 @@ export const nl: Record<TranslationKey, string> = {
   'summary.toGoOne': 'Nog 1 check-in te gaan — dit totaal loopt nog op.',
   'summary.toGoOther': 'Nog {count} check-ins te gaan — dit totaal loopt nog op.',
   'summary.partial': '{answered} van {total} ingevuld voor deze dag.',
+  'summary.laterOne': 'Morgenochtend nog 1 check-in — dit totaal loopt nog op.',
+  'summary.laterOther': 'Morgenochtend nog {count} check-ins — dit totaal loopt nog op.',
   'summary.viewHistory': 'Bekijk geschiedenis',
   'summary.strong': 'Sterke dag. Wat je ook doet, het werkt. 🌱',
   'summary.steady': 'Goed bezig met inchecken — kleine signalen tellen op. Je vindt een vast ritme. 🌱',
@@ -194,6 +202,11 @@ export const nl: Record<TranslationKey, string> = {
   'settings.pushSub': 'Krijg een herinnering om in te checken',
   'settings.changeTimeA11y': 'Tijd van herinnering wijzigen voor {title}',
   'settings.reminderTime': 'Tijd van herinnering',
+  'settings.sameDay': 'Zelfde dag',
+  'settings.nextDay': 'Volgende dag',
+  'settings.dayToggleA11y': 'Dag van herinnering voor {title}',
+  'settings.nextDayHint':
+    'Volgende dag: je krijgt de herinnering de ochtend erna en vult hem in voor de dag ervoor — voor vragen over je avond of slaap. Op de dag zelf invullen kan ook.',
   'settings.language': 'Taal',
   'settings.languageSystem': 'Zoals apparaat',
   'settings.account': 'Account',
@@ -215,12 +228,13 @@ export const nl: Record<TranslationKey, string> = {
 
   // Reminders
   'reminder.body': 'Tijd voor een korte check-in.',
+  'reminder.bodyNextDay': 'Hoe eindigde gisteren? Tijd voor een korte check-in.',
   'reminder.channel': 'Energie-check-ins',
 
   // Change password
   'changePassword.noPasswordTitle': 'Geen wachtwoord om te wijzigen',
   'changePassword.noPasswordBody':
-    'Je logt in met {provider}, dus je wachtwoord beheer je daar en niet in Fettle.',
+    'Je logt in met {provider}, dus je wachtwoord beheer je daar en niet in Lekker Bezig.',
   'changePassword.failed': 'Je wachtwoord kon niet worden gewijzigd.',
   'changePassword.doneTitle': 'Wachtwoord gewijzigd',
   'changePassword.doneBody': 'Gebruik je nieuwe wachtwoord de volgende keer dat je inlogt.',
@@ -251,23 +265,23 @@ export const nl: Record<TranslationKey, string> = {
   'terms.lastUpdated': 'Laatst bijgewerkt op {date}',
   'terms.shortTitle': 'In het kort',
   'terms.shortBody':
-    'Fettle helpt je zien hoe je energie door de dag heen verandert. Je check-ins zijn van jou: we verkopen of delen ze nooit, er zijn geen advertenties of trackers, en je kunt alles op elk moment verwijderen via Instellingen.',
+    'Lekker Bezig helpt je zien hoe je energie door de dag heen verandert. Je check-ins zijn van jou: we verkopen of delen ze nooit, er zijn geen advertenties of trackers, en je kunt alles op elk moment verwijderen via Instellingen.',
   'terms.termsHeading': 'Gebruiksvoorwaarden',
-  'terms.usingTitle': 'Fettle gebruiken',
+  'terms.usingTitle': 'Lekker Bezig gebruiken',
   'terms.usingBody':
     'Door een account te maken of de app te gebruiken ga je akkoord met deze voorwaarden. Je moet minstens 13 jaar zijn, of de minimumleeftijd voor digitale toestemming waar je woont, om de app te gebruiken. Houd je inloggegevens voor jezelf; je bent verantwoordelijk voor wat er met je account gebeurt.',
   'terms.medicalTitle': 'Geen medisch advies',
   'terms.medicalBody':
-    'Fettle is een hulpmiddel voor zelfreflectie. Scores, gemiddelden en trends zijn geen diagnose en vervangen geen advies van een arts of andere deskundige. Maak je je zorgen over je gezondheid, praat dan met een van hen.',
+    'Lekker Bezig is een hulpmiddel voor zelfreflectie. Scores, gemiddelden en trends zijn geen diagnose en vervangen geen advies van een arts of andere deskundige. Maak je je zorgen over je gezondheid, praat dan met een van hen.',
   'terms.useTitle': 'Redelijk gebruik',
   'terms.useBody':
     'Misbruik de dienst niet: probeer niet bij gegevens van anderen te komen, de app te verstoren of hem voor iets onwettigs te gebruiken. We kunnen accounts die dat doen blokkeren.',
   'terms.serviceTitle': 'De dienst',
   'terms.serviceBody':
-    'We doen ons best om Fettle beschikbaar en je gegevens veilig te houden, maar de app wordt geleverd “zoals hij is”, zonder enige garantie. Voor zover de wet dat toestaat, zijn we niet aansprakelijk voor indirecte schade of gevolgschade door het gebruik ervan. We kunnen functies wijzigen of stoppen en passen deze voorwaarden dan aan — de datum hierboven toont de nieuwste versie. Als je de app na een wijziging blijft gebruiken, ga je akkoord met de nieuwe voorwaarden.',
+    'We doen ons best om Lekker Bezig beschikbaar en je gegevens veilig te houden, maar de app wordt geleverd “zoals hij is”, zonder enige garantie. Voor zover de wet dat toestaat, zijn we niet aansprakelijk voor indirecte schade of gevolgschade door het gebruik ervan. We kunnen functies wijzigen of stoppen en passen deze voorwaarden dan aan — de datum hierboven toont de nieuwste versie. Als je de app na een wijziging blijft gebruiken, ga je akkoord met de nieuwe voorwaarden.',
   'terms.endingTitle': 'Je account opzeggen',
   'terms.endingBody':
-    'Je kunt op elk moment stoppen met Fettle. Via Instellingen → Account verwijderen verwijder je je account en al je gegevens voorgoed.',
+    'Je kunt op elk moment stoppen met Lekker Bezig. Via Instellingen → Account verwijderen verwijder je je account en al je gegevens voorgoed.',
   'terms.privacyHeading': 'Privacybeleid',
   'terms.storeTitle': 'Wat we opslaan',
   'terms.storeBody':

@@ -17,7 +17,7 @@ export function useReminderSync() {
 
   const enabled = profile?.push_enabled ?? false;
   // Includes the locale so switching language re-schedules translated reminders.
-  const signature = `${enabled}|${locale}|${questions.map((q) => `${q.id}@${q.reminder_time}:${q.title}`).join(',')}`;
+  const signature = `${enabled}|${locale}|${questions.map((q) => `${q.id}@${q.reminder_time}${q.reminder_next_day ? '+1' : ''}:${q.title}`).join(',')}`;
 
   useEffect(() => {
     if (!profile) return;
@@ -25,6 +25,7 @@ export function useReminderSync() {
     lastSignature.current = signature;
     void syncReminders(questions, enabled, {
       body: t('reminder.body'),
+      bodyNextDay: t('reminder.bodyNextDay'),
       channelName: t('reminder.channel'),
     });
   }, [signature, profile, questions, enabled, t]);

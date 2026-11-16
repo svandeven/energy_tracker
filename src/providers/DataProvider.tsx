@@ -157,6 +157,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         reminder_time: '12:00',
         sort_order: rawQuestions.length,
         is_active: true,
+        reminder_next_day: false,
         default_key: null,
       })
       .select()

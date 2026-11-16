@@ -9,7 +9,7 @@
 export const en = {
   // Shared
   /** The name in the header and on the welcome and sign-in screens. */
-  'common.appName': 'Fettle',
+  'common.appName': 'Sun Steps',
   'common.continue': 'Continue',
   'common.cancel': 'Cancel',
   'common.save': 'Save',
@@ -55,7 +55,7 @@ export const en = {
   'error.loadData': 'Could not load your data.',
 
   // Welcome
-  'welcome.title': 'Welcome to Fettle',
+  'welcome.title': 'Welcome to Sun Steps',
   'welcome.lead': 'Track daily energy in 5 quick check-ins.',
   'welcome.sub': 'Small moments, big clarity — feel your day flow.',
   'welcome.getStarted': 'Get started',
@@ -128,6 +128,12 @@ export const en = {
   'dashboard.remainingOne': 'Finish your last check-in to complete today.',
   'dashboard.remainingOther': 'Finish your last {count} check-ins to complete today.',
   'dashboard.viewSummary': 'View today’s summary',
+  'dashboard.logTomorrow': 'Now or tomorrow morning',
+  'dashboard.finishYesterday': 'Finish yesterday',
+  'dashboard.finishYesterdayBody': 'These are logged the morning after.',
+  'dashboard.allDoneForNow': 'All done for now!',
+  'dashboard.laterOne': 'One more check-in is due tomorrow morning — or log it now if you like.',
+  'dashboard.laterOther': '{count} more check-ins are due tomorrow morning — or log them now if you like.',
 
   // Check-in
   'checkIn.unavailable': 'That check-in isn’t available any more.',
@@ -148,6 +154,8 @@ export const en = {
   'summary.toGoOne': '1 check-in still to go — this total will keep climbing.',
   'summary.toGoOther': '{count} check-ins still to go — this total will keep climbing.',
   'summary.partial': '{answered} of {total} logged for this day.',
+  'summary.laterOne': '1 check-in to log tomorrow morning — this total will keep climbing.',
+  'summary.laterOther': '{count} check-ins to log tomorrow morning — this total will keep climbing.',
   'summary.viewHistory': 'View History',
   'summary.strong': 'Strong day. Whatever you’re doing, it’s working. 🌱',
   'summary.steady': 'Nice work checking in—small signals add up. You’re finding a steady rhythm. 🌱',
@@ -197,6 +205,11 @@ export const en = {
   'settings.pushSub': 'Get reminders to check in',
   'settings.changeTimeA11y': 'Change reminder time for {title}',
   'settings.reminderTime': 'Reminder time',
+  'settings.sameDay': 'Same day',
+  'settings.nextDay': 'Next day',
+  'settings.dayToggleA11y': 'Reminder day for {title}',
+  'settings.nextDayHint':
+    'Next day: you’re reminded the following morning and log it for the day before — for questions about your evening or sleep. You can still answer it the same day.',
   'settings.language': 'Language',
   'settings.languageSystem': 'Same as device',
   'settings.account': 'Account',
@@ -218,12 +231,13 @@ export const en = {
 
   // Reminders
   'reminder.body': 'Time for a quick check-in.',
+  'reminder.bodyNextDay': 'How did yesterday end? Time for a quick check-in.',
   'reminder.channel': 'Energy check-ins',
 
   // Change password
   'changePassword.noPasswordTitle': 'No password to change',
   'changePassword.noPasswordBody':
-    'You sign in with {provider}, so your password is managed there rather than in Fettle.',
+    'You sign in with {provider}, so your password is managed there rather than in Sun Steps.',
   'changePassword.failed': 'Could not change your password.',
   'changePassword.doneTitle': 'Password changed',
   'changePassword.doneBody': 'Use your new password next time you sign in.',
@@ -254,23 +268,23 @@ export const en = {
   'terms.lastUpdated': 'Last updated {date}',
   'terms.shortTitle': 'The short version',
   'terms.shortBody':
-    'Fettle helps you notice how your energy changes through the day. Your check-ins belong to you, we never sell or share them, there are no ads or trackers, and you can delete everything at any time from Settings.',
+    'Sun Steps helps you notice how your energy changes through the day. Your check-ins belong to you, we never sell or share them, there are no ads or trackers, and you can delete everything at any time from Settings.',
   'terms.termsHeading': 'Terms of Use',
-  'terms.usingTitle': 'Using Fettle',
+  'terms.usingTitle': 'Using Sun Steps',
   'terms.usingBody':
     'By creating an account or using the app you agree to these terms. You need to be at least 13 years old, or the minimum age for digital consent where you live, to use it. Please keep your sign-in details to yourself; you are responsible for activity on your account.',
   'terms.medicalTitle': 'Not medical advice',
   'terms.medicalBody':
-    'Fettle is a self-reflection tool. Scores, averages and trends are not a diagnosis and are not a substitute for advice from a doctor or other qualified professional. If you are worried about your health, please talk to one.',
+    'Sun Steps is a self-reflection tool. Scores, averages and trends are not a diagnosis and are not a substitute for advice from a doctor or other qualified professional. If you are worried about your health, please talk to one.',
   'terms.useTitle': 'Acceptable use',
   'terms.useBody':
     'Don’t misuse the service: no attempts to access other people’s data, disrupt the app, or use it for anything unlawful. We may suspend accounts that do.',
   'terms.serviceTitle': 'The service',
   'terms.serviceBody':
-    'We work to keep Fettle available and your data safe, but the app is provided “as is”, without warranties of any kind. To the extent the law allows, we are not liable for indirect or consequential losses arising from its use. We may change or discontinue features, and will update these terms when we do — the date above shows the latest version. Continuing to use the app after a change means you accept the updated terms.',
+    'We work to keep Sun Steps available and your data safe, but the app is provided “as is”, without warranties of any kind. To the extent the law allows, we are not liable for indirect or consequential losses arising from its use. We may change or discontinue features, and will update these terms when we do — the date above shows the latest version. Continuing to use the app after a change means you accept the updated terms.',
   'terms.endingTitle': 'Ending your account',
   'terms.endingBody':
-    'You can stop using Fettle whenever you like. Settings → Delete account removes your account and all of its data permanently.',
+    'You can stop using Sun Steps whenever you like. Settings → Delete account removes your account and all of its data permanently.',
   'terms.privacyHeading': 'Privacy Policy',
   'terms.storeTitle': 'What we store',
   'terms.storeBody':
