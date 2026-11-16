@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -8,7 +8,7 @@ import { Text } from './Text';
 
 /**
  * The persistent header from the mockups: history glyph on the left, the
- * logo + app-name wordmark centered, settings gear on the right.
+ * sun + app-name wordmark (matching the welcome screen) centered, settings gear on the right.
  */
 export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' | 'surface' }) {
   const router = useRouter();
@@ -30,7 +30,7 @@ export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' |
       </Pressable>
 
       <View style={styles.wordmark}>
-        <Image source={require('../../assets/images/logo.png')} style={styles.mark} />
+        <Ionicons name="sunny" size={16} color={colors.primary} style={styles.mark} />
         <Text variant="bodyStrong">{t('common.appName')}</Text>
       </View>
 
@@ -55,5 +55,5 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   wordmark: { flexDirection: 'row', alignItems: 'center' },
-  mark: { width: 20, height: 20, marginRight: 6 },
+  mark: { marginRight: 5 },
 });
