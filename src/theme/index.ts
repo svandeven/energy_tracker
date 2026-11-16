@@ -55,7 +55,7 @@ export const fonts = {
 export const type = {
   /** 40px display — "8/10", "7.4" */
   display: { fontFamily: fonts.extrabold, fontSize: 40, lineHeight: 46 },
-  /** 28px screen titles — "Welcome to Fettle", "Settings" */
+  /** 28px screen titles — "Welcome to Sun Steps", "Settings" */
   title: { fontFamily: fonts.extrabold, fontSize: 28, lineHeight: 34 },
   /** 20px section heads — "Energy Check-ins", "Question Manager" */
   heading: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 26 },

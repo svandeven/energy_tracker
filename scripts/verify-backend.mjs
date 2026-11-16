@@ -30,7 +30,7 @@ try {
 const url = env.EXPO_PUBLIC_SUPABASE_URL;
 const key = env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-console.log('\nFettle — backend check\n');
+console.log('\nSun Steps — backend check\n');
 
 if (!url || PLACEHOLDERS.includes(url)) {
   bad('EXPO_PUBLIC_SUPABASE_URL is missing or still the placeholder');

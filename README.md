@@ -1,6 +1,6 @@
-# Fettle
+# Sun Steps
 
-Ships as **Fettle**, and as **Lekker Bezig** on devices set to Dutch (`locales/nl.json`).
+Ships as **Sun Steps**, and as **Lekker Bezig** on devices set to Dutch (`locales/nl.json`).
 
 A React Native (Expo) app for tracking daily energy across five quick check-ins,
 built from a design mockup that is kept locally and deliberately not committed

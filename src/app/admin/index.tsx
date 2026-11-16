@@ -80,7 +80,7 @@ export default function TranslationsScreen() {
       <View style={styles.inner}>
         <Text variant="title">Text & translations</Text>
         <Text variant="small" color={colors.inkMuted} style={styles.lead}>
-          Changes go live as soon as you save: people see them the next time they open Fettle. Keep
+          Changes go live as soon as you save: people see them the next time they open Sun Steps. Keep
           anything in {'{curly braces}'} exactly as it is — the app fills those in.
         </Text>
 

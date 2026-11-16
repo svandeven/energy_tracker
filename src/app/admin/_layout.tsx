@@ -67,7 +67,7 @@ export default function AdminLayout() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <View style={styles.headerInner}>
-          <Text variant="heading">Fettle admin</Text>
+          <Text variant="heading">Sun Steps admin</Text>
           <View style={styles.tabs}>
             {tabs.map((tab) => {
               const active = pathname === tab.href;

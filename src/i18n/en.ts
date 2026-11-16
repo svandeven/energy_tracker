@@ -9,7 +9,7 @@
 export const en = {
   // Shared
   /** The name in the header and on the welcome and sign-in screens. */
-  'common.appName': 'Fettle',
+  'common.appName': 'Sun Steps',
   'common.continue': 'Continue',
   'common.cancel': 'Cancel',
   'common.save': 'Save',
@@ -55,7 +55,7 @@ export const en = {
   'error.loadData': 'Could not load your data.',
 
   // Welcome
-  'welcome.title': 'Welcome to Fettle',
+  'welcome.title': 'Welcome to Sun Steps',
   'welcome.lead': 'Track daily energy in 5 quick check-ins.',
   'welcome.sub': 'Small moments, big clarity — feel your day flow.',
   'welcome.getStarted': 'Get started',
@@ -237,7 +237,7 @@ export const en = {
   // Change password
   'changePassword.noPasswordTitle': 'No password to change',
   'changePassword.noPasswordBody':
-    'You sign in with {provider}, so your password is managed there rather than in Fettle.',
+    'You sign in with {provider}, so your password is managed there rather than in Sun Steps.',
   'changePassword.failed': 'Could not change your password.',
   'changePassword.doneTitle': 'Password changed',
   'changePassword.doneBody': 'Use your new password next time you sign in.',
@@ -268,23 +268,23 @@ export const en = {
   'terms.lastUpdated': 'Last updated {date}',
   'terms.shortTitle': 'The short version',
   'terms.shortBody':
-    'Fettle helps you notice how your energy changes through the day. Your check-ins belong to you, we never sell or share them, there are no ads or trackers, and you can delete everything at any time from Settings.',
+    'Sun Steps helps you notice how your energy changes through the day. Your check-ins belong to you, we never sell or share them, there are no ads or trackers, and you can delete everything at any time from Settings.',
   'terms.termsHeading': 'Terms of Use',
-  'terms.usingTitle': 'Using Fettle',
+  'terms.usingTitle': 'Using Sun Steps',
   'terms.usingBody':
     'By creating an account or using the app you agree to these terms. You need to be at least 13 years old, or the minimum age for digital consent where you live, to use it. Please keep your sign-in details to yourself; you are responsible for activity on your account.',
   'terms.medicalTitle': 'Not medical advice',
   'terms.medicalBody':
-    'Fettle is a self-reflection tool. Scores, averages and trends are not a diagnosis and are not a substitute for advice from a doctor or other qualified professional. If you are worried about your health, please talk to one.',
+    'Sun Steps is a self-reflection tool. Scores, averages and trends are not a diagnosis and are not a substitute for advice from a doctor or other qualified professional. If you are worried about your health, please talk to one.',
   'terms.useTitle': 'Acceptable use',
   'terms.useBody':
     'Don’t misuse the service: no attempts to access other people’s data, disrupt the app, or use it for anything unlawful. We may suspend accounts that do.',
   'terms.serviceTitle': 'The service',
   'terms.serviceBody':
-    'We work to keep Fettle available and your data safe, but the app is provided “as is”, without warranties of any kind. To the extent the law allows, we are not liable for indirect or consequential losses arising from its use. We may change or discontinue features, and will update these terms when we do — the date above shows the latest version. Continuing to use the app after a change means you accept the updated terms.',
+    'We work to keep Sun Steps available and your data safe, but the app is provided “as is”, without warranties of any kind. To the extent the law allows, we are not liable for indirect or consequential losses arising from its use. We may change or discontinue features, and will update these terms when we do — the date above shows the latest version. Continuing to use the app after a change means you accept the updated terms.',
   'terms.endingTitle': 'Ending your account',
   'terms.endingBody':
-    'You can stop using Fettle whenever you like. Settings → Delete account removes your account and all of its data permanently.',
+    'You can stop using Sun Steps whenever you like. Settings → Delete account removes your account and all of its data permanently.',
   'terms.privacyHeading': 'Privacy Policy',
   'terms.storeTitle': 'What we store',
   'terms.storeBody':

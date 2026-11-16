@@ -52,7 +52,7 @@ export const nl: Record<TranslationKey, string> = {
   'error.loadData': 'Je gegevens konden niet worden geladen.',
 
   // Welcome
-  'welcome.title': 'Welkom bij Fettle',
+  'welcome.title': 'Welkom bij Lekker Bezig',
   'welcome.lead': 'Volg je energie met 5 korte check-ins per dag.',
   'welcome.sub': 'Kleine momenten, veel inzicht — voel hoe je dag loopt.',
   'welcome.getStarted': 'Aan de slag',
@@ -234,7 +234,7 @@ export const nl: Record<TranslationKey, string> = {
   // Change password
   'changePassword.noPasswordTitle': 'Geen wachtwoord om te wijzigen',
   'changePassword.noPasswordBody':
-    'Je logt in met {provider}, dus je wachtwoord beheer je daar en niet in Fettle.',
+    'Je logt in met {provider}, dus je wachtwoord beheer je daar en niet in Lekker Bezig.',
   'changePassword.failed': 'Je wachtwoord kon niet worden gewijzigd.',
   'changePassword.doneTitle': 'Wachtwoord gewijzigd',
   'changePassword.doneBody': 'Gebruik je nieuwe wachtwoord de volgende keer dat je inlogt.',
@@ -265,23 +265,23 @@ export const nl: Record<TranslationKey, string> = {
   'terms.lastUpdated': 'Laatst bijgewerkt op {date}',
   'terms.shortTitle': 'In het kort',
   'terms.shortBody':
-    'Fettle helpt je zien hoe je energie door de dag heen verandert. Je check-ins zijn van jou: we verkopen of delen ze nooit, er zijn geen advertenties of trackers, en je kunt alles op elk moment verwijderen via Instellingen.',
+    'Lekker Bezig helpt je zien hoe je energie door de dag heen verandert. Je check-ins zijn van jou: we verkopen of delen ze nooit, er zijn geen advertenties of trackers, en je kunt alles op elk moment verwijderen via Instellingen.',
   'terms.termsHeading': 'Gebruiksvoorwaarden',
-  'terms.usingTitle': 'Fettle gebruiken',
+  'terms.usingTitle': 'Lekker Bezig gebruiken',
   'terms.usingBody':
     'Door een account te maken of de app te gebruiken ga je akkoord met deze voorwaarden. Je moet minstens 13 jaar zijn, of de minimumleeftijd voor digitale toestemming waar je woont, om de app te gebruiken. Houd je inloggegevens voor jezelf; je bent verantwoordelijk voor wat er met je account gebeurt.',
   'terms.medicalTitle': 'Geen medisch advies',
   'terms.medicalBody':
-    'Fettle is een hulpmiddel voor zelfreflectie. Scores, gemiddelden en trends zijn geen diagnose en vervangen geen advies van een arts of andere deskundige. Maak je je zorgen over je gezondheid, praat dan met een van hen.',
+    'Lekker Bezig is een hulpmiddel voor zelfreflectie. Scores, gemiddelden en trends zijn geen diagnose en vervangen geen advies van een arts of andere deskundige. Maak je je zorgen over je gezondheid, praat dan met een van hen.',
   'terms.useTitle': 'Redelijk gebruik',
   'terms.useBody':
     'Misbruik de dienst niet: probeer niet bij gegevens van anderen te komen, de app te verstoren of hem voor iets onwettigs te gebruiken. We kunnen accounts die dat doen blokkeren.',
   'terms.serviceTitle': 'De dienst',
   'terms.serviceBody':
-    'We doen ons best om Fettle beschikbaar en je gegevens veilig te houden, maar de app wordt geleverd “zoals hij is”, zonder enige garantie. Voor zover de wet dat toestaat, zijn we niet aansprakelijk voor indirecte schade of gevolgschade door het gebruik ervan. We kunnen functies wijzigen of stoppen en passen deze voorwaarden dan aan — de datum hierboven toont de nieuwste versie. Als je de app na een wijziging blijft gebruiken, ga je akkoord met de nieuwe voorwaarden.',
+    'We doen ons best om Lekker Bezig beschikbaar en je gegevens veilig te houden, maar de app wordt geleverd “zoals hij is”, zonder enige garantie. Voor zover de wet dat toestaat, zijn we niet aansprakelijk voor indirecte schade of gevolgschade door het gebruik ervan. We kunnen functies wijzigen of stoppen en passen deze voorwaarden dan aan — de datum hierboven toont de nieuwste versie. Als je de app na een wijziging blijft gebruiken, ga je akkoord met de nieuwe voorwaarden.',
   'terms.endingTitle': 'Je account opzeggen',
   'terms.endingBody':
-    'Je kunt op elk moment stoppen met Fettle. Via Instellingen → Account verwijderen verwijder je je account en al je gegevens voorgoed.',
+    'Je kunt op elk moment stoppen met Lekker Bezig. Via Instellingen → Account verwijderen verwijder je je account en al je gegevens voorgoed.',
   'terms.privacyHeading': 'Privacybeleid',
   'terms.storeTitle': 'Wat we opslaan',
   'terms.storeBody':
