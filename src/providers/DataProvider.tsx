@@ -28,6 +28,8 @@ interface DataValue {
   updateQuestion(id: string, patch: Partial<QuestionRow>): Promise<void>;
   addQuestion(): Promise<QuestionRow | null>;
   deleteQuestion(id: string): Promise<void>;
+  /** Moves a question one place up (-1) or down (1). */
+  moveQuestion(id: string, by: -1 | 1): Promise<void>;
 }
 
 const DataContext = createContext<DataValue | null>(null);
@@ -155,7 +157,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         icon: 'sun',
         score_labels: [t('newQuestion.score0'), t('newQuestion.score1'), t('newQuestion.score2')],
         reminder_time: '12:00',
-        sort_order: rawQuestions.length,
+        sort_order: Math.max(-1, ...rawQuestions.map((q) => q.sort_order)) + 1,
         is_active: true,
         reminder_next_day: false,
         default_key: null,
@@ -165,7 +167,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (insertError) throw insertError;
     setQuestions((prev) => [...prev, data]);
     return data;
-  }, [userId, rawQuestions.length, t]);
+  }, [userId, rawQuestions, t]);
 
   const deleteQuestion = useCallback(
     async (id: string) => {
@@ -186,6 +188,33 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [userId, rawQuestions],
   );
 
+  const moveQuestion = useCallback(
+    async (id: string, by: -1 | 1) => {
+      if (!userId) return;
+      const from = rawQuestions.findIndex((q) => q.id === id);
+      const to = from + by;
+      if (from < 0 || to < 0 || to >= rawQuestions.length) return;
+      const previous = rawQuestions;
+      const next = [...rawQuestions];
+      [next[from], next[to]] = [next[to], next[from]];
+      // Renumber everything, so older rows with equal sort_orders get untangled too.
+      const renumbered = next.map((q, i) => ({ ...q, sort_order: i }));
+      setQuestions(renumbered);
+      const changed = renumbered.filter((q, i) => previous.find((p) => p.id === q.id)?.sort_order !== i);
+      const results = await Promise.all(
+        changed.map((q) =>
+          supabase.from('questions').update({ sort_order: q.sort_order }).eq('id', q.id).eq('user_id', userId),
+        ),
+      );
+      const failed = results.find((r) => r.error);
+      if (failed) {
+        setQuestions(previous);
+        throw failed.error;
+      }
+    },
+    [userId, rawQuestions],
+  );
+
   const value = useMemo<DataValue>(
     () => ({
       questions,
@@ -197,8 +226,21 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       updateQuestion,
       addQuestion,
       deleteQuestion,
+      moveQuestion,
     }),
-    [questions, checkins, loading, loadError, errorText, reload, saveScore, updateQuestion, addQuestion, deleteQuestion],
+    [
+      questions,
+      checkins,
+      loading,
+      loadError,
+      errorText,
+      reload,
+      saveScore,
+      updateQuestion,
+      addQuestion,
+      deleteQuestion,
+      moveQuestion,
+    ],
   );
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
