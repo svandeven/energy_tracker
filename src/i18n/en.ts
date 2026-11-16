@@ -189,6 +189,7 @@ export const en = {
   'settings.title': 'Settings',
   'settings.subtitle': 'Your profile, questions and reminders',
   'settings.editProfile': 'Edit profile',
+  'settings.questionsSub': '{count} questions, their order and reminders',
 
   // Profile
   'profile.title': 'Profile',
@@ -208,7 +209,9 @@ export const en = {
 
   // Daily questions
   'questions.title': 'Daily questions',
-  'questions.remindersHint': 'Reminder times for each question are under Notification Schedule in Settings.',
+  'questions.reminder': 'Reminder',
+  'questions.moveUpA11y': 'Move {title} up',
+  'questions.moveDownA11y': 'Move {title} down',
 
   'settings.questionManager': 'Question Manager',
   'settings.questionCountOne': 'Edit your daily energy check-in question',
@@ -429,8 +432,8 @@ export const en = {
   'reminders.goalSection': 'Goal reminders',
   'reminders.noGoals': 'Add a goal and its reminder can be switched on here.',
   'reminders.watchTip': 'Tick goals done straight from the notification or your Apple Watch.',
-  'reminders.pushOff': 'Notifications are off. Turn them on in Settings to get reminders.',
-  'reminders.openSettings': 'Open Settings',
+  'reminders.pushOff': 'Notifications are off. Turn them on under Daily questions to get reminders.',
+  'reminders.openSettings': 'Turn on notifications',
   'reminders.webNote': 'Reminders arrive on your phone through the Sun Steps app.',
   'reminders.toggleA11y': 'Reminder for {title}',
   'reminders.changeTimeA11y': 'Change time for {title}',

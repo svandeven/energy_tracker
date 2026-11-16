@@ -62,7 +62,7 @@ export default function RemindersScreen() {
         ) : (
           !pushOn && (
             <Pressable
-              onPress={() => router.push('/settings')}
+              onPress={() => router.push('/questions')}
               accessibilityRole="button"
               style={({ pressed }) => [styles.note, pressed && styles.pressed]}
             >

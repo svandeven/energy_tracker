@@ -28,6 +28,8 @@ totals **/10**. Add or remove categories in Settings and the denominator follows
 | Today's summary | `/summary` | `src/app/summary.tsx` |
 | History (from Progress) | `/history` | `src/app/(tabs)/history.tsx` |
 | Settings (profile button on Home) | `/settings` | `src/app/(tabs)/settings.tsx` |
+| Profile (photo, display name) | `/profile` | `src/app/profile.tsx` |
+| Daily questions (wording, order, reminder times, push switch) | `/questions` | `src/app/questions.tsx` |
 
 Plus five screens with no mockup of their own, following the same visual language:
 

@@ -186,6 +186,7 @@ export const nl: Record<TranslationKey, string> = {
   'settings.title': 'Instellingen',
   'settings.subtitle': 'Je profiel, vragen en herinneringen',
   'settings.editProfile': 'Profiel bewerken',
+  'settings.questionsSub': '{count} vragen, hun volgorde en herinneringen',
 
   // Profile
   'profile.title': 'Profiel',
@@ -205,7 +206,9 @@ export const nl: Record<TranslationKey, string> = {
 
   // Daily questions
   'questions.title': 'Dagelijkse vragen',
-  'questions.remindersHint': 'De herinneringstijd per vraag stel je in onder Herinneringen in Instellingen.',
+  'questions.reminder': 'Herinnering',
+  'questions.moveUpA11y': '{title} omhoog',
+  'questions.moveDownA11y': '{title} omlaag',
 
   'settings.questionManager': 'Vragen beheren',
   'settings.questionCountOne': 'Pas je dagelijkse energievraag aan',
@@ -426,8 +429,8 @@ export const nl: Record<TranslationKey, string> = {
   'reminders.goalSection': 'Herinneringen voor doelen',
   'reminders.noGoals': 'Voeg een doel toe, dan kun je hier de herinnering aanzetten.',
   'reminders.watchTip': 'Vink doelen meteen af vanuit de melding of op je Apple Watch.',
-  'reminders.pushOff': 'Meldingen staan uit. Zet ze aan in Instellingen om herinneringen te krijgen.',
-  'reminders.openSettings': 'Naar Instellingen',
+  'reminders.pushOff': 'Meldingen staan uit. Zet ze aan bij Dagelijkse vragen om herinneringen te krijgen.',
+  'reminders.openSettings': 'Meldingen aanzetten',
   'reminders.webNote': 'Herinneringen krijg je op je telefoon via de app Lekker Bezig.',
   'reminders.toggleA11y': 'Herinnering voor {title}',
   'reminders.changeTimeA11y': 'Tijd wijzigen voor {title}',
