@@ -178,7 +178,8 @@ Redirect Rule. Supabase's Site URL is `https://fettle-life.com`, and
 password recovery break.
 
 `npm run build:web` runs `expo export --platform web` and then
-`scripts/postexport-web.mjs`, which injects the phone-width centred frame,
+`scripts/postexport-web.mjs`, which injects the centred page column (full width on phones, up to 760px on
+desktop),
 `theme-color` and description into `dist/index.html`. That indirection exists
 because Expo Router's `+html.tsx` hook only runs for `output: "static"`, and
 this app uses `output: "single"` — static rendering prerenders every route in

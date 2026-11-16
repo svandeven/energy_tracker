@@ -13,29 +13,25 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const FILE = new URL('../dist/index.html', import.meta.url);
 
 const CSS = `
-    /* Screens are laid out for a phone; pin to a phone-width column on desktop. */
-    body { margin: 0; background: #E9E9EC; }
+    /*
+     * Screens are single-column layouts. Phones get the full width; anything
+     * wider gets a full-height centered column, so desktop reads as a web page
+     * rather than a phone mock-up, without stretching buttons across the screen.
+     */
+    body { margin: 0; background: #F0F0F0; }
     #root {
       width: 100%;
-      max-width: 480px;
+      max-width: 760px;
+      height: 100%;
       margin: 0 auto;
       background: #FFFFFF;
     }
-    @media (min-width: 560px) {
-      #root {
-        height: min(100%, 940px);
-        margin-top: max(0px, calc((100vh - 940px) / 2));
-        border-radius: 28px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        overflow: hidden;
-      }
+    @media (min-width: 800px) {
+      #root { box-shadow: 0 0 0 1px #E6E6E8; }
     }
     /* The content admin (src/app/admin) is a desktop tool: use the full window. */
     body.fettle-admin #root {
       max-width: none;
-      height: 100%;
-      margin-top: 0;
-      border-radius: 0;
       box-shadow: none;
     }`;
 
@@ -64,4 +60,4 @@ html = html.replace(
 html = html.replace('</head>', `  ${META}\n  </head>`);
 
 writeFileSync(FILE, html);
-console.log('dist/index.html: injected phone-frame CSS and meta tags');
+console.log('dist/index.html: injected page-column CSS and meta tags');
