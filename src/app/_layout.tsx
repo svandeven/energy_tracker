@@ -7,6 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { I18nProvider } from '../i18n';
 import { AuthProvider, useAuth } from '../providers/AuthProvider';
 import { DataProvider } from '../providers/DataProvider';
+import { GoalsProvider } from '../providers/GoalsProvider';
 import { useAppFonts } from '../theme/fonts';
 import { isSupabaseConfigured } from '../lib/env';
 import { SetupNotice } from '../components/SetupNotice';
@@ -39,7 +40,9 @@ export default function RootLayout() {
       <I18nProvider>
         <AuthProvider>
           <DataProvider>
-            <AuthGate />
+            <GoalsProvider>
+              <AuthGate />
+            </GoalsProvider>
           </DataProvider>
         </AuthProvider>
       </I18nProvider>
@@ -79,6 +82,8 @@ function AuthGate() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="check-in/[id]" options={{ presentation: 'card' }} />
       <Stack.Screen name="summary" />
+      <Stack.Screen name="goal/new" options={{ presentation: 'card' }} />
+      <Stack.Screen name="reminders" options={{ presentation: 'card' }} />
       <Stack.Screen name="change-password" options={{ presentation: 'card' }} />
       <Stack.Screen name="delete-account" options={{ presentation: 'card' }} />
       <Stack.Screen name="terms" options={{ presentation: 'card' }} />

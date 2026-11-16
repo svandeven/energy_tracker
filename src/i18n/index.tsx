@@ -93,6 +93,8 @@ interface I18nValue {
     longDate(date: LocalDate): string;
     /** "May 1" / "1 mei" */
     axisDate(date: LocalDate): string;
+    /** "Tue" / "di" */
+    weekday(date: LocalDate): string;
     /** "Today" / "Yesterday" / short date */
     dayLabel(date: LocalDate): string;
     /** Postgres time '08:00:00' -> "8:00 AM" / "08:00" */
@@ -193,6 +195,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       shortDate: (d) => date(d, { weekday: 'short', month: 'short', day: 'numeric' }),
       longDate: (d) => date(d, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
       axisDate: (d) => date(d, { month: 'short', day: 'numeric' }),
+      weekday: (d) => date(d, { weekday: 'short' }),
       dayLabel: (d) => {
         const ago = daysAgo(d);
         if (ago === 0) return t('history.today');

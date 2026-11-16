@@ -17,11 +17,17 @@ totals **/10**. Add or remove categories in Settings and the denominator follows
 | --- | --- | --- |
 | Welcome | `/welcome` | `src/app/(auth)/welcome.tsx` |
 | Log in / Create account | `/sign-in` | `src/app/(auth)/sign-in.tsx` |
-| Dashboard | `/` | `src/app/(tabs)/index.tsx` |
+| Home | `/` | `src/app/(tabs)/index.tsx` |
+| Energy check-in (tab) | `/checkin` | `src/app/(tabs)/checkin.tsx` |
+| Daily goals (tab) | `/goals` | `src/app/(tabs)/goals.tsx` |
+| Add goal | `/goal/new` | `src/app/goal/new.tsx` |
+| Reminders | `/reminders` | `src/app/reminders.tsx` |
+| Goal progress (tab) | `/progress` | `src/app/(tabs)/progress.tsx` |
+| Awards (tab) | `/awards` | `src/app/(tabs)/awards.tsx` |
 | Category check-in | `/check-in/[id]` | `src/app/check-in/[id].tsx` |
 | Today's summary | `/summary` | `src/app/summary.tsx` |
-| History | `/history` | `src/app/(tabs)/history.tsx` |
-| Settings | `/settings` | `src/app/(tabs)/settings.tsx` |
+| History (from Progress) | `/history` | `src/app/(tabs)/history.tsx` |
+| Settings (profile button on Home) | `/settings` | `src/app/(tabs)/settings.tsx` |
 
 Plus five screens with no mockup of their own, following the same visual language:
 
@@ -218,11 +224,52 @@ By default Supabase also requires **email confirmation** on sign-up. Either
 click the emailed link, or turn confirmations off under **Authentication →
 Sign In / Providers → Email** while developing.
 
+## Daily goals
+
+Goals live in two tables (`supabase/schema.sql`): `goal_templates` holds the
+goals people keep — repeating ones (`daily` / `weekdays`, shown as "Default
+goal") and saved ones (`none`, the chips on Add goal) — and `goals` holds one
+row per goal per day. The app copies repeating goals onto a day the first time
+it loads that day (`ensureGoalsForDate`); a unique key makes that safe to run
+twice. Removing a repeating goal "from today" hides that day's row instead of
+deleting it, so it isn't copied back.
+
+The rules for progress and awards are in `src/lib/goals.ts`:
+
+- A day **counts** only if it had goals, and is **met** when every goal on it
+  is ticked off. Days without goals neither break nor extend a streak, and an
+  unfinished today doesn't break it either.
+- The **7 day average** is the mean completion rate over the last 7 days that
+  had goals.
+- **Awards:** First full day (one met day), Weekly goal getter (7 met days in
+  a row, earned again every 7), Monthly goals (30 met days in total, any
+  order, again every 30), 100 day streak (100 in a row).
+- `goal_day_stats()` returns one row per day over the whole history, so the
+  monthly and 100-day awards don't need every goal row loaded.
+
 ## Notifications
 
-Settings schedules one repeating daily local notification per question, at that
-question's reminder time. `src/features/useReminderSync.ts` re-schedules
-whenever a time, title or the push toggle changes.
+`src/features/notifications.ts` schedules, all as local notifications:
+
+- one daily reminder per energy question, at its reminder time;
+- the morning "Plan your day" and evening "How did today go?" goal nudges, at
+  the times on the Reminders screen (`profiles.goal_plan_time` /
+  `goal_review_time`);
+- a reminder for each goal with a time, carrying a **Done** button. Repeating
+  goals are scheduled a week ahead, one day at a time, and re-planned whenever
+  the app opens, so a goal already ticked off doesn't still nag.
+
+`src/features/useReminderSync.ts` re-schedules whenever any of that, the push
+toggle or the language changes. Tapping a reminder opens the matching screen
+(`useNotificationResponses`).
+
+**The Done button:** on Android it ticks the goal off in the background, via
+the task in `src/features/goalNotificationTask.ts` (loaded first by
+`index.ts`). On iPhone, iOS only lets the app's code run for a button tap if
+the app opens or is still in memory, so Done briefly opens the app and ticks it
+there. iPhone notifications appear on a paired Apple Watch with the same
+button. The task needs `expo-task-manager`, so test it in a development build;
+Expo Go won't run it.
 
 Local notifications fire in Expo Go. Remote push is not wired up and would need
 a development build.
@@ -234,14 +281,17 @@ src/
   app/                 expo-router routes (see the table above)
   components/          Text, Button, Card, CategoryIcon, AppHeader, EnergyChart,
                        TimePicker (+ .web variant)
-  providers/           AuthProvider (Supabase auth), DataProvider (questions + check-ins)
+  providers/           AuthProvider (Supabase auth), DataProvider (questions + check-ins),
+                       GoalsProvider (goals, saved goals, per-day stats)
   i18n/                en/nl strings, I18nProvider (t(), language choice, date formats)
   lib/
     scoring.ts         daily totals, 7-day rolling average, week-over-week delta
+    goals.ts           goal streaks, completion rates and awards
     dates.ts           local-calendar-date helpers ('YYYY-MM-DD', never UTC)
     database.types.ts  hand-written types matching supabase/schema.sql
   theme/               design tokens sampled from the mockup
-  features/            default questions, notification scheduling
+  features/            default questions, goal writes, notification scheduling
+                       and the Done-button handlers
 scripts/
   verify-backend.mjs   checks .env against the live project
   postexport-web.mjs   post-processes dist/index.html after a web export

@@ -139,6 +139,10 @@ try {
     ['profiles', 'role'],
     ['questions', 'default_key'],
     ['questions', 'reminder_next_day'],
+    ['profiles', 'goal_plan_time'],
+    ['profiles', 'goal_review_time'],
+    ['goal_templates', 'remind_at'],
+    ['goals', 'done_at'],
   ]) {
     const col = await fetch(`${url}/rest/v1/${table}?select=${column}&limit=1`, { headers });
     if (col.ok) ok(`column "${table}.${column}" exists`);
@@ -161,6 +165,21 @@ try {
     failed = true;
   } else {
     bad(`function "admin_set_role" is not closed to anon: HTTP ${rpc.status} ${rpcBody.slice(0, 120)}`);
+    failed = true;
+  }
+
+  const stats = await fetch(`${url}/rest/v1/rpc/goal_day_stats`, {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: '{}',
+  });
+  const statsBody = await stats.text();
+  if (statsBody.includes('42501')) ok('function "goal_day_stats" exists and is closed to anon');
+  else if (statsBody.includes('PGRST202') || stats.status === 404) {
+    bad('function "goal_day_stats" not found — re-run schema.sql');
+    failed = true;
+  } else {
+    bad(`function "goal_day_stats" is not closed to anon: HTTP ${stats.status} ${statsBody.slice(0, 120)}`);
     failed = true;
   }
 } catch { /* reachability was already proven above */ }

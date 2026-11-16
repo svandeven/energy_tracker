@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { AppHeader } from '../../components/AppHeader';
+import { BackLink } from '../../components/ScreenTop';
 import { Card } from '../../components/Card';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { TimePicker } from '../../components/TimePicker';
@@ -50,7 +50,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <AppHeader onBackground="surface" />
+      <BackLink inset />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text variant="title">{t('settings.title')}</Text>
         <Text variant="small" color={colors.inkMuted} style={styles.subtitle}>
@@ -152,6 +152,23 @@ export default function SettingsScreen() {
         <Text variant="caption" color={colors.inkMuted} style={styles.scheduleHint}>
           {t('settings.nextDayHint')}
         </Text>
+
+        <Card padded={false} style={styles.goalRemindersCard}>
+          <Pressable
+            onPress={() => router.push('/reminders')}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.accountRow, pressed && styles.pressed]}
+          >
+            <Ionicons name="alarm-outline" size={20} color={colors.accent} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong">{t('settings.goalReminders')}</Text>
+              <Text variant="small" color={colors.inkMuted}>
+                {t('settings.goalRemindersSub')}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
+        </Card>
 
         <Text variant="heading" style={styles.accountTitle}>
           {t('settings.language')}
@@ -351,7 +368,7 @@ function QuestionEditor({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.surface },
+  safe: { flex: 1, backgroundColor: colors.canvas },
   content: { paddingHorizontal: 20, paddingBottom: 40 },
   subtitle: { marginTop: 4, marginBottom: 26 },
   sectionSub: { marginTop: 2, marginBottom: 14 },
@@ -398,6 +415,7 @@ const styles = StyleSheet.create({
   },
   dayPillNext: { backgroundColor: colors.tint },
   scheduleHint: { marginTop: 8, marginHorizontal: 4 },
+  goalRemindersCard: { marginTop: 14 },
   timePill: {
     backgroundColor: colors.surface,
     borderRadius: radii.sm,

@@ -358,3 +358,80 @@ drop trigger if exists translations_touch on public.translations;
 create trigger translations_touch
   before insert or update on public.translations
   for each row execute function public.touch_translation();
+
+-- ---------------------------------------------------------------------------
+-- Daily goals
+--   goal_templates: goals the user keeps — repeating defaults ('daily' or
+--     'weekdays') and saved goals ('none') to pick again from a list.
+--   goals: one row per goal per local day. Repeating templates are copied in
+--     by the app the first time it sees a day (one copy per template per day,
+--     enforced below). `done_at` set = ticked off. `hidden` = removed for that
+--     day only, so a repeating goal isn't copied back in.
+-- ---------------------------------------------------------------------------
+alter table public.profiles
+  add column if not exists goal_plan_time time not null default '07:30';
+alter table public.profiles
+  add column if not exists goal_review_time time not null default '20:30';
+
+create table if not exists public.goal_templates (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users (id) on delete cascade,
+  title       text not null check (length(btrim(title)) between 1 and 200),
+  repeat      text not null default 'none' check (repeat in ('none', 'daily', 'weekdays')),
+  remind_at   time,
+  is_active   boolean not null default true,
+  sort_order  integer not null default 0,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists goal_templates_user_idx
+  on public.goal_templates (user_id, sort_order);
+
+create table if not exists public.goals (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users (id) on delete cascade,
+  local_date   date not null,
+  template_id  uuid references public.goal_templates (id) on delete set null,
+  title        text not null check (length(btrim(title)) between 1 and 200),
+  remind_at    time,
+  done_at      timestamptz,
+  hidden       boolean not null default false,
+  sort_order   integer not null default 0,
+  created_at   timestamptz not null default now(),
+  -- NULL template ids never collide, so one-off goals are unaffected.
+  unique (user_id, template_id, local_date)
+);
+
+create index if not exists goals_user_date_idx
+  on public.goals (user_id, local_date desc);
+
+alter table public.goal_templates enable row level security;
+alter table public.goals          enable row level security;
+
+drop policy if exists "own goal templates" on public.goal_templates;
+drop policy if exists "own goals"          on public.goals;
+
+create policy "own goal templates" on public.goal_templates
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create policy "own goals" on public.goals
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Per-day totals for the progress chart, streaks and awards, over the user's
+-- whole history (small: one row per day). Runs as the caller, so RLS applies.
+create or replace function public.goal_day_stats()
+returns table (local_date date, total integer, done integer)
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select g.local_date, count(*)::integer, count(g.done_at)::integer
+  from public.goals g
+  where g.user_id = auth.uid() and not g.hidden
+  group by g.local_date
+  order by g.local_date;
+$$;
+
+revoke execute on function public.goal_day_stats() from public, anon;
+grant execute on function public.goal_day_stats() to authenticated;
