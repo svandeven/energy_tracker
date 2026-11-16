@@ -187,7 +187,29 @@ export const en = {
 
   // Settings
   'settings.title': 'Settings',
-  'settings.subtitle': 'Manage your check-in questions and reminders',
+  'settings.subtitle': 'Your profile, questions and reminders',
+  'settings.editProfile': 'Edit profile',
+
+  // Profile
+  'profile.title': 'Profile',
+  'profile.subtitle': 'How you appear in Sun Steps',
+  'profile.noName': 'Add your name',
+  'profile.addPhoto': 'Add photo',
+  'profile.changePhoto': 'Change photo',
+  'profile.removePhoto': 'Remove',
+  'profile.photoFailed': 'The photo could not be saved. Please try again.',
+  'profile.name': 'Display name',
+  'profile.namePlaceholder': 'Your name',
+  'profile.nameHint': 'Used in your greeting on Home.',
+  'profile.nameRequired': 'Please enter a name.',
+  'profile.email': 'Signed in as {email}',
+  'profile.saveFailed': 'Your name could not be saved. Please try again.',
+  'profile.saved': 'Saved',
+
+  // Daily questions
+  'questions.title': 'Daily questions',
+  'questions.remindersHint': 'Reminder times for each question are under Notification Schedule in Settings.',
+
   'settings.questionManager': 'Question Manager',
   'settings.questionCountOne': 'Edit your daily energy check-in question',
   'settings.questionCountOther': 'Edit your {count} daily energy check-in questions',

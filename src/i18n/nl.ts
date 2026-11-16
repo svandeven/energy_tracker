@@ -184,7 +184,29 @@ export const nl: Record<TranslationKey, string> = {
 
   // Settings
   'settings.title': 'Instellingen',
-  'settings.subtitle': 'Beheer je check-in-vragen en herinneringen',
+  'settings.subtitle': 'Je profiel, vragen en herinneringen',
+  'settings.editProfile': 'Profiel bewerken',
+
+  // Profile
+  'profile.title': 'Profiel',
+  'profile.subtitle': 'Zo zie je jezelf in Lekker Bezig',
+  'profile.noName': 'Voeg je naam toe',
+  'profile.addPhoto': 'Foto toevoegen',
+  'profile.changePhoto': 'Foto wijzigen',
+  'profile.removePhoto': 'Verwijderen',
+  'profile.photoFailed': 'De foto kon niet worden opgeslagen. Probeer het opnieuw.',
+  'profile.name': 'Weergavenaam',
+  'profile.namePlaceholder': 'Je naam',
+  'profile.nameHint': 'Gebruikt in je begroeting op Home.',
+  'profile.nameRequired': 'Vul een naam in.',
+  'profile.email': 'Ingelogd als {email}',
+  'profile.saveFailed': 'Je naam kon niet worden opgeslagen. Probeer het opnieuw.',
+  'profile.saved': 'Opgeslagen',
+
+  // Daily questions
+  'questions.title': 'Dagelijkse vragen',
+  'questions.remindersHint': 'De herinneringstijd per vraag stel je in onder Herinneringen in Instellingen.',
+
   'settings.questionManager': 'Vragen beheren',
   'settings.questionCountOne': 'Pas je dagelijkse energievraag aan',
   'settings.questionCountOther': 'Pas je {count} dagelijkse energievragen aan',

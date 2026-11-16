@@ -84,6 +84,8 @@ function AuthGate() {
       <Stack.Screen name="summary" />
       <Stack.Screen name="goal/new" options={{ presentation: 'card' }} />
       <Stack.Screen name="reminders" options={{ presentation: 'card' }} />
+      <Stack.Screen name="profile" options={{ presentation: 'card' }} />
+      <Stack.Screen name="questions" options={{ presentation: 'card' }} />
       <Stack.Screen name="change-password" options={{ presentation: 'card' }} />
       <Stack.Screen name="delete-account" options={{ presentation: 'card' }} />
       <Stack.Screen name="terms" options={{ presentation: 'card' }} />

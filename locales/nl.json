@@ -1,7 +1,8 @@
 {
   "ios": {
     "CFBundleDisplayName": "Lekker Bezig",
-    "CFBundleName": "Lekker Bezig"
+    "CFBundleName": "Lekker Bezig",
+    "NSPhotoLibraryUsageDescription": "Lekker Bezig gebruikt een foto die je kiest als profielfoto."
   },
   "android": {
     "app_name": "Lekker Bezig"

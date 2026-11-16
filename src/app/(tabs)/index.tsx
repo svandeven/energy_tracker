@@ -73,6 +73,7 @@ export default function HomeScreen() {
           title={title}
           action={{
             icon: 'person',
+            avatar: { url: profile?.avatar_url ?? null, name: profile?.display_name ?? null },
             label: t('home.profileA11y'),
             onPress: () => router.push('/settings'),
           }}
