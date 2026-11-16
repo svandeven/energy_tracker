@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import { Avatar } from '../../components/Avatar';
 import { BackLink } from '../../components/ScreenTop';
 import { Card } from '../../components/Card';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { TimePicker } from '../../components/TimePicker';
 import { Text } from '../../components/Text';
-import { colors, fonts, radii } from '../../theme';
+import { colors, radii } from '../../theme';
 import type { QuestionRow } from '../../lib/database.types';
 import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
@@ -20,8 +21,8 @@ const DANGER = '#C4342B';
 export default function SettingsScreen() {
   const router = useRouter();
   const { profile, setPushEnabled, signOut } = useAuth();
-  const { questions, updateQuestion, addQuestion, deleteQuestion } = useData();
-  const { t, fmt, locale, preference, setPreference } = useI18n();
+  const { questions, updateQuestion } = useData();
+  const { t, fmt, preference, setPreference } = useI18n();
   const [editingTimeFor, setEditingTimeFor] = useState<QuestionRow | null>(null);
 
   const pushEnabled = profile?.push_enabled ?? false;
@@ -33,21 +34,6 @@ export default function SettingsScreen() {
     ...LOCALES.map((l) => ({ value: l, label: LOCALE_NAMES[l] })),
   ];
 
-  const confirmDelete = (question: QuestionRow) => {
-    Alert.alert(
-      t('settings.removeTitle', { title: question.title }),
-      t('settings.removeBody'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('settings.remove'),
-          style: 'destructive',
-          onPress: () => void deleteQuestion(question.id),
-        },
-      ],
-    );
-  };
-
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <BackLink inset />
@@ -57,33 +43,42 @@ export default function SettingsScreen() {
           {t('settings.subtitle')}
         </Text>
 
-        <Text variant="heading">{t('settings.questionManager')}</Text>
-        <Text variant="small" color={colors.inkMuted} style={styles.sectionSub}>
-          {questions.length === 1
-            ? t('settings.questionCountOne')
-            : t('settings.questionCountOther', { count: questions.length })}
-        </Text>
+        <Card padded={false}>
+          <Pressable
+            onPress={() => router.push('/profile')}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.editProfile')}
+            style={({ pressed }) => [styles.profileRow, pressed && styles.pressed]}
+          >
+            <Avatar url={profile?.avatar_url} name={profile?.display_name} size={52} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong">{profile?.display_name || t('profile.noName')}</Text>
+              <Text variant="small" color={colors.accent}>
+                {t('settings.editProfile')}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
+        </Card>
 
-        {questions.map((question) => (
-          <QuestionEditor
-            // Remount on language change so the fields pick up the new wording.
-            key={`${question.id}:${locale}`}
-            question={question}
-            onChange={(patch) => void updateQuestion(question.id, patch)}
-            onDelete={questions.length > 1 ? () => confirmDelete(question) : undefined}
-          />
-        ))}
-
-        <Pressable
-          onPress={() => void addQuestion()}
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
-        >
-          <Ionicons name="add" size={18} color={colors.accent} />
-          <Text variant="bodyStrong" color={colors.accent}>
-            {t('settings.addQuestion')}
-          </Text>
-        </Pressable>
+        <Card padded={false} style={styles.questionsCard}>
+          <Pressable
+            onPress={() => router.push('/questions')}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.accountRow, pressed && styles.pressed]}
+          >
+            <Ionicons name="create-outline" size={20} color={colors.accent} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong">{t('questions.title')}</Text>
+              <Text variant="small" color={colors.inkMuted}>
+                {questions.length === 1
+                  ? t('settings.questionCountOne')
+                  : t('settings.questionCountOther', { count: questions.length })}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
+        </Card>
 
         <Text variant="heading" style={styles.notificationsTitle}>
           {t('settings.notifications')}
@@ -293,112 +288,12 @@ export default function SettingsScreen() {
   );
 }
 
-function QuestionEditor({
-  question,
-  onChange,
-  onDelete,
-}: {
-  question: QuestionRow;
-  onChange: (patch: Partial<QuestionRow>) => void;
-  onDelete?: () => void;
-}) {
-  const { t } = useI18n();
-  // Kept in local state so typing stays responsive; persisted on blur.
-  const [title, setTitle] = useState(question.title);
-  const [labels, setLabels] = useState<string[]>(question.score_labels);
-
-  const commitLabel = (score: number, value: string) => {
-    const next = [...labels];
-    next[score] = value;
-    setLabels(next);
-  };
-
-  return (
-    <Card style={styles.questionCard}>
-      <View style={styles.questionHeader}>
-        <CategoryIcon icon={question.icon} size={38} />
-        {onDelete && (
-          <Pressable
-            onPress={onDelete}
-            hitSlop={10}
-            accessibilityRole="button"
-            accessibilityLabel={t('settings.removeA11y', { title: question.title })}
-          >
-            <Ionicons name="trash-outline" size={18} color={colors.inkFaint} />
-          </Pressable>
-        )}
-      </View>
-
-      <Text variant="label" color={colors.inkMuted} style={styles.fieldLabel}>
-        {t('settings.question')}
-      </Text>
-      <TextInput
-        value={title}
-        onChangeText={setTitle}
-        onBlur={() => title.trim() && title !== question.title && onChange({ title: title.trim() })}
-        style={[styles.textField, styles.textFieldCentered]}
-        placeholder={t('settings.questionPlaceholder')}
-        placeholderTextColor={colors.inkFaint}
-      />
-
-      <Text variant="label" color={colors.inkMuted} style={styles.fieldLabel}>
-        {t('settings.scoreDescriptions')}
-      </Text>
-      {[0, 1, 2].map((score) => (
-        <View key={score} style={styles.labelRow}>
-          <Text variant="label" color={score === 0 ? colors.inkMuted : score === 1 ? colors.accent : colors.primary}>
-            {score}
-          </Text>
-          <TextInput
-            value={labels[score] ?? ''}
-            onChangeText={(value) => commitLabel(score, value)}
-            onBlur={() => {
-              if (labels[score] !== question.score_labels[score]) {
-                onChange({ score_labels: labels });
-              }
-            }}
-            style={[styles.textField, styles.textFieldCentered, styles.labelField]}
-            placeholder={t('settings.describeScore', { score })}
-            placeholderTextColor={colors.inkFaint}
-          />
-        </View>
-      ))}
-    </Card>
-  );
-}
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.canvas },
   content: { paddingHorizontal: 20, paddingBottom: 40 },
-  subtitle: { marginTop: 4, marginBottom: 26 },
-  sectionSub: { marginTop: 2, marginBottom: 14 },
-  questionCard: { marginBottom: 14 },
-  questionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  fieldLabel: { marginTop: 14, marginBottom: 6 },
-  textField: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.sm,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    color: colors.ink,
-  },
-  textFieldCentered: { textAlign: 'center' },
-  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
-  labelField: { flex: 1 },
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    height: 56,
-    borderRadius: radii.md,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderStyle: 'dashed',
-    backgroundColor: colors.white,
-  },
+  subtitle: { marginTop: 4, marginBottom: 20 },
+  profileRow: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
+  questionsCard: { marginTop: 14 },
   notificationsTitle: { marginTop: 32, marginBottom: 12 },
   pushCard: { marginBottom: 14 },
   pushRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },

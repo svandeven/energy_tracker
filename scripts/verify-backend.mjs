@@ -143,6 +143,7 @@ try {
     ['profiles', 'goal_review_time'],
     ['goal_templates', 'remind_at'],
     ['goals', 'done_at'],
+    ['profiles', 'avatar_url'],
   ]) {
     const col = await fetch(`${url}/rest/v1/${table}?select=${column}&limit=1`, { headers });
     if (col.ok) ok(`column "${table}.${column}" exists`);

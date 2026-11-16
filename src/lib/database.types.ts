@@ -50,6 +50,8 @@ export type CheckinRow = {
 export type ProfileRow = {
   id: string;
   display_name: string | null;
+  /** Public URL of the profile picture in the "avatars" bucket, or null. */
+  avatar_url: string | null;
   push_enabled: boolean;
   /** Only a super admin can change this; a trigger in schema.sql enforces it. */
   role: UserRole;

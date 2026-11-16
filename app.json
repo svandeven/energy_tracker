@@ -49,6 +49,14 @@
       ],
       "expo-image",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Sun Steps uses a photo you choose as your profile picture.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
         "expo-localization",
         {
           "supportedLocales": {

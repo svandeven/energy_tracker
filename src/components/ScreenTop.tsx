@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import { colors } from '../theme';
 import { useI18n } from '../i18n';
+import { Avatar } from './Avatar';
 import { Text } from './Text';
 
 interface ScreenTopProps {
@@ -16,6 +17,8 @@ interface ScreenTopProps {
   /** Round button on the right, e.g. profile or reminders. */
   action?: {
     icon: React.ComponentProps<typeof Ionicons>['name'];
+    /** Shows the profile picture (or initials) instead of the icon. */
+    avatar?: { url: string | null; name: string | null };
     label: string;
     onPress(): void;
   };
@@ -67,7 +70,11 @@ export function ScreenTop({ title, caption, subtitle, back, action }: ScreenTopP
             hitSlop={8}
             style={({ pressed }) => [styles.action, pressed && styles.pressed]}
           >
-            <Ionicons name={action.icon} size={20} color={colors.onTint} />
+            {action.avatar ? (
+              <Avatar url={action.avatar.url} name={action.avatar.name} size={42} />
+            ) : (
+              <Ionicons name={action.icon} size={20} color={colors.onTint} />
+            )}
           </Pressable>
         )}
       </View>

@@ -435,3 +435,42 @@ $$;
 
 revoke execute on function public.goal_day_stats() from public, anon;
 grant execute on function public.goal_day_stats() to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Profile pictures
+--   Stored in the public "avatars" bucket as <user id>/<random>.jpg. Public
+--   so the app can show them with a plain URL; the random file name keeps
+--   them unguessable, and nobody can list the bucket. Only the owner can
+--   upload, replace or delete files in their own folder. The app removes the
+--   files itself before deleting an account (Supabase blocks deleting
+--   storage files from SQL).
+-- ---------------------------------------------------------------------------
+alter table public.profiles add column if not exists avatar_url text;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('avatars', 'avatars', true, 2097152, array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do update
+  set public = excluded.public,
+      file_size_limit = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "own avatar read"   on storage.objects;
+drop policy if exists "own avatar insert" on storage.objects;
+drop policy if exists "own avatar update" on storage.objects;
+drop policy if exists "own avatar delete" on storage.objects;
+
+create policy "own avatar read" on storage.objects
+  for select to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "own avatar insert" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "own avatar update" on storage.objects
+  for update to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "own avatar delete" on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);

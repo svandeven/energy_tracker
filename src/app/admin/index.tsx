@@ -40,6 +40,8 @@ const GROUPS: Record<string, string> = {
   progress: 'Progress',
   awards: 'Awards',
   settings: 'Settings',
+  profile: 'Profile',
+  questions: 'Daily questions',
   question: 'Default questions',
   newQuestion: 'New question',
   reminder: 'Reminders',

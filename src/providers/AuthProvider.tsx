@@ -8,6 +8,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../lib/supabase';
 import { isSupabaseConfigured } from '../lib/env';
 import { cancelReminders } from '../features/notifications';
+import { removeAvatars, uploadAvatar } from '../features/avatar';
 import type { ProfileRow } from '../lib/database.types';
 import { LocalizedError } from '../i18n';
 
@@ -24,6 +25,9 @@ interface AuthValue {
   signInWithProvider(provider: OAuthProvider): Promise<void>;
   signOut(): Promise<void>;
   setPushEnabled(enabled: boolean): Promise<void>;
+  setDisplayName(name: string): Promise<void>;
+  /** Uploads a new profile picture (JPEG as base64), or removes it with null. */
+  setAvatar(base64: string | null): Promise<void>;
   /** Saves the daily goal-planning and goal-review reminder times. */
   setGoalTimes(patch: Partial<Pick<ProfileRow, 'goal_plan_time' | 'goal_review_time'>>): Promise<void>;
   refreshProfile(): Promise<void>;
@@ -318,6 +322,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (reauthError) throw new LocalizedError('error.passwordWrong');
       }
 
+      // Storage files don't cascade with the account, so remove them first.
+      if (userId) await removeAvatars(userId).catch(() => {});
+
       const { error } = await supabase.rpc('delete_account');
       if (error) throw error;
 
@@ -328,7 +335,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(null);
       setRecovering(false);
     },
-    [authProvider, session?.user?.email],
+    [authProvider, session?.user?.email, userId],
+  );
+
+  const setDisplayName = useCallback(
+    async (name: string) => {
+      if (!userId) return;
+      const display_name = name.trim();
+      const { error } = await supabase.from('profiles').update({ display_name }).eq('id', userId);
+      if (error) throw error;
+      setProfile((p) => (p ? { ...p, display_name } : p));
+    },
+    [userId],
+  );
+
+  const setAvatar = useCallback(
+    async (base64: string | null) => {
+      if (!userId) return;
+      const avatar_url = base64 ? await uploadAvatar(userId, base64) : null;
+      const { error } = await supabase.from('profiles').update({ avatar_url }).eq('id', userId);
+      if (error) throw error;
+      setProfile((p) => (p ? { ...p, avatar_url } : p));
+      // Tidy up older pictures; a failure here only leaves an unused file.
+      await removeAvatars(userId, avatar_url).catch(() => {});
+    },
+    [userId],
   );
 
   const setPushEnabled = useCallback(
@@ -371,6 +402,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithProvider,
       signOut,
       setPushEnabled,
+      setDisplayName,
+      setAvatar,
       setGoalTimes,
       refreshProfile,
       requestPasswordReset,
@@ -390,6 +423,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithProvider,
       signOut,
       setPushEnabled,
+      setDisplayName,
+      setAvatar,
       setGoalTimes,
       refreshProfile,
       requestPasswordReset,
