@@ -10,6 +10,7 @@ interface DefaultQuestion {
   /** Descriptions for scores 0, 1 and 2. */
   score_labels: string[];
   reminder_time: string;
+  reminder_next_day: boolean;
   is_active: boolean;
 }
 
@@ -24,6 +25,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
       'Refreshed and ready to go',
     ],
     reminder_time: '08:00',
+    reminder_next_day: false,
     is_active: true,
   },
   {
@@ -36,6 +38,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
       'Energized and focused all day',
     ],
     reminder_time: '13:00',
+    reminder_next_day: false,
     is_active: true,
   },
   {
@@ -48,6 +51,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
       'Full workout felt great',
     ],
     reminder_time: '17:00',
+    reminder_next_day: false,
     is_active: true,
   },
   {
@@ -60,6 +64,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
       'Still active and productive tonight',
     ],
     reminder_time: '20:00',
+    reminder_next_day: false,
     is_active: true,
   },
   {
@@ -72,6 +77,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
       'Sharp, positive, and motivated',
     ],
     reminder_time: '21:30',
+    reminder_next_day: false,
     is_active: true,
   },
 ];

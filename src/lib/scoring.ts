@@ -1,5 +1,10 @@
 import type { CheckinRow, QuestionRow } from './database.types';
-import { type LocalDate, addDays } from './dates';
+import { type LocalDate, addDays, today } from './dates';
+
+/** Next-day questions are answered the morning after, never on the day itself. */
+export function isAnswerable(question: QuestionRow, date: LocalDate, now: LocalDate = today()): boolean {
+  return !question.reminder_next_day || date < now;
+}
 
 /** Each question contributes 0–2, so a full day is 2 x (active questions). */
 export const MAX_PER_QUESTION = 2;

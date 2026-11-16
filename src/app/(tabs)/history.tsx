@@ -14,6 +14,7 @@ import { shortLabel } from '../../i18n/questions';
 import {
   breakdownLine,
   compareWeeks,
+  isAnswerable,
   type DayTotal,
   dayTotalsSeries,
   maxDailyScore,
@@ -64,7 +65,9 @@ export default function HistoryScreen() {
   /** Opens the first unanswered category for a day, or the first one to edit. */
   const openDay = (day: DayTotal) => {
     const answered = scoresForDate(checkins, day.date);
-    const target = questions.find((q) => !answered.has(q.id)) ?? questions[0];
+    const target =
+      questions.find((q) => !answered.has(q.id) && isAnswerable(q, day.date)) ??
+      questions.find((q) => isAnswerable(q, day.date));
     if (!target) return;
     router.push({
       pathname: '/check-in/[id]',

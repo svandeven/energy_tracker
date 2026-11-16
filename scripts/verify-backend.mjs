@@ -135,7 +135,11 @@ try {
     failed = true;
   }
 
-  for (const [table, column] of [['profiles', 'role'], ['questions', 'default_key']]) {
+  for (const [table, column] of [
+    ['profiles', 'role'],
+    ['questions', 'default_key'],
+    ['questions', 'reminder_next_day'],
+  ]) {
     const col = await fetch(`${url}/rest/v1/${table}?select=${column}&limit=1`, { headers });
     if (col.ok) ok(`column "${table}.${column}" exists`);
     else {

@@ -39,6 +39,11 @@ create table if not exists public.questions (
   constraint questions_score_labels_len check (array_length(score_labels, 1) = 3)
 );
 
+-- Reminders for questions about the evening or sleep fire the morning after,
+-- and the score is logged for the day before (the app enforces this).
+alter table public.questions
+  add column if not exists reminder_next_day boolean not null default false;
+
 -- One of the five seeded questions with untouched wording. While set, the app
 -- shows the translated title and score descriptions for the user's language;
 -- the app clears it as soon as the user rewrites the question.

@@ -128,6 +128,12 @@ export const en = {
   'dashboard.remainingOne': 'Finish your last check-in to complete today.',
   'dashboard.remainingOther': 'Finish your last {count} check-ins to complete today.',
   'dashboard.viewSummary': 'View today’s summary',
+  'dashboard.logTomorrow': 'Log tomorrow morning',
+  'dashboard.finishYesterday': 'Finish yesterday',
+  'dashboard.finishYesterdayBody': 'These are logged the morning after.',
+  'dashboard.allDoneForNow': 'All done for now!',
+  'dashboard.laterOne': 'One more check-in tomorrow morning finishes today.',
+  'dashboard.laterOther': 'Log {count} more tomorrow morning to finish today.',
 
   // Check-in
   'checkIn.unavailable': 'That check-in isn’t available any more.',
@@ -140,6 +146,7 @@ export const en = {
   'checkIn.pickOne': 'Pick the option that best matches your day.',
   'checkIn.saveFailed': 'Could not save that. Try again.',
   'checkIn.notReady': 'Not ready?',
+  'checkIn.nextDayOnly': 'You log this one tomorrow morning, once the day is over.',
 
   // Summary
   'summary.today': 'Today’s summary',
@@ -148,6 +155,8 @@ export const en = {
   'summary.toGoOne': '1 check-in still to go — this total will keep climbing.',
   'summary.toGoOther': '{count} check-ins still to go — this total will keep climbing.',
   'summary.partial': '{answered} of {total} logged for this day.',
+  'summary.laterOne': '1 check-in to log tomorrow morning — this total will keep climbing.',
+  'summary.laterOther': '{count} check-ins to log tomorrow morning — this total will keep climbing.',
   'summary.viewHistory': 'View History',
   'summary.strong': 'Strong day. Whatever you’re doing, it’s working. 🌱',
   'summary.steady': 'Nice work checking in—small signals add up. You’re finding a steady rhythm. 🌱',
@@ -197,6 +206,11 @@ export const en = {
   'settings.pushSub': 'Get reminders to check in',
   'settings.changeTimeA11y': 'Change reminder time for {title}',
   'settings.reminderTime': 'Reminder time',
+  'settings.sameDay': 'Same day',
+  'settings.nextDay': 'Next day',
+  'settings.dayToggleA11y': 'Reminder day for {title}',
+  'settings.nextDayHint':
+    'Next day: you’re reminded the following morning and log it for the day before — for questions about your evening or sleep.',
   'settings.language': 'Language',
   'settings.languageSystem': 'Same as device',
   'settings.account': 'Account',
@@ -218,6 +232,7 @@ export const en = {
 
   // Reminders
   'reminder.body': 'Time for a quick check-in.',
+  'reminder.bodyNextDay': 'How did yesterday end? Time for a quick check-in.',
   'reminder.channel': 'Energy check-ins',
 
   // Change password

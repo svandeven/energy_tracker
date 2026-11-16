@@ -119,6 +119,26 @@ export default function SettingsScreen() {
                 {question.title}
               </Text>
               <Pressable
+                onPress={() =>
+                  void updateQuestion(question.id, { reminder_next_day: !question.reminder_next_day })
+                }
+                accessibilityRole="switch"
+                accessibilityState={{ checked: question.reminder_next_day }}
+                accessibilityLabel={t('settings.dayToggleA11y', { title: question.title })}
+                style={({ pressed }) => [
+                  styles.dayPill,
+                  question.reminder_next_day && styles.dayPillNext,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text
+                  variant="caption"
+                  color={question.reminder_next_day ? colors.onTint : colors.inkMuted}
+                >
+                  {question.reminder_next_day ? t('settings.nextDay') : t('settings.sameDay')}
+                </Text>
+              </Pressable>
+              <Pressable
                 onPress={() => setEditingTimeFor(question)}
                 accessibilityRole="button"
                 accessibilityLabel={t('settings.changeTimeA11y', { title: question.title })}
@@ -129,6 +149,9 @@ export default function SettingsScreen() {
             </View>
           ))}
         </Card>
+        <Text variant="caption" color={colors.inkMuted} style={styles.scheduleHint}>
+          {t('settings.nextDayHint')}
+        </Text>
 
         <Text variant="heading" style={styles.accountTitle}>
           {t('settings.language')}
@@ -367,6 +390,14 @@ const styles = StyleSheet.create({
   scheduleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
   divider: { borderBottomWidth: 1, borderBottomColor: colors.surface },
   scheduleLabel: { flex: 1 },
+  dayPill: {
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  dayPillNext: { backgroundColor: colors.tint },
+  scheduleHint: { marginTop: 8, marginHorizontal: 4 },
   timePill: {
     backgroundColor: colors.surface,
     borderRadius: radii.sm,

@@ -41,6 +41,8 @@ export async function requestPermission(): Promise<boolean> {
 /** Reminder wording in the user's language; the titles come from the questions. */
 export interface ReminderText {
   body: string;
+  /** For next-day questions, which ask about the day before. */
+  bodyNextDay: string;
   channelName: string;
 }
 
@@ -75,8 +77,8 @@ export async function syncReminders(questions: QuestionRow[], enabled: boolean, 
     await Notifications.scheduleNotificationAsync({
       content: {
         title: question.title,
-        body: text.body,
-        data: { questionId: question.id },
+        body: question.reminder_next_day ? text.bodyNextDay : text.body,
+        data: { questionId: question.id, nextDay: question.reminder_next_day },
         ...(Platform.OS === 'android' ? { channelId: CHANNEL_ID } : {}),
       },
       trigger: {

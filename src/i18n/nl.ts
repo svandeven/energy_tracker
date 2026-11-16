@@ -125,6 +125,12 @@ export const nl: Record<TranslationKey, string> = {
   'dashboard.remainingOne': 'Vul je laatste check-in in om vandaag af te ronden.',
   'dashboard.remainingOther': 'Vul je laatste {count} check-ins in om vandaag af te ronden.',
   'dashboard.viewSummary': 'Bekijk het overzicht van vandaag',
+  'dashboard.logTomorrow': 'Morgenochtend invullen',
+  'dashboard.finishYesterday': 'Gisteren afronden',
+  'dashboard.finishYesterdayBody': 'Deze vul je de ochtend erna in.',
+  'dashboard.allDoneForNow': 'Klaar voor nu!',
+  'dashboard.laterOne': 'Morgenochtend nog één check-in om vandaag af te ronden.',
+  'dashboard.laterOther': 'Morgenochtend nog {count} check-ins om vandaag af te ronden.',
 
   // Check-in
   'checkIn.unavailable': 'Die check-in is niet meer beschikbaar.',
@@ -137,6 +143,7 @@ export const nl: Record<TranslationKey, string> = {
   'checkIn.pickOne': 'Kies de optie die het best bij je dag past.',
   'checkIn.saveFailed': 'Opslaan is niet gelukt. Probeer het opnieuw.',
   'checkIn.notReady': 'Nog niet klaar?',
+  'checkIn.nextDayOnly': 'Deze vul je morgenochtend in, als de dag voorbij is.',
 
   // Summary
   'summary.today': 'Overzicht van vandaag',
@@ -145,6 +152,8 @@ export const nl: Record<TranslationKey, string> = {
   'summary.toGoOne': 'Nog 1 check-in te gaan — dit totaal loopt nog op.',
   'summary.toGoOther': 'Nog {count} check-ins te gaan — dit totaal loopt nog op.',
   'summary.partial': '{answered} van {total} ingevuld voor deze dag.',
+  'summary.laterOne': 'Morgenochtend nog 1 check-in — dit totaal loopt nog op.',
+  'summary.laterOther': 'Morgenochtend nog {count} check-ins — dit totaal loopt nog op.',
   'summary.viewHistory': 'Bekijk geschiedenis',
   'summary.strong': 'Sterke dag. Wat je ook doet, het werkt. 🌱',
   'summary.steady': 'Goed bezig met inchecken — kleine signalen tellen op. Je vindt een vast ritme. 🌱',
@@ -194,6 +203,11 @@ export const nl: Record<TranslationKey, string> = {
   'settings.pushSub': 'Krijg een herinnering om in te checken',
   'settings.changeTimeA11y': 'Tijd van herinnering wijzigen voor {title}',
   'settings.reminderTime': 'Tijd van herinnering',
+  'settings.sameDay': 'Zelfde dag',
+  'settings.nextDay': 'Volgende dag',
+  'settings.dayToggleA11y': 'Dag van herinnering voor {title}',
+  'settings.nextDayHint':
+    'Volgende dag: je krijgt de herinnering de ochtend erna en vult hem in voor de dag ervoor — voor vragen over je avond of slaap.',
   'settings.language': 'Taal',
   'settings.languageSystem': 'Zoals apparaat',
   'settings.account': 'Account',
@@ -215,6 +229,7 @@ export const nl: Record<TranslationKey, string> = {
 
   // Reminders
   'reminder.body': 'Tijd voor een korte check-in.',
+  'reminder.bodyNextDay': 'Hoe eindigde gisteren? Tijd voor een korte check-in.',
   'reminder.channel': 'Energie-check-ins',
 
   // Change password

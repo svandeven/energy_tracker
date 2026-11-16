@@ -18,6 +18,12 @@ export type QuestionRow = {
   score_labels: string[];
   /** 'HH:MM:SS' as returned by Postgres `time`. */
   reminder_time: string;
+  /**
+   * Reminded the morning after instead of the same day, and answered for the
+   * day before — for questions only answerable once the day is over (sleep,
+   * the evening). On the day itself the question can't be answered yet.
+   */
+  reminder_next_day: boolean;
   sort_order: number;
   is_active: boolean;
   /**
