@@ -32,6 +32,17 @@ const CACHE_KEY = 'sunsteps.translations';
 const isLocale = (value: unknown): value is Locale =>
   typeof value === 'string' && (LOCALES as readonly string[]).includes(value);
 
+/**
+ * `?lang=nl` on a web link (lekkerbezig.eu redirects with it) picks the
+ * language and saves it as the user's choice. Read at load, before the router
+ * redirects and drops the query.
+ */
+const URL_LOCALE: Locale | null = (() => {
+  if (Platform.OS !== 'web' || typeof window === 'undefined') return null;
+  const lang = new URLSearchParams(window.location.search).get('lang')?.toLowerCase();
+  return isLocale(lang) ? lang : null;
+})();
+
 /** First device/browser language we support, else English. */
 function pickDeviceLocale(locales: DeviceLocale[]): Locale {
   for (const l of locales) {
@@ -106,7 +117,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           AsyncStorage.getItem(PREFERENCE_KEY),
           AsyncStorage.getItem(CACHE_KEY),
         ]);
-        if (isLocale(pref)) setPreferenceState(pref);
+        if (URL_LOCALE) {
+          setPreferenceState(URL_LOCALE);
+          void AsyncStorage.setItem(PREFERENCE_KEY, URL_LOCALE).catch(() => {});
+        } else if (isLocale(pref)) {
+          setPreferenceState(pref);
+        }
         if (cached) setOverrides(JSON.parse(cached) as Overrides);
       } catch {
         // Storage is a convenience; the bundled strings always work.
