@@ -1,6 +1,7 @@
 /**
  * All check-in dates are *local* calendar dates ('YYYY-MM-DD'), never UTC
  * instants — a 9:30 PM evening check-in must belong to that evening's day.
+ * Formatting for display lives in src/i18n, since it depends on the language.
  */
 
 export type LocalDate = string;
@@ -32,31 +33,6 @@ export function lastNDates(end: LocalDate, n: number): LocalDate[] {
   return Array.from({ length: n }, (_, i) => addDays(end, -i));
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-/** "Tue, May 14" — dashboard eyebrow and History row titles. */
-export function formatShortDate(date: LocalDate): string {
-  const d = parseLocalDate(date);
-  return `${WEEKDAYS[d.getDay()]}, ${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`;
-}
-
-/** "Tuesday, June 17, 2025" — the summary screen subtitle. */
-export function formatLongDate(date: LocalDate): string {
-  const d = parseLocalDate(date);
-  const weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
-  return `${weekday}, ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-}
-
-/** "May 1" — chart axis ticks. */
-export function formatAxisDate(date: LocalDate): string {
-  const d = parseLocalDate(date);
-  return `${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`;
-}
-
 export function isToday(date: LocalDate): boolean {
   return date === today();
 }
@@ -72,36 +48,11 @@ export function daysAgo(date: LocalDate): number {
   return Math.round(ms / 86_400_000);
 }
 
-/** "Today" / "Yesterday" / "Mon, May 13" for backfill lists and headers. */
-export function formatDayLabel(date: LocalDate): string {
-  const ago = daysAgo(date);
-  if (ago === 0) return 'Today';
-  if (ago === 1) return 'Yesterday';
-  return formatShortDate(date);
-}
-
 /** Basic shape check so a hand-edited URL can't produce an invalid query. */
 export function isValidLocalDate(value: string | undefined): value is LocalDate {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const d = parseLocalDate(value);
   return !Number.isNaN(d.getTime()) && toLocalDate(d) === value;
-}
-
-/** "Good morning" / "Good afternoon" / "Good evening" for the dashboard greeting. */
-export function greeting(now = new Date()): string {
-  const h = now.getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
-}
-
-/** Postgres `time` ('08:00:00') -> '8:00 AM' for the notification schedule. */
-export function formatTime(time: string): string {
-  const [hStr, mStr] = time.split(':');
-  const h = Number(hStr);
-  const suffix = h < 12 ? 'AM' : 'PM';
-  const h12 = h % 12 === 0 ? 12 : h % 12;
-  return `${h12}:${mStr} ${suffix}`;
 }
 
 /** '08:00:00' -> { hour: 8, minute: 0 } for scheduling notifications. */

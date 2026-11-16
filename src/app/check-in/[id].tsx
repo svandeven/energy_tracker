@@ -11,7 +11,6 @@ import { Text } from '../../components/Text';
 import { colors, radii } from '../../theme';
 import {
   addDays,
-  formatDayLabel,
   isFuture,
   isToday,
   isValidLocalDate,
@@ -20,6 +19,7 @@ import {
 } from '../../lib/dates';
 import { scoresForDate } from '../../lib/scoring';
 import { HISTORY_WINDOW_DAYS, useData } from '../../providers/DataProvider';
+import { useI18n } from '../../i18n';
 
 /** Options are shown best-first (2, 1, 0) exactly as in the mockup. */
 const OPTION_ORDER = [2, 1, 0] as const;
@@ -40,6 +40,7 @@ export default function CheckInScreen() {
   const router = useRouter();
   const { id, date: dateParam } = useLocalSearchParams<{ id: string; date?: string }>();
   const { questions, checkins, saveScore } = useData();
+  const { t, fmt, errorText } = useI18n();
 
   const date = resolveDate(dateParam);
   const backfilling = !isToday(date);
@@ -60,10 +61,10 @@ export default function CheckInScreen() {
         <AppHeader onBackground="surface" />
         <View style={styles.missing}>
           <Text variant="bodyStrong" center>
-            That check-in isn&apos;t available any more.
+            {t('checkIn.unavailable')}
           </Text>
           <Button
-            label="Back to dashboard"
+            label={t('common.backToDashboard')}
             variant="secondary"
             onPress={() => router.replace('/')}
             style={styles.missingButton}
@@ -83,7 +84,7 @@ export default function CheckInScreen() {
 
   const save = async () => {
     if (selected == null) {
-      setError('Pick the option that best matches your day.');
+      setError(t('checkIn.pickOne'));
       return;
     }
     setSaving(true);
@@ -104,7 +105,7 @@ export default function CheckInScreen() {
         router.replace({ pathname: '/summary', params: carry });
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save that. Try again.');
+      setError(errorText(e, 'checkIn.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -116,23 +117,23 @@ export default function CheckInScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {backfilling && (
           <View style={styles.backfillBanner}>
-            <Ionicons name="calendar-outline" size={15} color={colors.onMint} />
-            <Text variant="smallStrong" color={colors.onMint}>
-              Logging {formatDayLabel(date)}
+            <Ionicons name="calendar-outline" size={15} color={colors.onTint} />
+            <Text variant="smallStrong" color={colors.onTint}>
+              {t('checkIn.logging', { day: fmt.dayLabel(date) })}
             </Text>
           </View>
         )}
 
         <Text variant="label">
-          Category {index + 1} of {questions.length}
+          {t('checkIn.category', { n: index + 1, total: questions.length })}
         </Text>
         <Text variant="title" style={styles.title}>
           {question.title}
         </Text>
         <Text variant="body" color={colors.inkMuted}>
           {backfilling
-            ? `How was this on ${formatDayLabel(date).toLowerCase()}?`
-            : 'Choose what best matches your day.'}
+            ? t('checkIn.howWasIt', { day: fmt.dayLabel(date).toLowerCase() })
+            : t('checkIn.choose')}
         </Text>
 
         <View style={styles.options}>
@@ -151,19 +152,19 @@ export default function CheckInScreen() {
                 ]}
               >
                 <View style={styles.optionScore}>
-                  <Text variant="label" color={active ? colors.onMint : colors.inkMuted}>
+                  <Text variant="label" color={active ? colors.onTint : colors.inkMuted}>
                     {score}
                   </Text>
                 </View>
                 <Text
                   variant="body"
                   style={styles.optionLabel}
-                  color={active ? colors.onMint : colors.ink}
+                  color={active ? colors.onTint : colors.ink}
                 >
-                  {question.score_labels[score] || `Score ${score}`}
+                  {question.score_labels[score] || t('checkIn.scoreFallback', { score })}
                 </Text>
                 {active ? (
-                  <Ionicons name="checkmark-circle" size={24} color={colors.onMint} />
+                  <Ionicons name="checkmark-circle" size={24} color={colors.onTint} />
                 ) : (
                   <View style={styles.optionRing} />
                 )}
@@ -174,7 +175,7 @@ export default function CheckInScreen() {
 
         {existingScore != null && (
           <Text variant="caption" color={colors.inkMuted} style={styles.existingNote}>
-            Already logged as {existingScore}. Saving replaces it.
+            {t('checkIn.alreadyLogged', { score: existingScore })}
           </Text>
         )}
 
@@ -186,14 +187,14 @@ export default function CheckInScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button label="Save" onPress={save} loading={saving} />
+        <Button label={t('common.save')} onPress={save} loading={saving} />
         <View style={styles.backRow}>
           <Text variant="small" color={colors.inkMuted}>
-            Not ready?{' '}
+            {t('checkIn.notReady')}{' '}
           </Text>
           <Pressable onPress={() => router.replace(backfilling ? '/history' : '/')} hitSlop={8}>
-            <Text variant="smallStrong" color={colors.teal}>
-              {backfilling ? 'Back to history' : 'Back to dashboard'}
+            <Text variant="smallStrong" color={colors.accent}>
+              {backfilling ? t('common.backToHistory') : t('common.backToDashboard')}
             </Text>
           </Pressable>
         </View>
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     gap: 6,
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     borderRadius: radii.pill,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 14,
   },
-  optionActive: { backgroundColor: colors.mint, borderColor: colors.green },
+  optionActive: { backgroundColor: colors.tint, borderColor: colors.primary },
   optionPressed: { opacity: 0.85 },
   optionScore: {
     width: 26,

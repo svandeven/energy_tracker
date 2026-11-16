@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 
+import { I18nProvider } from '../i18n';
 import { AuthProvider, useAuth } from '../providers/AuthProvider';
 import { DataProvider } from '../providers/DataProvider';
 import { useAppFonts } from '../theme/fonts';
@@ -35,11 +36,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <AuthProvider>
-        <DataProvider>
-          <AuthGate />
-        </DataProvider>
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <DataProvider>
+            <AuthGate />
+          </DataProvider>
+        </AuthProvider>
+      </I18nProvider>
     </SafeAreaProvider>
   );
 }
@@ -77,6 +80,7 @@ function AuthGate() {
       <Stack.Screen name="change-password" options={{ presentation: 'card' }} />
       <Stack.Screen name="delete-account" options={{ presentation: 'card' }} />
       <Stack.Screen name="terms" options={{ presentation: 'card' }} />
+      <Stack.Screen name="admin" />
     </Stack>
   );
 }

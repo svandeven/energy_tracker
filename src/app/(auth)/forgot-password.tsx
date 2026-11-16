@@ -8,10 +8,12 @@ import { Button } from '../../components/Button';
 import { Text } from '../../components/Text';
 import { colors, fonts, radii } from '../../theme';
 import { useAuth } from '../../providers/AuthProvider';
+import { useI18n } from '../../i18n';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
   const { requestPasswordReset, verifyRecovery } = useAuth();
+  const { t, errorText } = useI18n();
 
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -21,7 +23,7 @@ export default function ForgotPasswordScreen() {
 
   const send = async () => {
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-      setError('Enter the email address for your account.');
+      setError(t('forgot.emailRequired'));
       return;
     }
     setError(null);
@@ -30,7 +32,7 @@ export default function ForgotPasswordScreen() {
       await requestPasswordReset(email);
       setSent(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not send the reset email.');
+      setError(errorText(e, 'forgot.sendFailed'));
     } finally {
       setBusy(null);
     }
@@ -39,11 +41,11 @@ export default function ForgotPasswordScreen() {
   const verify = async () => {
     const input = code.trim();
     if (!input) {
-      setError('Paste the link from the email, or enter the 6-digit code.');
+      setError(t('forgot.codeRequired'));
       return;
     }
     if (!input.includes('://') && input.length < 6) {
-      setError('That code looks too short — it should be 6 digits.');
+      setError(t('forgot.codeTooShort'));
       return;
     }
     setError(null);
@@ -52,7 +54,7 @@ export default function ForgotPasswordScreen() {
       await verifyRecovery(email, input);
       // The auth gate sends us to /reset-password once recovery is active.
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'That code was not accepted.');
+      setError(errorText(e, 'forgot.codeRejected'));
     } finally {
       setBusy(null);
     }
@@ -66,22 +68,20 @@ export default function ForgotPasswordScreen() {
             <Ionicons name="key-outline" size={26} color={colors.ink} />
           </View>
           <Text variant="title" center>
-            Reset your password
+            {t('forgot.title')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.lead}>
-            {sent
-              ? 'We sent you an email. Paste the link from it below — or the 6-digit code, if your email contains one.'
-              : "Enter your email and we'll send you a link and a code."}
+            {sent ? t('forgot.leadAfter') : t('forgot.leadBefore')}
           </Text>
 
           <View style={styles.field}>
-            <Text variant="label">Email</Text>
+            <Text variant="label">{t('common.email')}</Text>
             <View style={styles.inputRow}>
               <Ionicons name="mail-outline" size={18} color={colors.inkFaint} />
               <TextInput
                 value={email}
                 onChangeText={setEmail}
-                placeholder="you@example.com"
+                placeholder={t('common.emailPlaceholder')}
                 placeholderTextColor={colors.inkFaint}
                 autoCapitalize="none"
                 autoComplete="email"
@@ -94,13 +94,13 @@ export default function ForgotPasswordScreen() {
 
           {sent && (
             <View style={styles.field}>
-              <Text variant="label">Link or code from the email</Text>
+              <Text variant="label">{t('forgot.codeLabel')}</Text>
               <View style={[styles.inputRow, styles.inputRowTall]}>
                 <Ionicons name="link-outline" size={18} color={colors.inkFaint} />
                 <TextInput
                   value={code}
                   onChangeText={setCode}
-                  placeholder="Paste the link, or type the 6-digit code"
+                  placeholder={t('forgot.codePlaceholder')}
                   placeholderTextColor={colors.inkFaint}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -109,7 +109,7 @@ export default function ForgotPasswordScreen() {
                 />
               </View>
               <Text variant="caption" color={colors.inkMuted}>
-                In the email, long-press the button and choose Copy Link.
+                {t('forgot.copyHint')}
               </Text>
             </View>
           )}
@@ -122,20 +122,20 @@ export default function ForgotPasswordScreen() {
 
           {sent ? (
             <>
-              <Button label="Continue" onPress={verify} loading={busy === 'verify'} />
+              <Button label={t('common.continue')} onPress={verify} loading={busy === 'verify'} />
               <Pressable onPress={send} disabled={busy !== null} style={styles.resend}>
-                <Text variant="smallStrong" color={colors.teal} center>
-                  {busy === 'send' ? 'Sending…' : 'Send another email'}
+                <Text variant="smallStrong" color={colors.accent} center>
+                  {busy === 'send' ? t('forgot.sending') : t('forgot.sendAnother')}
                 </Text>
               </Pressable>
             </>
           ) : (
-            <Button label="Send reset email" onPress={send} loading={busy === 'send'} />
+            <Button label={t('forgot.send')} onPress={send} loading={busy === 'send'} />
           )}
 
           <Pressable onPress={() => router.replace('/sign-in?mode=login')} style={styles.backLink}>
             <Text variant="smallStrong" color={colors.inkMuted} center>
-              Back to log in
+              {t('forgot.backToLogin')}
             </Text>
           </Pressable>
         </ScrollView>

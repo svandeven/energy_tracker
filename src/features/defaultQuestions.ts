@@ -3,6 +3,8 @@
  * client can recover an account whose questions were never seeded.
  */
 interface DefaultQuestion {
+  /** Shown translated while the user hasn't reworded it; see src/i18n/questions.ts. */
+  default_key: string;
   title: string;
   icon: string;
   /** Descriptions for scores 0, 1 and 2. */
@@ -13,6 +15,7 @@ interface DefaultQuestion {
 
 export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
   {
+    default_key: 'morning',
     title: 'Morning readiness',
     icon: 'sun',
     score_labels: [
@@ -24,6 +27,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
     is_active: true,
   },
   {
+    default_key: 'daytime',
     title: 'Daytime stamina',
     icon: 'battery',
     score_labels: [
@@ -35,6 +39,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
     is_active: true,
   },
   {
+    default_key: 'movement',
     title: 'Movement capacity',
     icon: 'run',
     score_labels: [
@@ -46,6 +51,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
     is_active: true,
   },
   {
+    default_key: 'evening',
     title: 'Evening capacity',
     icon: 'moon',
     score_labels: [
@@ -57,6 +63,7 @@ export const DEFAULT_QUESTIONS: DefaultQuestion[] = [
     is_active: true,
   },
   {
+    default_key: 'mood',
     title: 'Mental clarity & mood',
     icon: 'brain',
     score_labels: [

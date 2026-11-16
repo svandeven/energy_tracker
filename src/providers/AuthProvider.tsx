@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import { isSupabaseConfigured } from '../lib/env';
 import { cancelReminders } from '../features/notifications';
 import type { ProfileRow } from '../lib/database.types';
+import { LocalizedError } from '../i18n';
 
 export type OAuthProvider = 'google' | 'apple';
 
@@ -199,7 +200,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       options: { redirectTo, skipBrowserRedirect: true },
     });
     if (error) throw error;
-    if (!data?.url) throw new Error('Could not start sign-in.');
+    if (!data?.url) throw new LocalizedError('error.couldNotStartSignIn');
 
     const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
     if (result.type !== 'success') return; // user dismissed the sheet
@@ -210,7 +211,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (errorDescription) throw new Error(errorDescription);
 
     const code = returned.searchParams.get('code');
-    if (!code) throw new Error('Sign-in did not return an authorization code.');
+    if (!code) throw new LocalizedError('error.noAuthCode');
 
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
     if (exchangeError) throw exchangeError;
@@ -233,7 +234,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         url = new URL(input);
       } catch {
-        throw new Error("That doesn't look like a link from the email.");
+        throw new LocalizedError('error.notALink');
       }
 
       const code = url.searchParams.get('code');
@@ -246,9 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const tokenHash = url.searchParams.get('token') ?? url.searchParams.get('token_hash');
       if (!tokenHash) {
-        throw new Error(
-          "Couldn't find a token in that link. Copy the whole link from the email.",
-        );
+        throw new LocalizedError('error.noTokenInLink');
       }
       const { error } = await supabase.auth.verifyOtp({
         token_hash: tokenHash,
@@ -281,13 +280,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const changePassword = useCallback(
     async (currentPassword: string, newPassword: string) => {
       const email = session?.user?.email;
-      if (!email) throw new Error('This account has no email address.');
+      if (!email) throw new LocalizedError('error.noEmailOnAccount');
 
       const { error: reauthError } = await supabase.auth.signInWithPassword({
         email,
         password: currentPassword,
       });
-      if (reauthError) throw new Error('That current password is not correct.');
+      if (reauthError) throw new LocalizedError('error.currentPasswordWrong');
 
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
@@ -309,12 +308,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (currentPassword?: string) => {
       if (authProvider === 'email') {
         const email = session?.user?.email;
-        if (!email || !currentPassword) throw new Error('Enter your password to continue.');
+        if (!email || !currentPassword) throw new LocalizedError('error.passwordRequired');
         const { error: reauthError } = await supabase.auth.signInWithPassword({
           email,
           password: currentPassword,
         });
-        if (reauthError) throw new Error('That password is not correct.');
+        if (reauthError) throw new LocalizedError('error.passwordWrong');
       }
 
       const { error } = await supabase.rpc('delete_account');

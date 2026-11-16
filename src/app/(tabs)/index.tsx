@@ -10,7 +10,8 @@ import { Card } from '../../components/Card';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { Text } from '../../components/Text';
 import { colors, radii, scoreColor } from '../../theme';
-import { formatShortDate, greeting, today } from '../../lib/dates';
+import { today } from '../../lib/dates';
+import { useI18n } from '../../i18n';
 import { dayTotal, maxDailyScore } from '../../lib/scoring';
 import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
@@ -19,6 +20,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { profile } = useAuth();
   const { questions, checkins, loading, error, reload } = useData();
+  const { t, fmt } = useI18n();
 
   const date = today();
   const day = useMemo(
@@ -34,7 +36,7 @@ export default function DashboardScreen() {
       <SafeAreaView style={styles.safe} edges={['top']}>
         <AppHeader />
         <View style={styles.centered}>
-          <ActivityIndicator color={colors.green} />
+          <ActivityIndicator color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -47,15 +49,16 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={reload} tintColor={colors.green} />
+          <RefreshControl refreshing={loading} onRefresh={reload} tintColor={colors.primary} />
         }
       >
         <Text variant="label" color={colors.inkFaint}>
-          {formatShortDate(date)}
+          {fmt.shortDate(date)}
         </Text>
         <Text variant="title" style={styles.greeting}>
-          {greeting()}
-          {profile?.display_name ? `, ${capitalize(profile.display_name)}` : ''}
+          {profile?.display_name
+            ? t('dashboard.greetingWithName', { greeting: t(greetingKey()), name: capitalize(profile.display_name) })
+            : t(greetingKey())}
         </Text>
 
         {error && (
@@ -66,8 +69,8 @@ export default function DashboardScreen() {
 
         <View style={styles.totalCard}>
           <View>
-            <Text variant="small" color={colors.onMint}>
-              Today&apos;s total
+            <Text variant="small" color={colors.onTint}>
+              {t('dashboard.todaysTotal')}
             </Text>
             <View style={styles.totalRow}>
               <Text variant="display" color={colors.ink}>
@@ -84,7 +87,7 @@ export default function DashboardScreen() {
         </View>
 
         <Text variant="heading" style={styles.sectionTitle}>
-          Energy Check-ins
+          {t('dashboard.checkins')}
         </Text>
 
         <View style={styles.list}>
@@ -96,9 +99,11 @@ export default function DashboardScreen() {
                 key={question.id}
                 onPress={() => router.push(`/check-in/${question.id}`)}
                 accessibilityRole="button"
-                accessibilityLabel={`${question.title}, ${
-                  scored ? `scored ${score} out of 2` : 'not scored yet'
-                }`}
+                accessibilityLabel={
+                  scored
+                    ? t('dashboard.a11yScored', { title: question.title, score })
+                    : t('dashboard.a11yNotScored', { title: question.title })
+                }
                 style={({ pressed }) => [pressed && styles.pressed]}
               >
                 <Card style={styles.row} padded={false}>
@@ -107,7 +112,7 @@ export default function DashboardScreen() {
                     <View style={styles.rowText}>
                       <Text variant="bodyStrong">{question.title}</Text>
                       <Text variant="small" color={colors.inkMuted}>
-                        {scored ? 'Completed' : 'Not scored yet'}
+                        {scored ? t('dashboard.completed') : t('dashboard.notScored')}
                       </Text>
                     </View>
                     {scored ? (
@@ -134,15 +139,21 @@ export default function DashboardScreen() {
             <Ionicons name="checkmark" size={22} color={colors.white} />
           </View>
           <Text variant="heading" center style={styles.promptTitle}>
-            {complete ? 'All done!' : remaining === questions.length ? 'Ready when you are' : 'Almost there!'}
+            {complete
+              ? t('dashboard.allDone')
+              : remaining === questions.length
+                ? t('dashboard.ready')
+                : t('dashboard.almost')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center>
             {complete
-              ? "Every check-in is in. Here's how the day added up."
-              : `Finish your last ${remaining} check-in${remaining === 1 ? '' : 's'} to complete today.`}
+              ? t('dashboard.allDoneBody')
+              : remaining === 1
+                ? t('dashboard.remainingOne')
+                : t('dashboard.remainingOther', { count: remaining })}
           </Text>
           <Button
-            label="View today's summary"
+            label={t('dashboard.viewSummary')}
             variant="dark"
             onPress={() => router.push('/summary')}
             style={styles.promptButton}
@@ -155,6 +166,13 @@ export default function DashboardScreen() {
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+function greetingKey(now = new Date()) {
+  const h = now.getHours();
+  if (h < 12) return 'dashboard.goodMorning' as const;
+  if (h < 18) return 'dashboard.goodAfternoon' as const;
+  return 'dashboard.goodEvening' as const;
+}
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
@@ -163,7 +181,7 @@ const styles = StyleSheet.create({
   error: { marginTop: 8 },
   totalCard: {
     marginTop: 18,
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     borderRadius: radii.lg,
     padding: 18,
     flexDirection: 'row',
@@ -176,7 +194,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 999,
-    backgroundColor: colors.green,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -206,7 +224,7 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 999,
-    backgroundColor: colors.green,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },

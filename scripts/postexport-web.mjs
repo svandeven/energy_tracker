@@ -29,10 +29,18 @@ const CSS = `
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
         overflow: hidden;
       }
+    }
+    /* The content admin (src/app/admin) is a desktop tool: use the full window. */
+    body.fettle-admin #root {
+      max-width: none;
+      height: 100%;
+      margin-top: 0;
+      border-radius: 0;
+      box-shadow: none;
     }`;
 
 const META = [
-  '<meta name="theme-color" content="#6EDA8C" />',
+  '<meta name="theme-color" content="#FE9F4D" />',
   '<meta name="description" content="Track your daily energy in five quick check-ins." />',
 ].join('\n    ');
 

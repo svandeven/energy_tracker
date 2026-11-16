@@ -5,6 +5,8 @@ import type { CheckinRow, QuestionRow } from '../lib/database.types';
 import { type LocalDate, addDays, today } from '../lib/dates';
 import { useAuth } from './AuthProvider';
 import { DEFAULT_QUESTIONS } from '../features/defaultQuestions';
+import { useI18n } from '../i18n';
+import { localizeQuestion } from '../i18n/questions';
 
 /**
  * The chart needs 30 days and the week-over-week delta needs 14; fetch a little
@@ -15,6 +17,7 @@ import { DEFAULT_QUESTIONS } from '../features/defaultQuestions';
 export const HISTORY_WINDOW_DAYS = 45;
 
 interface DataValue {
+  /** Active questions, with seeded ones already in the current language. */
   questions: QuestionRow[];
   checkins: CheckinRow[];
   loading: boolean;
@@ -31,12 +34,15 @@ const DataContext = createContext<DataValue | null>(null);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
+  const { t, errorText } = useI18n();
   const userId = session?.user?.id ?? null;
 
-  const [questions, setQuestions] = useState<QuestionRow[]>([]);
+  // As stored. Screens get `questions`, the localized view of these.
+  const [rawQuestions, setQuestions] = useState<QuestionRow[]>([]);
   const [checkins, setCheckins] = useState<CheckinRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Kept raw and translated on read, so a language change doesn't refetch.
+  const [loadError, setError] = useState<unknown>(null);
 
   const reload = useCallback(async () => {
     if (!userId) {
@@ -80,7 +86,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setQuestions(loadedQuestions);
       setCheckins(cRes.data ?? []);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not load your data.');
+      setError(e);
     } finally {
       setLoading(false);
     }
@@ -112,10 +118,19 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [userId],
   );
 
+  const questions = useMemo(() => rawQuestions.map((q) => localizeQuestion(q, t)), [rawQuestions, t]);
+
   const updateQuestion = useCallback(
-    async (id: string, patch: Partial<QuestionRow>) => {
+    async (id: string, requested: Partial<QuestionRow>) => {
       if (!userId) return;
-      const previous = questions;
+      const previous = rawQuestions;
+      let patch = requested;
+      // Rewording a seeded question makes it the user's own: store the text they
+      // were looking at (in their language) and stop following translations.
+      const shown = questions.find((q) => q.id === id);
+      if (shown?.default_key && ('title' in patch || 'score_labels' in patch)) {
+        patch = { title: shown.title, score_labels: shown.score_labels, ...patch, default_key: null };
+      }
       setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, ...patch } : q)));
       const { error: updateError } = await supabase
         .from('questions')
@@ -127,7 +142,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         throw updateError;
       }
     },
-    [userId, questions],
+    [userId, rawQuestions, questions],
   );
 
   const addQuestion = useCallback(async () => {
@@ -136,24 +151,25 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       .from('questions')
       .insert({
         user_id: userId,
-        title: 'New check-in',
+        title: t('newQuestion.title'),
         icon: 'sun',
-        score_labels: ['Low', 'Okay', 'Great'],
+        score_labels: [t('newQuestion.score0'), t('newQuestion.score1'), t('newQuestion.score2')],
         reminder_time: '12:00',
-        sort_order: questions.length,
+        sort_order: rawQuestions.length,
         is_active: true,
+        default_key: null,
       })
       .select()
       .single();
     if (insertError) throw insertError;
     setQuestions((prev) => [...prev, data]);
     return data;
-  }, [userId, questions.length]);
+  }, [userId, rawQuestions.length, t]);
 
   const deleteQuestion = useCallback(
     async (id: string) => {
       if (!userId) return;
-      const previous = questions;
+      const previous = rawQuestions;
       setQuestions((prev) => prev.filter((q) => q.id !== id));
       // Soft delete: keeps historical check-ins meaningful instead of cascading them away.
       const { error: deleteError } = await supabase
@@ -166,7 +182,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         throw deleteError;
       }
     },
-    [userId, questions],
+    [userId, rawQuestions],
   );
 
   const value = useMemo<DataValue>(
@@ -174,14 +190,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       questions,
       checkins,
       loading,
-      error,
+      error: loadError == null ? null : errorText(loadError, 'error.loadData'),
       reload,
       saveScore,
       updateQuestion,
       addQuestion,
       deleteQuestion,
     }),
-    [questions, checkins, loading, error, reload, saveScore, updateQuestion, addQuestion, deleteQuestion],
+    [questions, checkins, loading, loadError, errorText, reload, saveScore, updateQuestion, addQuestion, deleteQuestion],
   );
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

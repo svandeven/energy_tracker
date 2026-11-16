@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { colors, fonts, radii } from '../theme';
 import { Text } from './Text';
 import type { TimePickerProps } from './TimePicker';
+import { useI18n } from '../i18n';
 
 /**
  * Web fallback. @react-native-community/datetimepicker ships no web build, so
@@ -10,13 +11,14 @@ import type { TimePickerProps } from './TimePicker';
  * renders to the DOM, so raw elements are fine in a .web file.
  */
 export function TimePicker({ value, onChange, onDismiss }: TimePickerProps) {
+  const { t } = useI18n();
   // <input type="time"> wants 'HH:MM'; Postgres gives us 'HH:MM:SS'.
   const inputValue = value.slice(0, 5);
 
   return (
     <View style={styles.sheet}>
       <Text variant="label" color={colors.inkMuted} style={styles.label}>
-        Reminder time
+        {t('settings.reminderTime')}
       </Text>
       <input
         type="time"
@@ -36,8 +38,8 @@ export function TimePicker({ value, onChange, onDismiss }: TimePickerProps) {
         }}
       />
       <Pressable onPress={onDismiss} style={styles.done} accessibilityRole="button">
-        <Text variant="bodyStrong" color={colors.teal} center>
-          Done
+        <Text variant="bodyStrong" color={colors.accent} center>
+          {t('common.done')}
         </Text>
       </Pressable>
     </View>

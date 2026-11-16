@@ -39,7 +39,7 @@ function Step({ n, text }: { n: number; text: string }) {
   return (
     <View style={styles.step}>
       <View style={styles.stepNumber}>
-        <Text variant="label" color={colors.onMint}>
+        <Text variant="label" color={colors.onTint}>
           {n}
         </Text>
       </View>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 999,
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     alignItems: 'center',
     justifyContent: 'center',
   },

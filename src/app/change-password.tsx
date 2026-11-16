@@ -9,10 +9,12 @@ import { Button } from '../components/Button';
 import { Text } from '../components/Text';
 import { colors, fonts, radii } from '../theme';
 import { useAuth } from '../providers/AuthProvider';
+import { useI18n } from '../i18n';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
   const { changePassword, authProvider } = useAuth();
+  const { t, errorText } = useI18n();
 
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
@@ -31,14 +33,13 @@ export default function ChangePasswordScreen() {
         <View style={styles.centered}>
           <Ionicons name="information-circle-outline" size={34} color={colors.inkMuted} />
           <Text variant="bodyStrong" center style={styles.centeredTitle}>
-            No password to change
+            {t('changePassword.noPasswordTitle')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center>
-            You sign in with {label}, so your password is managed there rather than in
-            Fettle.
+            {t('changePassword.noPasswordBody', { provider: label })}
           </Text>
           <Button
-            label="Back to settings"
+            label={t('common.backToSettings')}
             variant="secondary"
             onPress={() => router.back()}
             style={styles.centeredButton}
@@ -50,19 +51,19 @@ export default function ChangePasswordScreen() {
 
   const submit = async () => {
     if (!current) {
-      setError('Enter your current password.');
+      setError(t('error.currentPasswordRequired'));
       return;
     }
     if (next.length < 6) {
-      setError('New passwords need at least 6 characters.');
+      setError(t('error.newPasswordTooShort'));
       return;
     }
     if (next !== confirm) {
-      setError('Those passwords don’t match.');
+      setError(t('error.passwordsDontMatch'));
       return;
     }
     if (next === current) {
-      setError('That is already your password.');
+      setError(t('error.samePassword'));
       return;
     }
     setError(null);
@@ -71,7 +72,7 @@ export default function ChangePasswordScreen() {
       await changePassword(current, next);
       setDone(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not change your password.');
+      setError(errorText(e, 'changePassword.failed'));
     } finally {
       setBusy(false);
     }
@@ -86,13 +87,13 @@ export default function ChangePasswordScreen() {
             <Ionicons name="checkmark" size={28} color={colors.white} />
           </View>
           <Text variant="heading" center style={styles.centeredTitle}>
-            Password changed
+            {t('changePassword.doneTitle')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center>
-            Use your new password next time you sign in.
+            {t('changePassword.doneBody')}
           </Text>
           <Button
-            label="Back to settings"
+            label={t('common.backToSettings')}
             onPress={() => router.back()}
             style={styles.centeredButton}
           />
@@ -109,16 +110,16 @@ export default function ChangePasswordScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text variant="title">Change password</Text>
+          <Text variant="title">{t('changePassword.title')}</Text>
           <Text variant="small" color={colors.inkMuted} style={styles.lead}>
-            Confirm your current password, then choose a new one.
+            {t('changePassword.lead')}
           </Text>
 
-          <Field label="Current password">
+          <Field label={t('changePassword.current')}>
             <TextInput
               value={current}
               onChangeText={setCurrent}
-              placeholder="Your current password"
+              placeholder={t('common.currentPasswordPlaceholder')}
               placeholderTextColor={colors.inkFaint}
               secureTextEntry
               autoCapitalize="none"
@@ -127,11 +128,11 @@ export default function ChangePasswordScreen() {
             />
           </Field>
 
-          <Field label="New password">
+          <Field label={t('common.newPassword')}>
             <TextInput
               value={next}
               onChangeText={setNext}
-              placeholder="At least 6 characters"
+              placeholder={t('common.atLeast6')}
               placeholderTextColor={colors.inkFaint}
               secureTextEntry={!show}
               autoCapitalize="none"
@@ -142,7 +143,7 @@ export default function ChangePasswordScreen() {
               hitSlop={10}
               onPress={() => setShow((v) => !v)}
               accessibilityRole="button"
-              accessibilityLabel={show ? 'Hide password' : 'Show password'}
+              accessibilityLabel={show ? t('common.hidePassword') : t('common.showPassword')}
             >
               <Ionicons
                 name={show ? 'eye-off-outline' : 'eye-outline'}
@@ -152,11 +153,11 @@ export default function ChangePasswordScreen() {
             </Pressable>
           </Field>
 
-          <Field label="Confirm new password">
+          <Field label={t('common.confirmNewPassword')}>
             <TextInput
               value={confirm}
               onChangeText={setConfirm}
-              placeholder="Re-enter your new password"
+              placeholder={t('changePassword.reenterNew')}
               placeholderTextColor={colors.inkFaint}
               secureTextEntry={!show}
               autoCapitalize="none"
@@ -171,11 +172,11 @@ export default function ChangePasswordScreen() {
             </Text>
           )}
 
-          <Button label="Save new password" onPress={submit} loading={busy} />
+          <Button label={t('common.saveNewPassword')} onPress={submit} loading={busy} />
 
           <Pressable onPress={() => router.back()} style={styles.backLink}>
             <Text variant="smallStrong" color={colors.inkMuted} center>
-              Cancel
+              {t('common.cancel')}
             </Text>
           </Pressable>
         </ScrollView>
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 999,
-    backgroundColor: colors.green,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },

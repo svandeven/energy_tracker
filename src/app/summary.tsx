@@ -12,15 +12,15 @@ import { Text } from '../components/Text';
 import { colors, radii } from '../theme';
 import {
   addDays,
-  formatLongDate,
   isFuture,
   isToday,
   isValidLocalDate,
   today,
   type LocalDate,
 } from '../lib/dates';
-import { dayTotal, maxDailyScore, summaryMessage } from '../lib/scoring';
+import { dayTotal, maxDailyScore, summaryMessageKey } from '../lib/scoring';
 import { HISTORY_WINDOW_DAYS, useData } from '../providers/DataProvider';
+import { useI18n } from '../i18n';
 
 /** Mirrors the check-in screen's guard so a bad `?date=` falls back to today. */
 function resolveDate(raw: string | undefined): LocalDate {
@@ -34,6 +34,7 @@ export default function SummaryScreen() {
   const router = useRouter();
   const { date: dateParam } = useLocalSearchParams<{ date?: string }>();
   const { questions, checkins } = useData();
+  const { t, fmt } = useI18n();
 
   const date = resolveDate(dateParam);
   const day = useMemo(() => dayTotal(checkins, questions, date), [checkins, questions, date]);
@@ -45,13 +46,13 @@ export default function SummaryScreen() {
       <AppHeader onBackground="surface" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.badge}>
-          <Ionicons name="checkmark" size={30} color={complete ? colors.green : colors.inkFaint} />
+          <Ionicons name="checkmark" size={30} color={complete ? colors.primary : colors.inkFaint} />
         </View>
         <Text variant="title" center>
-          {isToday(date) ? "Today's summary" : 'Day summary'}
+          {isToday(date) ? t('summary.today') : t('summary.day')}
         </Text>
         <Text variant="small" color={colors.inkMuted} center style={styles.date}>
-          {formatLongDate(date)}
+          {fmt.longDate(date)}
         </Text>
 
         <Card style={styles.card} padded={false}>
@@ -75,27 +76,27 @@ export default function SummaryScreen() {
         </Card>
 
         <View style={styles.totalCard}>
-          <Text variant="small" color={colors.onMint} center>
-            Total energy score
+          <Text variant="small" color={colors.onTint} center>
+            {t('summary.total')}
           </Text>
           <Text variant="display" color={colors.ink} style={styles.totalValue}>
             {day.total}/{max}
           </Text>
-          <Text variant="small" color={colors.onMint} center>
+          <Text variant="small" color={colors.onTint} center>
             {complete
-              ? summaryMessage(day.total, max)
+              ? t(summaryMessageKey(day.total, max))
               : isToday(date)
-                ? `${questions.length - day.answered} check-in${
-                    questions.length - day.answered === 1 ? '' : 's'
-                  } still to go — this total will keep climbing.`
-                : `${day.answered} of ${questions.length} logged for this day.`}
+                ? questions.length - day.answered === 1
+                  ? t('summary.toGoOne')
+                  : t('summary.toGoOther', { count: questions.length - day.answered })
+                : t('summary.partial', { answered: day.answered, total: questions.length })}
           </Text>
         </View>
 
         <View style={styles.actions}>
-          <Button label="View History" onPress={() => router.replace('/history')} />
+          <Button label={t('summary.viewHistory')} onPress={() => router.replace('/history')} />
           <Button
-            label={isToday(date) ? 'Back to dashboard' : 'Back to history'}
+            label={isToday(date) ? t('common.backToDashboard') : t('common.backToHistory')}
             variant="secondary"
             onPress={() => router.replace(isToday(date) ? '/' : '/history')}
           />
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 999,
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   rowLabel: { flex: 1 },
   totalCard: {
     marginTop: 18,
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     borderRadius: radii.lg,
     padding: 20,
     alignItems: 'center',
