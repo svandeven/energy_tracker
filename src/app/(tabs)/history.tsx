@@ -14,7 +14,7 @@ import { shortLabel } from '../../i18n/questions';
 import {
   breakdownLine,
   compareWeeks,
-  isAnswerable,
+  isDue,
   type DayTotal,
   dayTotalsSeries,
   maxDailyScore,
@@ -66,8 +66,8 @@ export default function HistoryScreen() {
   const openDay = (day: DayTotal) => {
     const answered = scoresForDate(checkins, day.date);
     const target =
-      questions.find((q) => !answered.has(q.id) && isAnswerable(q, day.date)) ??
-      questions.find((q) => isAnswerable(q, day.date));
+      questions.find((q) => !answered.has(q.id) && isDue(q, day.date)) ??
+      questions.find((q) => isDue(q, day.date));
     if (!target) return;
     router.push({
       pathname: '/check-in/[id]',

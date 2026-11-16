@@ -18,7 +18,7 @@ import {
   today,
   type LocalDate,
 } from '../lib/dates';
-import { dayTotal, isAnswerable, maxDailyScore, summaryMessageKey } from '../lib/scoring';
+import { dayTotal, isDue, maxDailyScore, summaryMessageKey } from '../lib/scoring';
 import { HISTORY_WINDOW_DAYS, useData } from '../providers/DataProvider';
 import { useI18n } from '../i18n';
 
@@ -41,7 +41,7 @@ export default function SummaryScreen() {
   const max = maxDailyScore(questions);
   const complete = day.answered === questions.length && questions.length > 0;
   const unanswered = questions.filter((q) => !day.scores.has(q.id));
-  const toGo = unanswered.filter((q) => isAnswerable(q, date)).length;
+  const toGo = unanswered.filter((q) => isDue(q, date)).length;
   // Next-day questions still waiting for tomorrow morning.
   const later = unanswered.length - toGo;
 

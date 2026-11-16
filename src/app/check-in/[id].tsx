@@ -17,7 +17,7 @@ import {
   today,
   type LocalDate,
 } from '../../lib/dates';
-import { isAnswerable, scoresForDate } from '../../lib/scoring';
+import { isDue, scoresForDate } from '../../lib/scoring';
 import { HISTORY_WINDOW_DAYS, useData } from '../../providers/DataProvider';
 import { useI18n } from '../../i18n';
 
@@ -55,13 +55,13 @@ export default function CheckInScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!question || !isAnswerable(question, date)) {
+  if (!question) {
     return (
       <SafeAreaView style={styles.safe} edges={['top']}>
         <AppHeader onBackground="surface" />
         <View style={styles.missing}>
           <Text variant="bodyStrong" center>
-            {question ? t('checkIn.nextDayOnly') : t('checkIn.unavailable')}
+            {t('checkIn.unavailable')}
           </Text>
           <Button
             label={t('common.backToDashboard')}
@@ -95,7 +95,8 @@ export default function CheckInScreen() {
       // summary — the same chain whether you're logging today or backfilling.
       const answered = scoresForDate(checkins, date);
       answered.set(question.id, selected);
-      const next = questions.find((q) => !answered.has(q.id) && isAnswerable(q, date));
+      // Optional next-day questions are skipped; they're offered tomorrow morning.
+      const next = questions.find((q) => !answered.has(q.id) && isDue(q, date));
       // Object form rather than a template string: expo-router's typed routes
       // reject interpolated paths.
       const carry = backfilling ? { date } : {};

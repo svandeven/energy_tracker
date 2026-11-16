@@ -128,12 +128,12 @@ export const en = {
   'dashboard.remainingOne': 'Finish your last check-in to complete today.',
   'dashboard.remainingOther': 'Finish your last {count} check-ins to complete today.',
   'dashboard.viewSummary': 'View today’s summary',
-  'dashboard.logTomorrow': 'Log tomorrow morning',
+  'dashboard.logTomorrow': 'Now or tomorrow morning',
   'dashboard.finishYesterday': 'Finish yesterday',
   'dashboard.finishYesterdayBody': 'These are logged the morning after.',
   'dashboard.allDoneForNow': 'All done for now!',
-  'dashboard.laterOne': 'One more check-in tomorrow morning finishes today.',
-  'dashboard.laterOther': 'Log {count} more tomorrow morning to finish today.',
+  'dashboard.laterOne': 'One more check-in is due tomorrow morning — or log it now if you like.',
+  'dashboard.laterOther': '{count} more check-ins are due tomorrow morning — or log them now if you like.',
 
   // Check-in
   'checkIn.unavailable': 'That check-in isn’t available any more.',
@@ -146,7 +146,6 @@ export const en = {
   'checkIn.pickOne': 'Pick the option that best matches your day.',
   'checkIn.saveFailed': 'Could not save that. Try again.',
   'checkIn.notReady': 'Not ready?',
-  'checkIn.nextDayOnly': 'You log this one tomorrow morning, once the day is over.',
 
   // Summary
   'summary.today': 'Today’s summary',
@@ -210,7 +209,7 @@ export const en = {
   'settings.nextDay': 'Next day',
   'settings.dayToggleA11y': 'Reminder day for {title}',
   'settings.nextDayHint':
-    'Next day: you’re reminded the following morning and log it for the day before — for questions about your evening or sleep.',
+    'Next day: you’re reminded the following morning and log it for the day before — for questions about your evening or sleep. You can still answer it the same day.',
   'settings.language': 'Language',
   'settings.languageSystem': 'Same as device',
   'settings.account': 'Account',

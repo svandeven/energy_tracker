@@ -125,12 +125,12 @@ export const nl: Record<TranslationKey, string> = {
   'dashboard.remainingOne': 'Vul je laatste check-in in om vandaag af te ronden.',
   'dashboard.remainingOther': 'Vul je laatste {count} check-ins in om vandaag af te ronden.',
   'dashboard.viewSummary': 'Bekijk het overzicht van vandaag',
-  'dashboard.logTomorrow': 'Morgenochtend invullen',
+  'dashboard.logTomorrow': 'Nu of morgenochtend',
   'dashboard.finishYesterday': 'Gisteren afronden',
   'dashboard.finishYesterdayBody': 'Deze vul je de ochtend erna in.',
   'dashboard.allDoneForNow': 'Klaar voor nu!',
-  'dashboard.laterOne': 'Morgenochtend nog één check-in om vandaag af te ronden.',
-  'dashboard.laterOther': 'Morgenochtend nog {count} check-ins om vandaag af te ronden.',
+  'dashboard.laterOne': 'Morgenochtend volgt nog één check-in — of vul hem nu al in.',
+  'dashboard.laterOther': 'Morgenochtend volgen nog {count} check-ins — of vul ze nu al in.',
 
   // Check-in
   'checkIn.unavailable': 'Die check-in is niet meer beschikbaar.',
@@ -143,7 +143,6 @@ export const nl: Record<TranslationKey, string> = {
   'checkIn.pickOne': 'Kies de optie die het best bij je dag past.',
   'checkIn.saveFailed': 'Opslaan is niet gelukt. Probeer het opnieuw.',
   'checkIn.notReady': 'Nog niet klaar?',
-  'checkIn.nextDayOnly': 'Deze vul je morgenochtend in, als de dag voorbij is.',
 
   // Summary
   'summary.today': 'Overzicht van vandaag',
@@ -207,7 +206,7 @@ export const nl: Record<TranslationKey, string> = {
   'settings.nextDay': 'Volgende dag',
   'settings.dayToggleA11y': 'Dag van herinnering voor {title}',
   'settings.nextDayHint':
-    'Volgende dag: je krijgt de herinnering de ochtend erna en vult hem in voor de dag ervoor — voor vragen over je avond of slaap.',
+    'Volgende dag: je krijgt de herinnering de ochtend erna en vult hem in voor de dag ervoor — voor vragen over je avond of slaap. Op de dag zelf invullen kan ook.',
   'settings.language': 'Taal',
   'settings.languageSystem': 'Zoals apparaat',
   'settings.account': 'Account',

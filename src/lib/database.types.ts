@@ -20,8 +20,8 @@ export type QuestionRow = {
   reminder_time: string;
   /**
    * Reminded the morning after instead of the same day, and answered for the
-   * day before — for questions only answerable once the day is over (sleep,
-   * the evening). On the day itself the question can't be answered yet.
+   * day before — for questions best answered once the day is over (sleep, the
+   * evening). Answering on the day itself is allowed but optional.
    */
   reminder_next_day: boolean;
   sort_order: number;

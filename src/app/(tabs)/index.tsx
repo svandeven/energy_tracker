@@ -12,7 +12,7 @@ import { Text } from '../../components/Text';
 import { colors, radii, scoreColor } from '../../theme';
 import { addDays, today } from '../../lib/dates';
 import { useI18n } from '../../i18n';
-import { dayTotal, isAnswerable, maxDailyScore, scoresForDate } from '../../lib/scoring';
+import { dayTotal, isDue, maxDailyScore, scoresForDate } from '../../lib/scoring';
 import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
 
@@ -28,11 +28,11 @@ export default function DashboardScreen() {
     [checkins, questions, date],
   );
   const max = maxDailyScore(questions);
-  // Next-day questions can't be answered until tomorrow morning, so "done"
-  // means done with everything that can be answered today.
-  const answerableToday = questions.filter((q) => isAnswerable(q, date));
+  // Next-day questions aren't due until tomorrow morning, so "done" means done
+  // with everything due today; answering them now is optional.
+  const answerableToday = questions.filter((q) => isDue(q, date));
   const remaining = answerableToday.filter((q) => !day.scores.has(q.id)).length;
-  const later = questions.filter((q) => !isAnswerable(q, date) && !day.scores.has(q.id)).length;
+  const later = questions.filter((q) => !isDue(q, date) && !day.scores.has(q.id)).length;
   const complete = remaining === 0 && later === 0 && questions.length > 0;
   const doneForNow = remaining === 0 && later > 0;
 
@@ -136,17 +136,16 @@ export default function DashboardScreen() {
           {questions.map((question) => {
             const score = day.scores.get(question.id) ?? null;
             const scored = score != null;
-            const tomorrow = !scored && !isAnswerable(question, date);
+            const optional = !scored && !isDue(question, date);
             return (
               <Pressable
                 key={question.id}
                 onPress={() => router.push(`/check-in/${question.id}`)}
-                disabled={tomorrow}
                 accessibilityRole="button"
                 accessibilityLabel={
                   scored
                     ? t('dashboard.a11yScored', { title: question.title, score })
-                    : tomorrow
+                    : optional
                       ? `${question.title}, ${t('dashboard.logTomorrow')}`
                       : t('dashboard.a11yNotScored', { title: question.title })
                 }
@@ -160,7 +159,7 @@ export default function DashboardScreen() {
                       <Text variant="small" color={colors.inkMuted}>
                         {scored
                           ? t('dashboard.completed')
-                          : tomorrow
+                          : optional
                             ? t('dashboard.logTomorrow')
                             : t('dashboard.notScored')}
                       </Text>
@@ -174,7 +173,7 @@ export default function DashboardScreen() {
                           /2
                         </Text>
                       </View>
-                    ) : tomorrow ? (
+                    ) : optional ? (
                       <Ionicons name="moon-outline" size={20} color={colors.inkFaint} />
                     ) : (
                       <View style={styles.pendingRing} />

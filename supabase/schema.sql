@@ -40,7 +40,8 @@ create table if not exists public.questions (
 );
 
 -- Reminders for questions about the evening or sleep fire the morning after,
--- and the score is logged for the day before (the app enforces this).
+-- and the score is logged for the day before. Answering on the day itself is
+-- still allowed; it just isn't expected yet.
 alter table public.questions
   add column if not exists reminder_next_day boolean not null default false;
 
