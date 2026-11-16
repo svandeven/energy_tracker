@@ -123,7 +123,7 @@ SQL editor, or deletion fails with "Could not find the function".
 
 **Terms & Privacy** (`/terms`) is linked from the sign-in footer and from
 Settings, and opens signed out too. `CONTACT_EMAIL` in `src/app/terms.tsx` is
-support@fettle-life.com; have the text reviewed before you submit. App Store
+support@sunsteps.eu; have the text reviewed before you submit. App Store
 Connect also wants the privacy policy at a public URL — `/terms` on the web
 build (eventually `https://sunsteps.eu/terms`).
 

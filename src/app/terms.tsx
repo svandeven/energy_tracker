@@ -9,7 +9,7 @@ import { parseLocalDate } from '../lib/dates';
 import { useI18n } from '../i18n';
 
 // TODO: replace with a real support address before submitting to the App Store.
-const CONTACT_EMAIL = 'support@fettle-life.com';
+const CONTACT_EMAIL = 'support@sunsteps.eu';
 const LAST_UPDATED = '2026-11-06';
 
 /**
