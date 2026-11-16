@@ -10,9 +10,9 @@ import { Card } from '../components/Card';
 import { Text } from '../components/Text';
 import { colors, fonts, radii } from '../theme';
 import { useAuth } from '../providers/AuthProvider';
+import { useI18n } from '../i18n';
 
 const DANGER = '#C4342B';
-const CONFIRM_WORD = 'DELETE';
 
 /**
  * Permanent account deletion, required in-app by App Store guideline 5.1.1(v).
@@ -22,22 +22,26 @@ const CONFIRM_WORD = 'DELETE';
 export default function DeleteAccountScreen() {
   const router = useRouter();
   const { deleteAccount, authProvider, session } = useAuth();
+  const { t, errorText } = useI18n();
   const needsPassword = authProvider === 'email';
+  // The word is translated ("VERWIJDER" in Dutch); the English one always works too.
+  const confirmWord = t('deleteAccount.confirmWord');
 
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const confirmed = confirm.trim().toUpperCase() === CONFIRM_WORD;
+  const typed = confirm.trim().toUpperCase();
+  const confirmed = typed === confirmWord.toUpperCase() || typed === 'DELETE';
 
   const submit = async () => {
     if (needsPassword && !password) {
-      setError('Enter your password to continue.');
+      setError(t('error.passwordRequired'));
       return;
     }
     if (!confirmed) {
-      setError(`Type ${CONFIRM_WORD} to confirm.`);
+      setError(t('deleteAccount.typeToConfirmError', { word: confirmWord }));
       return;
     }
     setError(null);
@@ -47,7 +51,7 @@ export default function DeleteAccountScreen() {
       // there is no "done" state to render here.
       await deleteAccount(needsPassword ? password : undefined);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not delete your account.');
+      setError(errorText(e, 'deleteAccount.failed'));
       setBusy(false);
     }
   };
@@ -60,33 +64,32 @@ export default function DeleteAccountScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text variant="title">Delete account</Text>
+          <Text variant="title">{t('deleteAccount.title')}</Text>
           <Text variant="small" color={colors.inkMuted} style={styles.lead}>
             {session?.user?.email
-              ? `This permanently deletes ${session.user.email}.`
-              : 'This permanently deletes your account.'}
+              ? t('deleteAccount.leadEmail', { email: session.user.email })
+              : t('deleteAccount.lead')}
           </Text>
 
           <Card style={styles.warning}>
             <View style={styles.warningHeader}>
               <Ionicons name="warning-outline" size={20} color={DANGER} />
-              <Text variant="bodyStrong">This can’t be undone</Text>
+              <Text variant="bodyStrong">{t('deleteAccount.cantUndo')}</Text>
             </View>
-            <Bullet>Every check-in score and your full history</Bullet>
-            <Bullet>Your questions, score descriptions and reminder times</Bullet>
-            <Bullet>Your profile and sign-in details</Bullet>
+            <Bullet>{t('deleteAccount.bullet1')}</Bullet>
+            <Bullet>{t('deleteAccount.bullet2')}</Bullet>
+            <Bullet>{t('deleteAccount.bullet3')}</Bullet>
             <Text variant="small" color={colors.inkMuted} style={styles.warningFoot}>
-              Everything is removed from our servers straight away. Reminders scheduled on
-              this device are cancelled too.
+              {t('deleteAccount.foot')}
             </Text>
           </Card>
 
           {needsPassword && (
-            <Field label="Password" icon="lock-closed-outline">
+            <Field label={t('common.password')} icon="lock-closed-outline">
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Your current password"
+                placeholder={t('common.currentPasswordPlaceholder')}
                 placeholderTextColor={colors.inkFaint}
                 secureTextEntry
                 autoCapitalize="none"
@@ -96,11 +99,11 @@ export default function DeleteAccountScreen() {
             </Field>
           )}
 
-          <Field label={`Type ${CONFIRM_WORD} to confirm`} icon="trash-outline">
+          <Field label={t('deleteAccount.typeToConfirm', { word: confirmWord })} icon="trash-outline">
             <TextInput
               value={confirm}
               onChangeText={setConfirm}
-              placeholder={CONFIRM_WORD}
+              placeholder={confirmWord}
               placeholderTextColor={colors.inkFaint}
               autoCapitalize="characters"
               autoCorrect={false}
@@ -126,12 +129,12 @@ export default function DeleteAccountScreen() {
             ]}
           >
             <Text variant="bodyStrong" color={colors.white} center>
-              {busy ? 'Deleting…' : 'Permanently delete account'}
+              {busy ? t('deleteAccount.deleting') : t('deleteAccount.submit')}
             </Text>
           </Pressable>
 
           <Button
-            label="Keep my account"
+            label={t('deleteAccount.keep')}
             variant="secondary"
             onPress={() => router.back()}
             disabled={busy}

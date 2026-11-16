@@ -8,10 +8,12 @@ import { Button } from '../../components/Button';
 import { Text } from '../../components/Text';
 import { colors, fonts, radii } from '../../theme';
 import { useAuth } from '../../providers/AuthProvider';
+import { useI18n } from '../../i18n';
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
   const { updatePassword, signOut } = useAuth();
+  const { t, errorText } = useI18n();
 
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -21,11 +23,11 @@ export default function ResetPasswordScreen() {
 
   const submit = async () => {
     if (password.length < 6) {
-      setError('Passwords need at least 6 characters.');
+      setError(t('error.passwordTooShort'));
       return;
     }
     if (password !== confirm) {
-      setError('Those passwords don’t match.');
+      setError(t('error.passwordsDontMatch'));
       return;
     }
     setError(null);
@@ -35,7 +37,7 @@ export default function ResetPasswordScreen() {
       // Clearing recovery lets the auth gate drop us into the app.
       router.replace('/');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not update your password.');
+      setError(errorText(e, 'reset.failed'));
     } finally {
       setBusy(false);
     }
@@ -49,20 +51,20 @@ export default function ResetPasswordScreen() {
             <Ionicons name="lock-open-outline" size={26} color={colors.ink} />
           </View>
           <Text variant="title" center>
-            Choose a new password
+            {t('reset.title')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.lead}>
-            You&apos;re signed in from the reset link. Set a new password to finish.
+            {t('reset.lead')}
           </Text>
 
           <View style={styles.field}>
-            <Text variant="label">New password</Text>
+            <Text variant="label">{t('common.newPassword')}</Text>
             <View style={styles.inputRow}>
               <Ionicons name="lock-closed-outline" size={18} color={colors.inkFaint} />
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder="At least 6 characters"
+                placeholder={t('common.atLeast6')}
                 placeholderTextColor={colors.inkFaint}
                 secureTextEntry={!show}
                 autoCapitalize="none"
@@ -73,7 +75,7 @@ export default function ResetPasswordScreen() {
                 hitSlop={10}
                 onPress={() => setShow((v) => !v)}
                 accessibilityRole="button"
-                accessibilityLabel={show ? 'Hide password' : 'Show password'}
+                accessibilityLabel={show ? t('common.hidePassword') : t('common.showPassword')}
               >
                 <Ionicons
                   name={show ? 'eye-off-outline' : 'eye-outline'}
@@ -85,13 +87,13 @@ export default function ResetPasswordScreen() {
           </View>
 
           <View style={styles.field}>
-            <Text variant="label">Confirm new password</Text>
+            <Text variant="label">{t('common.confirmNewPassword')}</Text>
             <View style={styles.inputRow}>
               <Ionicons name="lock-closed-outline" size={18} color={colors.inkFaint} />
               <TextInput
                 value={confirm}
                 onChangeText={setConfirm}
-                placeholder="Re-enter your password"
+                placeholder={t('common.reenterPassword')}
                 placeholderTextColor={colors.inkFaint}
                 secureTextEntry={!show}
                 autoCapitalize="none"
@@ -107,7 +109,7 @@ export default function ResetPasswordScreen() {
             </Text>
           )}
 
-          <Button label="Save new password" onPress={submit} loading={busy} />
+          <Button label={t('common.saveNewPassword')} onPress={submit} loading={busy} />
 
           <Pressable
             onPress={async () => {
@@ -117,7 +119,7 @@ export default function ResetPasswordScreen() {
             style={styles.backLink}
           >
             <Text variant="smallStrong" color={colors.inkMuted} center>
-              Cancel and sign out
+              {t('reset.cancel')}
             </Text>
           </Pressable>
         </ScrollView>
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: radii.md,
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,

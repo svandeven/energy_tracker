@@ -5,6 +5,7 @@ import DateTimePicker, {
 
 import { colors } from '../theme';
 import { parseTime } from '../lib/dates';
+import { useI18n } from '../i18n';
 import { Text } from './Text';
 
 export interface TimePickerProps {
@@ -32,6 +33,7 @@ function toDate(time: string) {
  * manages its own lifecycle and reports a single 'set' or 'dismissed'.
  */
 export function TimePicker({ value, onChange, onDismiss }: TimePickerProps) {
+  const { t } = useI18n();
   const handleChange = (event: DateTimePickerEvent, selected?: Date) => {
     if (event.type === 'dismissed') {
       onDismiss();
@@ -59,8 +61,8 @@ export function TimePicker({ value, onChange, onDismiss }: TimePickerProps) {
     <View style={styles.sheet}>
       {picker}
       <Pressable onPress={onDismiss} style={styles.done} accessibilityRole="button">
-        <Text variant="bodyStrong" color={colors.teal} center>
-          Done
+        <Text variant="bodyStrong" color={colors.accent} center>
+          {t('common.done')}
         </Text>
       </Pressable>
     </View>

@@ -19,7 +19,7 @@
     "android": {
       "package": "com.fettlelife.app",
       "adaptiveIcon": {
-        "backgroundColor": "#B7FACC",
+        "backgroundColor": "#FE9F4D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
@@ -44,10 +44,19 @@
       [
         "expo-notifications",
         {
-          "color": "#6EDA8C"
+          "color": "#FE9F4D"
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["en", "nl"],
+            "android": ["en", "nl"]
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

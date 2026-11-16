@@ -1,16 +1,18 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { colors } from '../theme';
+import { useI18n } from '../i18n';
 import { Text } from './Text';
 
 /**
  * The persistent header from the mockups: history glyph on the left, the
- * "⚡ Fettle" wordmark centered, settings gear on the right.
+ * logo + app-name wordmark centered, settings gear on the right.
  */
 export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' | 'surface' }) {
   const router = useRouter();
+  const { t } = useI18n();
   return (
     <View
       style={[
@@ -20,27 +22,25 @@ export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' |
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="History"
+        accessibilityLabel={t('tabs.history')}
         hitSlop={12}
         onPress={() => router.push('/history')}
       >
-        <Ionicons name="analytics-outline" size={22} color={colors.green} />
+        <Ionicons name="analytics-outline" size={22} color={colors.accent} />
       </Pressable>
 
       <View style={styles.wordmark}>
-        <Text variant="caption" style={styles.bolt}>
-          ⚡
-        </Text>
-        <Text variant="bodyStrong">Fettle</Text>
+        <Image source={require('../../assets/images/logo.png')} style={styles.mark} />
+        <Text variant="bodyStrong">{t('common.appName')}</Text>
       </View>
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Settings"
+        accessibilityLabel={t('tabs.settings')}
         hitSlop={12}
         onPress={() => router.push('/settings')}
       >
-        <Ionicons name="settings-sharp" size={20} color={colors.teal} />
+        <Ionicons name="settings-sharp" size={20} color={colors.accent} />
       </Pressable>
     </View>
   );
@@ -55,5 +55,5 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   wordmark: { flexDirection: 'row', alignItems: 'center' },
-  bolt: { fontSize: 14, marginRight: 4 },
+  mark: { width: 20, height: 20, marginRight: 6 },
 });

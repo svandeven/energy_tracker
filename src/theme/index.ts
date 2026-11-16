@@ -1,23 +1,22 @@
 /**
- * Design tokens sampled directly from the source mockup (kept locally, not
- * committed). Values below are the exact hex codes read from its pixels.
- * Colors are exact hex values pulled from the mockup pixels.
+ * Design tokens. Brand colors are sampled from the app icon in design/
+ * (orange tile #FE9F4D, sun-and-bars yellow #FFDC4A, white check).
  */
 
 export const colors = {
-  /** Primary action green — "Get started", "Save", "Continue", toggles. */
-  green: '#6EDA8C',
-  greenPressed: '#5AC97A',
-  /** Mint surface — hero score card, selected option, summary total card. */
-  mint: '#B7FACC',
-  /** Text/icon color that sits on top of `mint`. */
-  onMint: '#0B3A1E',
-  /** Teal accent — header gear, category glyphs, inline links, mid scores. */
-  teal: '#35D6C0',
-  /** Pale teal — category icon chip backgrounds. */
-  tealChip: '#BEF0ED',
+  /** Primary action orange — "Get started", "Save", "Continue", toggles. */
+  primary: '#FE9F4D',
+  primaryPressed: '#F08A35',
+  /** Pale peach surface — hero score card, selected option, summary total card. */
+  tint: '#FFEAD6',
+  /** Text/icon color that sits on top of `tint`. */
+  onTint: '#5A2E0C',
+  /** Deep orange accent — header gear, category glyphs, inline links. Readable on white. */
+  accent: '#B5560A',
+  /** Pale yellow — category icon chip backgrounds. */
+  accentChip: '#FFF1BF',
   /** Brand yellow — logo tile, the score-of-1 numeral. */
-  yellow: '#FFDD33',
+  yellow: '#FFDC4A',
 
   ink: '#1C1C1E',
   inkMuted: '#616163',
@@ -80,17 +79,17 @@ export const cardShadow = {
   elevation: 2,
 } as const;
 
-/** Score colors: 0 is muted, 1 is yellow, 2 is green (per the dashboard rows). */
+/** Score colors: 0 is muted, 1 is yellow, 2 is orange (per the dashboard rows). */
 export function scoreColor(score: number | null | undefined) {
   if (score == null) return colors.inkFaint;
-  if (score >= 2) return colors.green;
+  if (score >= 2) return colors.primary;
   if (score === 1) return colors.yellow;
   return colors.inkMuted;
 }
 
-/** Daily-total color used on the History list (green when strong, teal when middling). */
+/** Daily-total color used on the History list (orange when strong, deep orange when middling). */
 export function totalColor(total: number, max: number) {
   const ratio = max > 0 ? total / max : 0;
-  if (ratio >= 0.7) return colors.green;
-  return colors.teal;
+  if (ratio >= 0.7) return colors.primary;
+  return colors.accent;
 }

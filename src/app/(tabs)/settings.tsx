@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,10 +10,10 @@ import { CategoryIcon } from '../../components/CategoryIcon';
 import { TimePicker } from '../../components/TimePicker';
 import { Text } from '../../components/Text';
 import { colors, fonts, radii } from '../../theme';
-import { formatTime } from '../../lib/dates';
 import type { QuestionRow } from '../../lib/database.types';
 import { useAuth } from '../../providers/AuthProvider';
 import { useData } from '../../providers/DataProvider';
+import { LOCALES, LOCALE_NAMES, type Locale, useI18n } from '../../i18n';
 
 const DANGER = '#C4342B';
 
@@ -21,18 +21,26 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { profile, setPushEnabled, signOut } = useAuth();
   const { questions, updateQuestion, addQuestion, deleteQuestion } = useData();
+  const { t, fmt, locale, preference, setPreference } = useI18n();
   const [editingTimeFor, setEditingTimeFor] = useState<QuestionRow | null>(null);
 
   const pushEnabled = profile?.push_enabled ?? false;
+  // The editing screens are built for a desktop browser, so only link them there.
+  const canEditContent =
+    Platform.OS === 'web' && (profile?.role === 'content_editor' || profile?.role === 'super_admin');
+  const languageOptions: { value: Locale | null; label: string }[] = [
+    { value: null, label: t('settings.languageSystem') },
+    ...LOCALES.map((l) => ({ value: l, label: LOCALE_NAMES[l] })),
+  ];
 
   const confirmDelete = (question: QuestionRow) => {
     Alert.alert(
-      `Remove "${question.title}"?`,
-      'Past scores stay in your history, but you will stop being asked about it.',
+      t('settings.removeTitle', { title: question.title }),
+      t('settings.removeBody'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Remove',
+          text: t('settings.remove'),
           style: 'destructive',
           onPress: () => void deleteQuestion(question.id),
         },
@@ -44,20 +52,22 @@ export default function SettingsScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <AppHeader onBackground="surface" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text variant="title">Settings</Text>
+        <Text variant="title">{t('settings.title')}</Text>
         <Text variant="small" color={colors.inkMuted} style={styles.subtitle}>
-          Manage your check-in questions and reminders
+          {t('settings.subtitle')}
         </Text>
 
-        <Text variant="heading">Question Manager</Text>
+        <Text variant="heading">{t('settings.questionManager')}</Text>
         <Text variant="small" color={colors.inkMuted} style={styles.sectionSub}>
-          Edit your {questions.length} daily energy check-in question
-          {questions.length === 1 ? '' : 's'}
+          {questions.length === 1
+            ? t('settings.questionCountOne')
+            : t('settings.questionCountOther', { count: questions.length })}
         </Text>
 
         {questions.map((question) => (
           <QuestionEditor
-            key={question.id}
+            // Remount on language change so the fields pick up the new wording.
+            key={`${question.id}:${locale}`}
             question={question}
             onChange={(patch) => void updateQuestion(question.id, patch)}
             onDelete={questions.length > 1 ? () => confirmDelete(question) : undefined}
@@ -69,29 +79,29 @@ export default function SettingsScreen() {
           accessibilityRole="button"
           style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
         >
-          <Ionicons name="add" size={18} color={colors.green} />
-          <Text variant="bodyStrong" color={colors.green}>
-            Add new question
+          <Ionicons name="add" size={18} color={colors.accent} />
+          <Text variant="bodyStrong" color={colors.accent}>
+            {t('settings.addQuestion')}
           </Text>
         </Pressable>
 
         <Text variant="heading" style={styles.notificationsTitle}>
-          Notification Schedule
+          {t('settings.notifications')}
         </Text>
 
         <Card style={styles.pushCard} padded={false}>
           <View style={styles.pushRow}>
-            <Ionicons name="notifications-outline" size={20} color={colors.green} />
+            <Ionicons name="notifications-outline" size={20} color={colors.accent} />
             <View style={styles.pushText}>
-              <Text variant="bodyStrong">Push notifications</Text>
+              <Text variant="bodyStrong">{t('settings.push')}</Text>
               <Text variant="small" color={colors.inkMuted}>
-                Get reminders to check in
+                {t('settings.pushSub')}
               </Text>
             </View>
             <Switch
               value={pushEnabled}
               onValueChange={(next) => void setPushEnabled(next)}
-              trackColor={{ false: colors.border, true: colors.green }}
+              trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor={colors.white}
               ios_backgroundColor={colors.border}
             />
@@ -111,17 +121,45 @@ export default function SettingsScreen() {
               <Pressable
                 onPress={() => setEditingTimeFor(question)}
                 accessibilityRole="button"
-                accessibilityLabel={`Change reminder time for ${question.title}`}
+                accessibilityLabel={t('settings.changeTimeA11y', { title: question.title })}
                 style={({ pressed }) => [styles.timePill, pressed && styles.pressed]}
               >
-                <Text variant="smallStrong">{formatTime(question.reminder_time)}</Text>
+                <Text variant="smallStrong">{fmt.time(question.reminder_time)}</Text>
               </Pressable>
             </View>
           ))}
         </Card>
 
         <Text variant="heading" style={styles.accountTitle}>
-          Account
+          {t('settings.language')}
+        </Text>
+
+        <Card padded={false} style={styles.languageCard}>
+          {languageOptions.map((option, i) => {
+            const active = option.value === preference;
+            return (
+              <Pressable
+                key={option.value ?? 'system'}
+                onPress={() => setPreference(option.value)}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: active }}
+                style={({ pressed }) => [
+                  styles.languageRow,
+                  i > 0 && styles.rowDivider,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text variant={active ? 'bodyStrong' : 'body'} style={styles.accountText}>
+                  {option.label}
+                </Text>
+                {active && <Ionicons name="checkmark" size={20} color={colors.accent} />}
+              </Pressable>
+            );
+          })}
+        </Card>
+
+        <Text variant="heading" style={styles.accountTitle}>
+          {t('settings.account')}
         </Text>
 
         <Card style={styles.accountCard} padded={false}>
@@ -130,11 +168,13 @@ export default function SettingsScreen() {
             accessibilityRole="button"
             style={({ pressed }) => [styles.accountRow, pressed && styles.pressed]}
           >
-            <Ionicons name="lock-closed-outline" size={20} color={colors.teal} />
+            <Ionicons name="lock-closed-outline" size={20} color={colors.accent} />
             <View style={styles.accountText}>
-              <Text variant="bodyStrong">Change password</Text>
+              <Text variant="bodyStrong">{t('settings.changePassword')}</Text>
               <Text variant="small" color={colors.inkMuted}>
-                {profile?.display_name ? `Signed in as ${profile.display_name}` : 'Update your password'}
+                {profile?.display_name
+                  ? t('settings.signedInAs', { name: profile.display_name })
+                  : t('settings.updatePassword')}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
@@ -144,15 +184,31 @@ export default function SettingsScreen() {
             accessibilityRole="button"
             style={({ pressed }) => [styles.accountRow, styles.rowDivider, pressed && styles.pressed]}
           >
-            <Ionicons name="document-text-outline" size={20} color={colors.teal} />
+            <Ionicons name="document-text-outline" size={20} color={colors.accent} />
             <View style={styles.accountText}>
-              <Text variant="bodyStrong">Terms &amp; Privacy</Text>
+              <Text variant="bodyStrong">{t('common.termsAndPrivacy')}</Text>
               <Text variant="small" color={colors.inkMuted}>
-                How we handle your data
+                {t('settings.termsSub')}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
           </Pressable>
+          {canEditContent && (
+            <Pressable
+              onPress={() => router.push('/admin')}
+              accessibilityRole="button"
+              style={({ pressed }) => [styles.accountRow, styles.rowDivider, pressed && styles.pressed]}
+            >
+              <Ionicons name="language-outline" size={20} color={colors.accent} />
+              <View style={styles.accountText}>
+                <Text variant="bodyStrong">{t('settings.contentAdmin')}</Text>
+                <Text variant="small" color={colors.inkMuted}>
+                  {t('settings.contentAdminSub')}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+            </Pressable>
+          )}
           <Pressable
             onPress={() => router.push('/delete-account')}
             accessibilityRole="button"
@@ -161,10 +217,10 @@ export default function SettingsScreen() {
             <Ionicons name="trash-outline" size={20} color={DANGER} />
             <View style={styles.accountText}>
               <Text variant="bodyStrong" color={DANGER}>
-                Delete account
+                {t('settings.deleteAccount')}
               </Text>
               <Text variant="small" color={colors.inkMuted}>
-                Permanently erase your account and data
+                {t('settings.deleteSub')}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
@@ -177,7 +233,7 @@ export default function SettingsScreen() {
           style={({ pressed }) => [styles.signOut, pressed && styles.pressed]}
         >
           <Text variant="bodyStrong" color={colors.inkMuted} center>
-            Log out
+            {t('settings.logOut')}
           </Text>
         </Pressable>
       </ScrollView>
@@ -206,6 +262,7 @@ function QuestionEditor({
   onChange: (patch: Partial<QuestionRow>) => void;
   onDelete?: () => void;
 }) {
+  const { t } = useI18n();
   // Kept in local state so typing stays responsive; persisted on blur.
   const [title, setTitle] = useState(question.title);
   const [labels, setLabels] = useState<string[]>(question.score_labels);
@@ -225,7 +282,7 @@ function QuestionEditor({
             onPress={onDelete}
             hitSlop={10}
             accessibilityRole="button"
-            accessibilityLabel={`Remove ${question.title}`}
+            accessibilityLabel={t('settings.removeA11y', { title: question.title })}
           >
             <Ionicons name="trash-outline" size={18} color={colors.inkFaint} />
           </Pressable>
@@ -233,23 +290,23 @@ function QuestionEditor({
       </View>
 
       <Text variant="label" color={colors.inkMuted} style={styles.fieldLabel}>
-        Question
+        {t('settings.question')}
       </Text>
       <TextInput
         value={title}
         onChangeText={setTitle}
         onBlur={() => title.trim() && title !== question.title && onChange({ title: title.trim() })}
         style={[styles.textField, styles.textFieldCentered]}
-        placeholder="What are you tracking?"
+        placeholder={t('settings.questionPlaceholder')}
         placeholderTextColor={colors.inkFaint}
       />
 
       <Text variant="label" color={colors.inkMuted} style={styles.fieldLabel}>
-        Score descriptions
+        {t('settings.scoreDescriptions')}
       </Text>
       {[0, 1, 2].map((score) => (
         <View key={score} style={styles.labelRow}>
-          <Text variant="label" color={score === 0 ? colors.inkMuted : score === 1 ? colors.teal : colors.green}>
+          <Text variant="label" color={score === 0 ? colors.inkMuted : score === 1 ? colors.accent : colors.primary}>
             {score}
           </Text>
           <TextInput
@@ -261,7 +318,7 @@ function QuestionEditor({
               }
             }}
             style={[styles.textField, styles.textFieldCentered, styles.labelField]}
-            placeholder={`Describe a score of ${score}`}
+            placeholder={t('settings.describeScore', { score })}
             placeholderTextColor={colors.inkFaint}
           />
         </View>
@@ -318,6 +375,8 @@ const styles = StyleSheet.create({
   },
   accountTitle: { marginTop: 32, marginBottom: 12 },
   accountCard: {},
+  languageCard: {},
+  languageRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
   accountRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
   accountText: { flex: 1 },
   rowDivider: { borderTopWidth: 1, borderTopColor: colors.surface },

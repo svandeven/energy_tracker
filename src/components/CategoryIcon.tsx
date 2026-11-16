@@ -35,14 +35,14 @@ export function CategoryIcon({ icon, size = 40, muted }: CategoryIconProps) {
           width: size,
           height: size,
           borderRadius: radii.md,
-          backgroundColor: muted ? colors.chipIdle : colors.tealChip,
+          backgroundColor: muted ? colors.chipIdle : colors.accentChip,
         },
       ]}
     >
       <MaterialCommunityIcons
         name={glyph}
         size={size * 0.5}
-        color={muted ? colors.inkMuted : colors.teal}
+        color={muted ? colors.inkMuted : colors.accent}
       />
     </View>
   );

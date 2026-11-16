@@ -38,10 +38,16 @@ export async function requestPermission(): Promise<boolean> {
   return requested.granted;
 }
 
-async function ensureAndroidChannel() {
+/** Reminder wording in the user's language; the titles come from the questions. */
+export interface ReminderText {
+  body: string;
+  channelName: string;
+}
+
+async function ensureAndroidChannel(name: string) {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-    name: 'Energy check-ins',
+    name,
     importance: Notifications.AndroidImportance.DEFAULT,
     vibrationPattern: [0, 200],
   });
@@ -52,7 +58,7 @@ async function ensureAndroidChannel() {
  * Called whenever the questions, their times, or the push toggle change —
  * cheaper and less error-prone than diffing against what's already scheduled.
  */
-export async function syncReminders(questions: QuestionRow[], enabled: boolean) {
+export async function syncReminders(questions: QuestionRow[], enabled: boolean, text: ReminderText) {
   if (!SUPPORTED) return;
 
   const granted = enabled && questions.length > 0 ? await requestPermission() : false;
@@ -62,14 +68,14 @@ export async function syncReminders(questions: QuestionRow[], enabled: boolean) 
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (!granted) return;
 
-  await ensureAndroidChannel();
+  await ensureAndroidChannel(text.channelName);
 
   for (const question of questions) {
     const { hour, minute } = parseTime(question.reminder_time);
     await Notifications.scheduleNotificationAsync({
       content: {
         title: question.title,
-        body: 'Time for a quick check-in.',
+        body: text.body,
         data: { questionId: question.id },
         ...(Platform.OS === 'android' ? { channelId: CHANNEL_ID } : {}),
       },

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 });
 
 const variantStyles: Record<ButtonVariant, ViewStyle> = {
-  primary: { backgroundColor: colors.green },
+  primary: { backgroundColor: colors.primary },
   secondary: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border },
   dark: { backgroundColor: colors.ink },
 };

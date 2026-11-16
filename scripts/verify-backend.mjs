@@ -121,6 +121,46 @@ try {
   }
 } catch { /* reachability was already proven above */ }
 
+// Translations, roles and the default-question key (the content admin).
+try {
+  const res = await fetch(`${url}/rest/v1/translations?select=key&limit=1`, { headers });
+  const body = await res.text();
+  if (res.ok) {
+    ok('table "translations" exists and is readable signed out (it must be)');
+  } else if (body.includes('PGRST205') || res.status === 404) {
+    bad('table "translations" not found — editor changes will not reach the app');
+    failed = true;
+  } else {
+    bad(`table "translations": HTTP ${res.status} ${body.slice(0, 120)}`);
+    failed = true;
+  }
+
+  for (const [table, column] of [['profiles', 'role'], ['questions', 'default_key']]) {
+    const col = await fetch(`${url}/rest/v1/${table}?select=${column}&limit=1`, { headers });
+    if (col.ok) ok(`column "${table}.${column}" exists`);
+    else {
+      bad(`column "${table}.${column}" missing — re-run schema.sql`);
+      failed = true;
+    }
+  }
+
+  // Same trick as delete_account: anon must be refused before the body runs.
+  const rpc = await fetch(`${url}/rest/v1/rpc/admin_set_role`, {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ target: '00000000-0000-0000-0000-000000000000', new_role: 'user' }),
+  });
+  const rpcBody = await rpc.text();
+  if (rpcBody.includes('42501')) ok('function "admin_set_role" exists and is closed to anon');
+  else if (rpcBody.includes('PGRST202') || rpc.status === 404) {
+    bad('function "admin_set_role" not found — re-run schema.sql');
+    failed = true;
+  } else {
+    bad(`function "admin_set_role" is not closed to anon: HTTP ${rpc.status} ${rpcBody.slice(0, 120)}`);
+    failed = true;
+  }
+} catch { /* reachability was already proven above */ }
+
 // The sign-up trigger is what seeds the five default questions.
 try {
   const res = await fetch(`${url}/auth/v1/settings`, { headers });

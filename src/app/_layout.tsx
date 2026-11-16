@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 
+import { I18nProvider } from '../i18n';
 import { AuthProvider, useAuth } from '../providers/AuthProvider';
 import { DataProvider } from '../providers/DataProvider';
 import { useAppFonts } from '../theme/fonts';
@@ -35,11 +36,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <AuthProvider>
-        <DataProvider>
-          <AuthGate />
-        </DataProvider>
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <DataProvider>
+            <AuthGate />
+          </DataProvider>
+        </AuthProvider>
+      </I18nProvider>
     </SafeAreaProvider>
   );
 }
@@ -54,7 +57,9 @@ function AuthGate() {
     if (initializing) return;
     const inAuthFlow = segments[0] === '(auth)';
     // Terms are linked from the sign-in screen, so they must open either way.
-    const isPublic = segments[0] === 'terms';
+    // The sign-in callback has no session yet while the code is exchanged, and
+    // navigates on by itself once it does.
+    const isPublic = segments[0] === 'terms' || segments[0] === 'auth-callback';
 
     // A recovery session is authenticated but still owes us a new password, so
     // it must not fall through to the normal "signed in -> dashboard" rule.
@@ -77,6 +82,8 @@ function AuthGate() {
       <Stack.Screen name="change-password" options={{ presentation: 'card' }} />
       <Stack.Screen name="delete-account" options={{ presentation: 'card' }} />
       <Stack.Screen name="terms" options={{ presentation: 'card' }} />
+      <Stack.Screen name="admin" />
+      <Stack.Screen name="auth-callback" />
     </Stack>
   );
 }

@@ -20,6 +20,13 @@ export type QuestionRow = {
   reminder_time: string;
   sort_order: number;
   is_active: boolean;
+  /**
+   * Set while this is one of the five seeded questions with untouched wording
+   * ('morning', 'daytime', 'movement', 'evening', 'mood'). The app then shows
+   * the translated text for the current language instead of `title` and
+   * `score_labels`. Cleared as soon as the user rewrites the question.
+   */
+  default_key: string | null;
   created_at: string;
 };
 
@@ -38,6 +45,28 @@ export type ProfileRow = {
   id: string;
   display_name: string | null;
   push_enabled: boolean;
+  /** Only a super admin can change this; a trigger in schema.sql enforces it. */
+  role: UserRole;
+  created_at: string;
+};
+
+export type UserRole = 'user' | 'content_editor' | 'super_admin';
+
+/** An editor's override of one bundled string in one locale. */
+export type TranslationRow = {
+  key: string;
+  locale: string;
+  value: string;
+  updated_at: string;
+  updated_by: string | null;
+};
+
+/** What `admin_list_users()` returns to a super admin. */
+export type AdminUserRow = {
+  id: string;
+  email: string | null;
+  display_name: string | null;
+  role: UserRole;
   created_at: string;
 };
 
@@ -67,6 +96,12 @@ export type Database = {
         Update: Partial<CheckinRow>;
         Relationships: [];
       };
+      translations: {
+        Row: TranslationRow;
+        Insert: Pick<TranslationRow, 'key' | 'locale' | 'value'> & Partial<TranslationRow>;
+        Update: Partial<TranslationRow>;
+        Relationships: [];
+      };
     };
     // `Record<never, never>` (not `Record<string, never>`) so that `keyof Views`
     // is empty — otherwise every table name also matches supabase-js's view
@@ -74,6 +109,8 @@ export type Database = {
     Views: Record<never, never>;
     Functions: {
       delete_account: { Args: Record<string, never>; Returns: undefined };
+      admin_list_users: { Args: Record<string, never>; Returns: AdminUserRow[] };
+      admin_set_role: { Args: { target: string; new_role: UserRole }; Returns: undefined };
     };
     Enums: Record<never, never>;
     CompositeTypes: Record<never, never>;

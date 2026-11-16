@@ -4,7 +4,8 @@ import Svg, { Circle, Line, Polyline, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 
 import { colors, fonts } from '../theme';
-import { formatAxisDate, formatShortDate, type LocalDate } from '../lib/dates';
+import type { LocalDate } from '../lib/dates';
+import { useI18n } from '../i18n';
 import { Text } from './Text';
 
 export interface ChartPoint {
@@ -27,6 +28,7 @@ const PAD_TOP = 10;
 const PAD_BOTTOM = 26;
 
 export function EnergyChart({ points, max }: EnergyChartProps) {
+  const { t, fmt } = useI18n();
   const [width, setWidth] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -83,10 +85,10 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
   return (
     <View>
       <View style={styles.headerRow}>
-        <Text variant="heading">Last 30 days</Text>
+        <Text variant="heading">{t('history.last30')}</Text>
         <View style={styles.legend}>
-          <LegendDot color={colors.green} label="Daily" />
-          <LegendDot color={colors.mint} label="7-day avg" />
+          <LegendDot color={colors.primary} label={t('history.legendDaily')} />
+          <LegendDot color={colors.tint} label={t('history.legendAvg')} />
         </View>
       </View>
 
@@ -94,7 +96,7 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
         onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
         onPressIn={(e) => handleTouch(e.nativeEvent.locationX)}
         accessibilityRole="adjustable"
-        accessibilityLabel="Daily energy totals for the last 30 days"
+        accessibilityLabel={t('history.chartA11y')}
       >
         <Svg width="100%" height={HEIGHT}>
           {/* y-axis gridline labels at 0, half and full */}
@@ -121,7 +123,7 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
               key={`avg-${i}`}
               points={pts}
               fill="none"
-              stroke={colors.mint}
+              stroke={colors.tint}
               strokeWidth={3}
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -132,7 +134,7 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
               key={`daily-${i}`}
               points={pts}
               fill="none"
-              stroke={colors.green}
+              stroke={colors.primary}
               strokeWidth={2.5}
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -154,7 +156,7 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
                 cy={y(selectedPoint.total)}
                 r={5}
                 fill={colors.white}
-                stroke={colors.green}
+                stroke={colors.primary}
                 strokeWidth={3}
               />
             </>
@@ -170,7 +172,7 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
               fill={colors.inkFaint}
               textAnchor={i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle'}
             >
-              {points[i] ? formatAxisDate(points[i].date) : ''}
+              {points[i] ? fmt.axisDate(points[i].date) : ''}
             </SvgText>
           ))}
         </Svg>
@@ -179,12 +181,12 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
       <View style={styles.hint}>
         {selectedPoint ? (
           <Text variant="smallStrong" center>
-            {formatShortDate(selectedPoint.date)} ·{' '}
-            {selectedPoint.total == null ? 'no check-ins' : `${selectedPoint.total}/${max}`}
+            {fmt.shortDate(selectedPoint.date)} ·{' '}
+            {selectedPoint.total == null ? t('history.noCheckins') : `${selectedPoint.total}/${max}`}
           </Text>
         ) : (
           <Text variant="small" color={colors.inkMuted} center>
-            👆 Tap a point to see that day&apos;s total
+            {t('history.tapPoint')}
           </Text>
         )}
       </View>

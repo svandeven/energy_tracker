@@ -8,7 +8,9 @@ import { AppHeader } from '../../components/AppHeader';
 import { EnergyChart, type ChartPoint } from '../../components/EnergyChart';
 import { Text } from '../../components/Text';
 import { colors, radii, totalColor } from '../../theme';
-import { formatDayLabel, today } from '../../lib/dates';
+import { today } from '../../lib/dates';
+import { useI18n } from '../../i18n';
+import { shortLabel } from '../../i18n/questions';
 import {
   breakdownLine,
   compareWeeks,
@@ -27,6 +29,7 @@ const RECENT_DAYS = 14;
 export default function HistoryScreen() {
   const router = useRouter();
   const { questions, checkins, loading, reload } = useData();
+  const { t, fmt } = useI18n();
   const [expanded, setExpanded] = useState(false);
 
   const date = today();
@@ -76,20 +79,20 @@ export default function HistoryScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={reload} tintColor={colors.green} />
+          <RefreshControl refreshing={loading} onRefresh={reload} tintColor={colors.primary} />
         }
       >
         <View style={styles.summary}>
           <View style={styles.summaryLabel}>
             <Text variant="small" color={colors.inkMuted}>
-              Last 7 days
+              {t('history.last7')}
             </Text>
             <Text variant="small" color={colors.inkMuted}>
-              7-day avg:
+              {t('history.avg7')}
             </Text>
           </View>
           <View style={styles.summaryValue}>
-            <Text variant="display" color={colors.green}>
+            <Text variant="display" color={colors.primary}>
               {week.current == null ? '–' : week.current.toFixed(1)}
             </Text>
             <Text variant="heading" color={colors.inkFaint} style={styles.summaryMax}>
@@ -103,14 +106,14 @@ export default function HistoryScreen() {
             <Ionicons
               name={week.delta >= 0 ? 'arrow-up' : 'arrow-down'}
               size={13}
-              color={week.delta >= 0 ? colors.green : '#C4342B'}
+              color={week.delta >= 0 ? colors.accent : '#C4342B'}
             />
-            <Text variant="smallStrong" color={week.delta >= 0 ? colors.green : '#C4342B'}>
+            <Text variant="smallStrong" color={week.delta >= 0 ? colors.accent : '#C4342B'}>
               {week.delta >= 0 ? '+' : ''}
               {week.delta.toFixed(1)}
             </Text>
             <Text variant="small" color={colors.inkMuted}>
-              vs previous week
+              {t('history.vsPrevious')}
             </Text>
           </View>
         )}
@@ -120,15 +123,15 @@ export default function HistoryScreen() {
         </View>
 
         <View style={styles.recentHeader}>
-          <Text variant="heading">Recent days</Text>
+          <Text variant="heading">{t('history.recent')}</Text>
           {missingCount > 0 && (
             <Text variant="caption" color={colors.inkMuted}>
-              {missingCount} not logged
+              {t('history.notLoggedCount', { count: missingCount })}
             </Text>
           )}
         </View>
         <Text variant="small" color={colors.inkMuted} style={styles.recentHint}>
-          Tap any day to fill it in or change it.
+          {t('history.tapHint')}
         </Text>
 
         <View>
@@ -141,20 +144,28 @@ export default function HistoryScreen() {
                 onPress={() => openDay(day)}
                 accessibilityRole="button"
                 accessibilityLabel={
-                  logged
-                    ? `${formatDayLabel(day.date)}, ${day.total} out of ${max}${
-                        partial ? `, ${day.answered} of ${questions.length} logged` : ''
-                      }`
-                    : `${formatDayLabel(day.date)}, not logged. Tap to add.`
+                  !logged
+                    ? t('history.a11yNotLogged', { day: fmt.dayLabel(day.date) })
+                    : partial
+                      ? t('history.a11yPartial', {
+                          day: fmt.dayLabel(day.date),
+                          total: day.total,
+                          max,
+                          answered: day.answered,
+                          count: questions.length,
+                        })
+                      : t('history.a11yLogged', { day: fmt.dayLabel(day.date), total: day.total, max })
                 }
                 style={({ pressed }) => [styles.dayRow, pressed && styles.pressed]}
               >
                 <View style={styles.dayText}>
                   <Text variant="bodyStrong" color={logged ? colors.ink : colors.inkMuted}>
-                    {formatDayLabel(day.date)}
+                    {fmt.dayLabel(day.date)}
                   </Text>
                   <Text variant="caption" color={colors.inkMuted} style={styles.breakdown}>
-                    {logged ? breakdownLine(day, questions) : 'Not logged'}
+                    {logged
+                      ? breakdownLine(day, questions, (q) => shortLabel(q, t))
+                      : t('history.notLogged')}
                   </Text>
                 </View>
 
@@ -176,9 +187,9 @@ export default function HistoryScreen() {
                   </View>
                 ) : (
                   <View style={styles.addChip}>
-                    <Ionicons name="add" size={14} color={colors.green} />
-                    <Text variant="caption" color={colors.green}>
-                      Add
+                    <Ionicons name="add" size={14} color={colors.accent} />
+                    <Text variant="caption" color={colors.accent}>
+                      {t('history.add')}
                     </Text>
                   </View>
                 )}
@@ -193,14 +204,14 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             style={({ pressed }) => [styles.showMore, pressed && styles.pressed]}
           >
-            <Text variant="smallStrong" color={colors.teal} center>
-              Show earlier days
+            <Text variant="smallStrong" color={colors.accent} center>
+              {t('history.showEarlier')}
             </Text>
           </Pressable>
         )}
         {expanded && (
           <Text variant="caption" color={colors.inkFaint} center style={styles.windowNote}>
-            Showing the last {HISTORY_WINDOW_DAYS} days — the furthest back you can log.
+            {t('history.windowNote', { days: HISTORY_WINDOW_DAYS })}
           </Text>
         )}
       </ScrollView>
@@ -253,7 +264,7 @@ const styles = StyleSheet.create({
     gap: 3,
     borderRadius: radii.pill,
     borderWidth: 1,
-    borderColor: colors.green,
+    borderColor: colors.primary,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },

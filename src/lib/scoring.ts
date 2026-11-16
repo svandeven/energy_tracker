@@ -95,33 +95,25 @@ export function compareWeeks(
   };
 }
 
-/** The encouraging line on the summary screen, tuned to how the day went. */
-export function summaryMessage(total: number, max: number): string {
+/** Which encouraging line the summary screen shows, tuned to how the day went. */
+export function summaryMessageKey(total: number, max: number) {
   const ratio = max > 0 ? total / max : 0;
-  if (ratio >= 0.8) return "Strong day. Whatever you're doing, it's working. 🌱";
-  if (ratio >= 0.5) return "Nice work checking in—small signals add up. You're finding a steady rhythm. 🌱";
-  if (ratio >= 0.3) return 'A mixed day, and that\'s useful data too. Be kind to yourself. 🌱';
-  return 'Low days happen. Logging one is still a win. 🌱';
+  if (ratio >= 0.8) return 'summary.strong' as const;
+  if (ratio >= 0.5) return 'summary.steady' as const;
+  if (ratio >= 0.3) return 'summary.mixed' as const;
+  return 'summary.low' as const;
 }
 
 /** "Morn 2 · Day 1 · Move 2 · Eve 1 · Mood 2" on the History rows. */
-export function shortLabel(title: string): string {
-  const first = title.split(/[\s&]+/)[0];
-  const map: Record<string, string> = {
-    Morning: 'Morn',
-    Daytime: 'Day',
-    Movement: 'Move',
-    Evening: 'Eve',
-    Mental: 'Mood',
-  };
-  return map[first] ?? first.slice(0, 4);
-}
-
-export function breakdownLine(day: DayTotal, questions: QuestionRow[]): string {
+export function breakdownLine(
+  day: DayTotal,
+  questions: QuestionRow[],
+  shortLabel: (q: QuestionRow) => string,
+): string {
   return questions
     .map((q) => {
       const s = day.scores.get(q.id);
-      return `${shortLabel(q.title)} ${s == null ? '–' : s}`;
+      return `${shortLabel(q)} ${s == null ? '–' : s}`;
     })
     .join(' · ');
 }

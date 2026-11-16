@@ -4,55 +4,59 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button } from '../../components/Button';
+import { LanguageSwitch } from '../../components/LanguageSwitch';
 import { Text } from '../../components/Text';
-import { colors } from '../../theme';
+import { useI18n } from '../../i18n';
+import { colors, radii } from '../../theme';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const { t } = useI18n();
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.wordmark}>
-        <Text variant="caption" style={styles.leaf}>
-          🌿
-        </Text>
-        <Text variant="bodyStrong">Fettle</Text>
+      <View style={styles.topRow}>
+        <View style={styles.wordmark}>
+          <Ionicons name="sunny" size={16} color={colors.primary} style={styles.sun} />
+          <Text variant="bodyStrong">{t('common.appName')}</Text>
+        </View>
+        <View style={styles.language}>
+          <LanguageSwitch />
+        </View>
       </View>
 
       <View style={styles.hero}>
-        <View style={styles.ring} />
-        <View style={styles.disc}>
-          <Image
-            source={require('../../../assets/images/welcome-illustration.png')}
-            style={styles.illustration}
-            resizeMode="contain"
-          />
-        </View>
+        <Image
+          source={require('../../../assets/images/welcome.png')}
+          style={styles.illustration}
+          resizeMode="cover"
+          accessibilityIgnoresInvertColors
+        />
       </View>
 
       <View style={styles.copy}>
         <Text variant="title" center>
-          Welcome to Fettle
+          {t('welcome.title')}
         </Text>
         <Text variant="body" color={colors.ink} center style={styles.lead}>
-          Track daily energy in 5 quick check-ins.
+          {t('welcome.lead')}
         </Text>
         <Text variant="small" color={colors.inkMuted} center>
-          Small moments, big clarity — feel your day flow.
+          {t('welcome.sub')}
         </Text>
       </View>
 
       <View style={styles.actions}>
-        <Button label="Get started" onPress={() => router.push('/sign-in?mode=signup')} />
+        <Button label={t('welcome.getStarted')} onPress={() => router.push('/sign-in?mode=signup')} />
         <Button
-          label="I already have an account"
+          label={t('welcome.haveAccount')}
           variant="secondary"
           onPress={() => router.push('/sign-in?mode=login')}
         />
         <View style={styles.privacy}>
-          <Ionicons name="lock-closed" size={12} color={colors.teal} />
+          <Ionicons name="lock-closed" size={12} color={colors.accent} />
           <Text variant="caption" color={colors.inkMuted}>
-            Your data stays private.
+            {t('welcome.privacy')}
           </Text>
         </View>
       </View>
@@ -60,32 +64,16 @@ export default function WelcomeScreen() {
   );
 }
 
-const DISC = 220;
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white, paddingHorizontal: 24 },
-  wordmark: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8 },
-  leaf: { fontSize: 14, marginRight: 5 },
-  hero: { alignItems: 'center', justifyContent: 'center', marginTop: 24, height: DISC + 40 },
-  ring: {
-    position: 'absolute',
-    width: DISC + 40,
-    height: DISC + 40,
-    borderRadius: 999,
-    borderWidth: 1.5,
-    borderColor: colors.tealChip,
-  },
-  disc: {
-    width: DISC,
-    height: DISC,
-    borderRadius: 999,
-    backgroundColor: colors.mint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  // The asset is the mockup's mint disc cropped to its own bounds, so it fills
-  // the container and the circular clip trims the leftover corner triangles.
+  // The switch sits in the corner without pushing the wordmark off-center.
+  topRow: { paddingTop: 8, justifyContent: 'center' },
+  wordmark: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  language: { position: 'absolute', right: 0, top: 4 },
+  sun: { marginRight: 5 },
+  // design/welcome_image.png, scaled down. The ratio sits on the wrapper
+  // because react-native-web's Image ignores aspectRatio.
+  hero: { marginTop: 24, width: '100%', aspectRatio: 1200 / 827, borderRadius: radii.xl, overflow: 'hidden' },
   illustration: { width: '100%', height: '100%' },
   copy: { marginTop: 28 },
   lead: { marginTop: 12 },

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -16,6 +17,7 @@ import { Button } from '../../components/Button';
 import { Text } from '../../components/Text';
 import { colors, fonts, radii } from '../../theme';
 import { useAuth, type OAuthProvider } from '../../providers/AuthProvider';
+import { useI18n } from '../../i18n';
 
 type Mode = 'login' | 'signup';
 
@@ -23,6 +25,7 @@ export default function SignInScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ mode?: string }>();
   const { signIn, signUp, signInWithProvider } = useAuth();
+  const { t, errorText } = useI18n();
 
   const [mode, setMode] = useState<Mode>(params.mode === 'login' ? 'login' : 'signup');
   const [email, setEmail] = useState('');
@@ -42,10 +45,10 @@ export default function SignInScreen() {
   };
 
   const validate = (): string | null => {
-    if (!email.trim()) return 'Enter your email address.';
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) return 'That email address looks incomplete.';
-    if (password.length < 6) return 'Passwords need at least 6 characters.';
-    if (mode === 'signup' && password !== confirm) return 'Those passwords don’t match.';
+    if (!email.trim()) return t('error.emailRequired');
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) return t('error.emailIncomplete');
+    if (password.length < 6) return t('error.passwordTooShort');
+    if (mode === 'signup' && password !== confirm) return t('error.passwordsDontMatch');
     return null;
   };
 
@@ -64,13 +67,13 @@ export default function SignInScreen() {
       } else {
         const { needsConfirmation } = await signUp(email, password);
         if (needsConfirmation) {
-          setNotice(`Check ${email.trim()} for a confirmation link, then come back and log in.`);
+          setNotice(t('signIn.checkEmail', { email: email.trim() }));
           setMode('login');
         }
       }
       // On success the auth gate in _layout.tsx navigates for us.
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Try again.');
+      setError(errorText(e, 'common.tryAgain'));
     } finally {
       setBusy(null);
     }
@@ -83,7 +86,11 @@ export default function SignInScreen() {
     try {
       await signInWithProvider(provider);
     } catch (e) {
-      setError(e instanceof Error ? e.message : `Could not continue with ${provider}.`);
+      setError(
+        e instanceof Error && e.message
+          ? errorText(e, 'common.tryAgain')
+          : t('error.oauthFailed', { provider: provider === 'apple' ? 'Apple' : 'Google' }),
+      );
     } finally {
       setBusy(null);
     }
@@ -100,35 +107,37 @@ export default function SignInScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.logo}>
-            <Ionicons name="flash" size={30} color={colors.ink} />
-          </View>
+          <Image
+            source={require('../../../assets/images/logo.png')}
+            style={styles.logo}
+            accessibilityIgnoresInvertColors
+          />
           <Text variant="title" center>
-            Fettle
+            {t('common.appName')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.tagline}>
-            Track your daily energy, calmly.
+            {t('signIn.tagline')}
           </Text>
 
           <View style={styles.segmented}>
             <SegmentedTab
-              label="Log in"
+              label={t('signIn.tabLogin')}
               active={mode === 'login'}
               onPress={() => switchMode('login')}
             />
             <SegmentedTab
-              label="Create account"
+              label={t('signIn.tabSignup')}
               active={mode === 'signup'}
               onPress={() => switchMode('signup')}
             />
           </View>
 
-          <Field label="Email">
+          <Field label={t('common.email')}>
             <Ionicons name="mail-outline" size={18} color={colors.inkFaint} />
             <TextInput
               value={email}
               onChangeText={setEmail}
-              placeholder="you@example.com"
+              placeholder={t('common.emailPlaceholder')}
               placeholderTextColor={colors.inkFaint}
               autoCapitalize="none"
               autoComplete="email"
@@ -137,12 +146,12 @@ export default function SignInScreen() {
             />
           </Field>
 
-          <Field label="Password">
+          <Field label={t('common.password')}>
             <Ionicons name="lock-closed-outline" size={18} color={colors.inkFaint} />
             <TextInput
               value={password}
               onChangeText={setPassword}
-              placeholder="Enter your password"
+              placeholder={t('signIn.passwordPlaceholder')}
               placeholderTextColor={colors.inkFaint}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
@@ -153,7 +162,7 @@ export default function SignInScreen() {
               hitSlop={10}
               onPress={() => setShowPassword((v) => !v)}
               accessibilityRole="button"
-              accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+              accessibilityLabel={showPassword ? t('common.hidePassword') : t('common.showPassword')}
             >
               <Ionicons
                 name={showPassword ? 'eye-off-outline' : 'eye-outline'}
@@ -164,12 +173,12 @@ export default function SignInScreen() {
           </Field>
 
           {mode === 'signup' && (
-            <Field label="Confirm password">
+            <Field label={t('signIn.confirmPassword')}>
               <Ionicons name="lock-closed-outline" size={18} color={colors.inkFaint} />
               <TextInput
                 value={confirm}
                 onChangeText={setConfirm}
-                placeholder="Re-enter your password"
+                placeholder={t('common.reenterPassword')}
                 placeholderTextColor={colors.inkFaint}
                 secureTextEntry={!showConfirm}
                 autoCapitalize="none"
@@ -180,7 +189,7 @@ export default function SignInScreen() {
                 hitSlop={10}
                 onPress={() => setShowConfirm((v) => !v)}
                 accessibilityRole="button"
-                accessibilityLabel={showConfirm ? 'Hide password' : 'Show password'}
+                accessibilityLabel={showConfirm ? t('common.hidePassword') : t('common.showPassword')}
               >
                 <Ionicons
                   name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
@@ -197,7 +206,7 @@ export default function SignInScreen() {
             </Text>
           )}
           {notice && (
-            <Text variant="small" color={colors.onMint} style={[styles.message, styles.noticeBox]}>
+            <Text variant="small" color={colors.onTint} style={[styles.message, styles.noticeBox]}>
               {notice}
             </Text>
           )}
@@ -208,14 +217,14 @@ export default function SignInScreen() {
               style={styles.forgotLink}
               hitSlop={6}
             >
-              <Text variant="smallStrong" color={colors.teal}>
-                Forgot password?
+              <Text variant="smallStrong" color={colors.accent}>
+                {t('signIn.forgot')}
               </Text>
             </Pressable>
           )}
 
           <Button
-            label="Continue"
+            label={t('common.continue')}
             onPress={submit}
             loading={busy === 'email'}
             disabled={busy !== null && busy !== 'email'}
@@ -225,13 +234,13 @@ export default function SignInScreen() {
           <View style={styles.dividerRow}>
             <View style={styles.dividerLine} />
             <Text variant="caption" color={colors.inkFaint}>
-              or continue with
+              {t('signIn.orContinueWith')}
             </Text>
             <View style={styles.dividerLine} />
           </View>
 
           <Button
-            label="Continue with Apple"
+            label={t('signIn.apple')}
             variant="secondary"
             icon={<AntDesign name="apple" size={18} color={colors.ink} />}
             loading={busy === 'apple'}
@@ -239,7 +248,7 @@ export default function SignInScreen() {
             onPress={() => oauth('apple')}
           />
           <Button
-            label="Continue with Google"
+            label={t('signIn.google')}
             variant="secondary"
             icon={<AntDesign name="google" size={18} color={colors.ink} />}
             loading={busy === 'google'}
@@ -249,21 +258,21 @@ export default function SignInScreen() {
           />
 
           <Text variant="caption" color={colors.inkFaint} center style={styles.terms}>
-            By continuing you agree to our{' '}
+            {t('signIn.agreePrefix')}{' '}
             <Text
               variant="caption"
-              color={colors.teal}
+              color={colors.accent}
               onPress={() => router.push('/terms')}
               accessibilityRole="link"
             >
-              Terms &amp; Privacy Policy
+              {t('signIn.agreeLink')}
             </Text>
             .
           </Text>
 
           <Pressable onPress={() => router.replace('/welcome')} style={styles.backLink}>
-            <Text variant="smallStrong" color={colors.teal} center>
-              Back to welcome
+            <Text variant="smallStrong" color={colors.accent} center>
+              {t('signIn.backToWelcome')}
             </Text>
           </Pressable>
         </ScrollView>
@@ -310,12 +319,8 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: 32 },
   logo: {
     alignSelf: 'center',
-    width: 58,
-    height: 58,
-    borderRadius: radii.md,
-    backgroundColor: colors.yellow,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 64,
+    height: 64,
     marginBottom: 14,
   },
   tagline: { marginTop: 4, marginBottom: 26 },
@@ -343,7 +348,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, fontFamily: fonts.regular, fontSize: 15, color: colors.ink },
   message: { marginBottom: 12 },
   noticeBox: {
-    backgroundColor: colors.mint,
+    backgroundColor: colors.tint,
     borderRadius: radii.sm,
     padding: 12,
     overflow: 'hidden',

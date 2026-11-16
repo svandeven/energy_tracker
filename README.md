@@ -114,7 +114,7 @@ link path is unreliable there and the 6-digit code is the one that works.
 
 **Delete account** is at Settings → Account → Delete account, as App Store
 guideline 5.1.1(v) requires. Password accounts re-enter their password; every
-account types `DELETE` to confirm. The app calls the `delete_account()` RPC in
+account types `DELETE` (`VERWIJDER` in Dutch) to confirm. The app calls the `delete_account()` RPC in
 `supabase/schema.sql`, a `security definer` function that deletes the caller's
 `auth.users` row (the id comes from the JWT, so it can never delete anyone
 else). Profiles, questions and check-ins go with it via `on delete cascade`.
@@ -126,6 +126,41 @@ Settings, and opens signed out too. `CONTACT_EMAIL` in `src/app/terms.tsx` is
 support@fettle-life.com; have the text reviewed before you submit. App Store
 Connect also wants the privacy policy at a public URL — `/terms` on the web
 build (eventually `https://fettle-life.com/terms`).
+
+## Languages and content admin
+
+The app is in **English and Dutch**. It follows the phone's language (or the
+browser's, on web) and falls back to English. People can override that in
+Settings → Language, or with the EN | NL switch on the welcome screen; the
+choice is stored on the device.
+
+All on-screen text lives in `src/i18n/en.ts` and `src/i18n/nl.ts` (the Dutch
+file is type-checked against the English keys, so a missing translation fails
+`tsc`). The five default check-in questions follow the language too, until a
+user rewrites one — then it's theirs and stays as typed (`questions.default_key`).
+
+**Editing text without a release.** Content editors and super admins get a
+**Content admin** link in Settings on the web, which opens `/admin`:
+
+- **Text & translations**: every string, English and Dutch side by side,
+  searchable and grouped by screen. Saving writes an override to the
+  `translations` table; apps pick it up on next launch. "Reset to built-in"
+  deletes the override.
+- **Users & roles** (super admins only): make someone a content editor or a
+  super admin. Nobody can change their own role, so a super admin always remains.
+
+Roles are enforced in the database (`guard_profile_role` trigger, RLS on
+`translations`), not just in the UI. To create the **first super admin**, sign
+up in the app, then run this in the Supabase SQL editor:
+
+```sql
+update public.profiles set role = 'super_admin'
+where id = (select id from auth.users where email = 'you@example.com');
+```
+
+Adding a third language: add it to `LOCALES` in `src/i18n/index.tsx`, write its
+bundle, widen the `locale` check on `translations` in `schema.sql`, and add it to
+`supportedLocales` in `app.json`.
 
 ## Deploying the web version
 
@@ -198,6 +233,7 @@ src/
   components/          Text, Button, Card, CategoryIcon, AppHeader, EnergyChart,
                        TimePicker (+ .web variant)
   providers/           AuthProvider (Supabase auth), DataProvider (questions + check-ins)
+  i18n/                en/nl strings, I18nProvider (t(), language choice, date formats)
   lib/
     scoring.ts         daily totals, 7-day rolling average, week-over-week delta
     dates.ts           local-calendar-date helpers ('YYYY-MM-DD', never UTC)
@@ -212,9 +248,9 @@ supabase/schema.sql    run once in the Supabase SQL editor
 
 ### Notes on the implementation
 
-- **Colors** in `src/theme/index.ts` are the exact hex values sampled from the
-  mockup pixels (`#6EDA8C` green, `#B7FACC` mint, `#35D6C0` teal, `#FFDD33`
-  yellow, `#1C1C1E` ink, `#F0F0F0` surface).
+- **Colors** in `src/theme/index.ts` come from the app icon (`#FE9F4D`
+  orange, `#FFDC4A` yellow), plus a deeper `#B5560A` orange for links and
+  small icons, which stays readable on white.
 - **Font** is [Figtree](https://fonts.google.com/specimen/Figtree), a free
   stand-in for the mockup's geometric sans. Swap the `@expo-google-fonts`
   package in `src/theme/fonts.ts` to change it.

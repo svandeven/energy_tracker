@@ -1,0 +1,321 @@
+/**
+ * English source strings: the fallback for every locale and the list of keys
+ * the content editor shows. Keys are grouped by screen (the part before the
+ * first dot). `{name}` placeholders are filled in by `t(key, { name })`.
+ *
+ * Editors can override any of these from the web admin; overrides live in the
+ * Supabase `translations` table and win over the values here.
+ */
+export const en = {
+  // Shared
+  /** The name in the header and on the welcome and sign-in screens. */
+  'common.appName': 'Fettle',
+  'common.continue': 'Continue',
+  'common.cancel': 'Cancel',
+  'common.save': 'Save',
+  'common.done': 'Done',
+  'common.back': 'Back',
+  'common.email': 'Email',
+  'common.password': 'Password',
+  'common.emailPlaceholder': 'you@example.com',
+  'common.showPassword': 'Show password',
+  'common.hidePassword': 'Hide password',
+  'common.reenterPassword': 'Re-enter your password',
+  'common.atLeast6': 'At least 6 characters',
+  'common.currentPasswordPlaceholder': 'Your current password',
+  'common.newPassword': 'New password',
+  'common.confirmNewPassword': 'Confirm new password',
+  'common.saveNewPassword': 'Save new password',
+  'common.backToDashboard': 'Back to dashboard',
+  'common.backToHistory': 'Back to history',
+  'common.backToSettings': 'Back to settings',
+  'common.termsAndPrivacy': 'Terms & Privacy',
+  'common.tryAgain': 'Something went wrong. Try again.',
+
+  // Validation and auth errors
+  'error.emailRequired': 'Enter your email address.',
+  'error.emailIncomplete': 'That email address looks incomplete.',
+  'error.passwordTooShort': 'Passwords need at least 6 characters.',
+  'error.newPasswordTooShort': 'New passwords need at least 6 characters.',
+  'error.passwordsDontMatch': 'Those passwords don’t match.',
+  'error.currentPasswordRequired': 'Enter your current password.',
+  'error.samePassword': 'That is already your password.',
+  'error.passwordRequired': 'Enter your password to continue.',
+  'error.currentPasswordWrong': 'That current password is not correct.',
+  'error.passwordWrong': 'That password is not correct.',
+  'error.invalidCredentials': 'That email and password don’t match an account.',
+  'error.alreadyRegistered': 'There is already an account with that email. Try logging in.',
+  'error.emailNotConfirmed': 'Confirm your email first — check your inbox for the link.',
+  'error.couldNotStartSignIn': 'Could not start sign-in.',
+  'error.noAuthCode': 'Sign-in did not return an authorization code.',
+  'error.oauthFailed': 'Could not continue with {provider}.',
+  'error.notALink': 'That doesn’t look like a link from the email.',
+  'error.noTokenInLink': 'Couldn’t find a token in that link. Copy the whole link from the email.',
+  'error.noEmailOnAccount': 'This account has no email address.',
+  'error.loadData': 'Could not load your data.',
+
+  // Welcome
+  'welcome.title': 'Welcome to Fettle',
+  'welcome.lead': 'Track daily energy in 5 quick check-ins.',
+  'welcome.sub': 'Small moments, big clarity — feel your day flow.',
+  'welcome.getStarted': 'Get started',
+  'welcome.haveAccount': 'I already have an account',
+  'welcome.privacy': 'Your data stays private.',
+
+  // Sign in / create account
+  'signIn.tagline': 'Track your daily energy, calmly.',
+  'signIn.tabLogin': 'Log in',
+  'signIn.tabSignup': 'Create account',
+  'signIn.passwordPlaceholder': 'Enter your password',
+  'signIn.confirmPassword': 'Confirm password',
+  'signIn.checkEmail': 'Check {email} for a confirmation link, then come back and log in.',
+  'signIn.forgot': 'Forgot password?',
+  'signIn.orContinueWith': 'or continue with',
+  'signIn.apple': 'Continue with Apple',
+  'signIn.google': 'Continue with Google',
+  'signIn.agreePrefix': 'By continuing you agree to our',
+  'signIn.agreeLink': 'Terms & Privacy Policy',
+  'signIn.backToWelcome': 'Back to welcome',
+
+  // Forgot password
+  'forgot.title': 'Reset your password',
+  'forgot.leadBefore': 'Enter your email and we’ll send you a link and a code.',
+  'forgot.leadAfter':
+    'We sent you an email. Paste the link from it below — or the 6-digit code, if your email contains one.',
+  'forgot.codeLabel': 'Link or code from the email',
+  'forgot.codePlaceholder': 'Paste the link, or type the 6-digit code',
+  'forgot.copyHint': 'In the email, long-press the button and choose Copy Link.',
+  'forgot.sending': 'Sending…',
+  'forgot.sendAnother': 'Send another email',
+  'forgot.send': 'Send reset email',
+  'forgot.backToLogin': 'Back to log in',
+  'forgot.emailRequired': 'Enter the email address for your account.',
+  'forgot.codeRequired': 'Paste the link from the email, or enter the 6-digit code.',
+  'forgot.codeTooShort': 'That code looks too short — it should be 6 digits.',
+  'forgot.sendFailed': 'Could not send the reset email.',
+  'forgot.codeRejected': 'That code was not accepted.',
+
+  // Reset password (from the emailed link)
+  'reset.title': 'Choose a new password',
+  'reset.lead': 'You’re signed in from the reset link. Set a new password to finish.',
+  'reset.failed': 'Could not update your password.',
+  'reset.cancel': 'Cancel and sign out',
+
+  // Returning from Google/Apple sign-in or the confirmation email
+  'authCallback.signingIn': 'Signing you in…',
+  'authCallback.failed': 'Sign-in didn’t complete',
+
+  // Tabs and header
+  'tabs.home': 'Home',
+  'tabs.history': 'History',
+  'tabs.settings': 'Settings',
+
+  // Dashboard
+  'dashboard.goodMorning': 'Good morning',
+  'dashboard.goodAfternoon': 'Good afternoon',
+  'dashboard.goodEvening': 'Good evening',
+  'dashboard.greetingWithName': '{greeting}, {name}',
+  'dashboard.todaysTotal': 'Today’s total',
+  'dashboard.checkins': 'Energy Check-ins',
+  'dashboard.completed': 'Completed',
+  'dashboard.notScored': 'Not scored yet',
+  'dashboard.a11yScored': '{title}, scored {score} out of 2',
+  'dashboard.a11yNotScored': '{title}, not scored yet',
+  'dashboard.allDone': 'All done!',
+  'dashboard.ready': 'Ready when you are',
+  'dashboard.almost': 'Almost there!',
+  'dashboard.allDoneBody': 'Every check-in is in. Here’s how the day added up.',
+  'dashboard.remainingOne': 'Finish your last check-in to complete today.',
+  'dashboard.remainingOther': 'Finish your last {count} check-ins to complete today.',
+  'dashboard.viewSummary': 'View today’s summary',
+
+  // Check-in
+  'checkIn.unavailable': 'That check-in isn’t available any more.',
+  'checkIn.logging': 'Logging {day}',
+  'checkIn.category': 'Category {n} of {total}',
+  'checkIn.howWasIt': 'How was this on {day}?',
+  'checkIn.choose': 'Choose what best matches your day.',
+  'checkIn.scoreFallback': 'Score {score}',
+  'checkIn.alreadyLogged': 'Already logged as {score}. Saving replaces it.',
+  'checkIn.pickOne': 'Pick the option that best matches your day.',
+  'checkIn.saveFailed': 'Could not save that. Try again.',
+  'checkIn.notReady': 'Not ready?',
+
+  // Summary
+  'summary.today': 'Today’s summary',
+  'summary.day': 'Day summary',
+  'summary.total': 'Total energy score',
+  'summary.toGoOne': '1 check-in still to go — this total will keep climbing.',
+  'summary.toGoOther': '{count} check-ins still to go — this total will keep climbing.',
+  'summary.partial': '{answered} of {total} logged for this day.',
+  'summary.viewHistory': 'View History',
+  'summary.strong': 'Strong day. Whatever you’re doing, it’s working. 🌱',
+  'summary.steady': 'Nice work checking in—small signals add up. You’re finding a steady rhythm. 🌱',
+  'summary.mixed': 'A mixed day, and that’s useful data too. Be kind to yourself. 🌱',
+  'summary.low': 'Low days happen. Logging one is still a win. 🌱',
+
+  // History
+  'history.last7': 'Last 7 days',
+  'history.avg7': '7-day avg:',
+  'history.vsPrevious': 'vs previous week',
+  'history.last30': 'Last 30 days',
+  'history.legendDaily': 'Daily',
+  'history.legendAvg': '7-day avg',
+  'history.chartA11y': 'Daily energy totals for the last 30 days',
+  'history.noCheckins': 'no check-ins',
+  'history.tapPoint': '👆 Tap a point to see that day’s total',
+  'history.recent': 'Recent days',
+  'history.notLoggedCount': '{count} not logged',
+  'history.tapHint': 'Tap any day to fill it in or change it.',
+  'history.notLogged': 'Not logged',
+  'history.add': 'Add',
+  'history.a11yLogged': '{day}, {total} out of {max}',
+  'history.a11yPartial': '{day}, {total} out of {max}, {answered} of {count} logged',
+  'history.a11yNotLogged': '{day}, not logged. Tap to add.',
+  'history.showEarlier': 'Show earlier days',
+  'history.windowNote': 'Showing the last {days} days — the furthest back you can log.',
+  'history.today': 'Today',
+  'history.yesterday': 'Yesterday',
+
+  // Settings
+  'settings.title': 'Settings',
+  'settings.subtitle': 'Manage your check-in questions and reminders',
+  'settings.questionManager': 'Question Manager',
+  'settings.questionCountOne': 'Edit your daily energy check-in question',
+  'settings.questionCountOther': 'Edit your {count} daily energy check-in questions',
+  'settings.removeTitle': 'Remove “{title}”?',
+  'settings.removeBody': 'Past scores stay in your history, but you will stop being asked about it.',
+  'settings.remove': 'Remove',
+  'settings.removeA11y': 'Remove {title}',
+  'settings.addQuestion': 'Add new question',
+  'settings.question': 'Question',
+  'settings.questionPlaceholder': 'What are you tracking?',
+  'settings.scoreDescriptions': 'Score descriptions',
+  'settings.describeScore': 'Describe a score of {score}',
+  'settings.notifications': 'Notification Schedule',
+  'settings.push': 'Push notifications',
+  'settings.pushSub': 'Get reminders to check in',
+  'settings.changeTimeA11y': 'Change reminder time for {title}',
+  'settings.reminderTime': 'Reminder time',
+  'settings.language': 'Language',
+  'settings.languageSystem': 'Same as device',
+  'settings.account': 'Account',
+  'settings.changePassword': 'Change password',
+  'settings.signedInAs': 'Signed in as {name}',
+  'settings.updatePassword': 'Update your password',
+  'settings.termsSub': 'How we handle your data',
+  'settings.deleteAccount': 'Delete account',
+  'settings.deleteSub': 'Permanently erase your account and data',
+  'settings.contentAdmin': 'Content admin',
+  'settings.contentAdminSub': 'Edit app text and translations',
+  'settings.logOut': 'Log out',
+
+  // New question defaults (what "Add new question" creates)
+  'newQuestion.title': 'New check-in',
+  'newQuestion.score0': 'Low',
+  'newQuestion.score1': 'Okay',
+  'newQuestion.score2': 'Great',
+
+  // Reminders
+  'reminder.body': 'Time for a quick check-in.',
+  'reminder.channel': 'Energy check-ins',
+
+  // Change password
+  'changePassword.noPasswordTitle': 'No password to change',
+  'changePassword.noPasswordBody':
+    'You sign in with {provider}, so your password is managed there rather than in Fettle.',
+  'changePassword.failed': 'Could not change your password.',
+  'changePassword.doneTitle': 'Password changed',
+  'changePassword.doneBody': 'Use your new password next time you sign in.',
+  'changePassword.title': 'Change password',
+  'changePassword.lead': 'Confirm your current password, then choose a new one.',
+  'changePassword.current': 'Current password',
+  'changePassword.reenterNew': 'Re-enter your new password',
+
+  // Delete account
+  'deleteAccount.title': 'Delete account',
+  'deleteAccount.leadEmail': 'This permanently deletes {email}.',
+  'deleteAccount.lead': 'This permanently deletes your account.',
+  'deleteAccount.cantUndo': 'This can’t be undone',
+  'deleteAccount.bullet1': 'Every check-in score and your full history',
+  'deleteAccount.bullet2': 'Your questions, score descriptions and reminder times',
+  'deleteAccount.bullet3': 'Your profile and sign-in details',
+  'deleteAccount.foot':
+    'Everything is removed from our servers straight away. Reminders scheduled on this device are cancelled too.',
+  'deleteAccount.confirmWord': 'DELETE',
+  'deleteAccount.typeToConfirm': 'Type {word} to confirm',
+  'deleteAccount.typeToConfirmError': 'Type {word} to confirm.',
+  'deleteAccount.failed': 'Could not delete your account.',
+  'deleteAccount.deleting': 'Deleting…',
+  'deleteAccount.submit': 'Permanently delete account',
+  'deleteAccount.keep': 'Keep my account',
+
+  // Terms & Privacy
+  'terms.lastUpdated': 'Last updated {date}',
+  'terms.shortTitle': 'The short version',
+  'terms.shortBody':
+    'Fettle helps you notice how your energy changes through the day. Your check-ins belong to you, we never sell or share them, there are no ads or trackers, and you can delete everything at any time from Settings.',
+  'terms.termsHeading': 'Terms of Use',
+  'terms.usingTitle': 'Using Fettle',
+  'terms.usingBody':
+    'By creating an account or using the app you agree to these terms. You need to be at least 13 years old, or the minimum age for digital consent where you live, to use it. Please keep your sign-in details to yourself; you are responsible for activity on your account.',
+  'terms.medicalTitle': 'Not medical advice',
+  'terms.medicalBody':
+    'Fettle is a self-reflection tool. Scores, averages and trends are not a diagnosis and are not a substitute for advice from a doctor or other qualified professional. If you are worried about your health, please talk to one.',
+  'terms.useTitle': 'Acceptable use',
+  'terms.useBody':
+    'Don’t misuse the service: no attempts to access other people’s data, disrupt the app, or use it for anything unlawful. We may suspend accounts that do.',
+  'terms.serviceTitle': 'The service',
+  'terms.serviceBody':
+    'We work to keep Fettle available and your data safe, but the app is provided “as is”, without warranties of any kind. To the extent the law allows, we are not liable for indirect or consequential losses arising from its use. We may change or discontinue features, and will update these terms when we do — the date above shows the latest version. Continuing to use the app after a change means you accept the updated terms.',
+  'terms.endingTitle': 'Ending your account',
+  'terms.endingBody':
+    'You can stop using Fettle whenever you like. Settings → Delete account removes your account and all of its data permanently.',
+  'terms.privacyHeading': 'Privacy Policy',
+  'terms.storeTitle': 'What we store',
+  'terms.storeBody':
+    '• Your email address, and a display name derived from it or from your Apple or Google profile\n• The check-in questions you set up, their score descriptions and reminder times\n• The scores you log, with the date you logged them for\n• Whether you have reminders switched on',
+  'terms.dontTitle': 'What we don’t collect',
+  'terms.dontBody':
+    'No location, contacts, health-app data, advertising identifiers or analytics. Reminders are scheduled on your device itself; their content never leaves it.',
+  'terms.howTitle': 'How it is used',
+  'terms.howBody':
+    'Only to run the app for you: signing you in, showing your dashboard and history, and scheduling your reminders. We don’t sell your data, share it with advertisers, or use it to build profiles.',
+  'terms.whereTitle': 'Where it lives',
+  'terms.whereBody':
+    'Your data is stored with our hosting provider, Supabase, which processes it on our behalf. Access is restricted so that each account can only ever read its own rows. If you sign in with Apple or Google, they confirm who you are; we receive your email address and name from them and nothing else.',
+  'terms.choicesTitle': 'Your choices',
+  'terms.choicesBody':
+    'You can edit or remove questions and switch reminders off in Settings. Deleting your account erases your profile, questions and every check-in from our servers immediately. For a copy of your data or any other privacy request, email us and we will respond within 30 days.',
+  'terms.contactTitle': 'Contact',
+  'terms.contactBody': 'Questions about these terms or your data?',
+
+  // The five default check-in questions. `short` is the History row abbreviation.
+  'question.morning.title': 'Morning readiness',
+  'question.morning.short': 'Morn',
+  'question.morning.score0': 'Groggy, hard to get out of bed',
+  'question.morning.score1': 'Okay, took a while to wake up',
+  'question.morning.score2': 'Refreshed and ready to go',
+  'question.daytime.title': 'Daytime stamina',
+  'question.daytime.short': 'Day',
+  'question.daytime.score0': 'Drained by midday, needed to rest',
+  'question.daytime.score1': 'Steady but dipped in the afternoon',
+  'question.daytime.score2': 'Energized and focused all day',
+  'question.movement.title': 'Movement capacity',
+  'question.movement.short': 'Move',
+  'question.movement.score0': 'No energy for any activity',
+  'question.movement.score1': 'Managed light movement or a short walk',
+  'question.movement.score2': 'Full workout felt great',
+  'question.evening.title': 'Evening capacity',
+  'question.evening.short': 'Eve',
+  'question.evening.score0': 'Completely wiped out after dinner',
+  'question.evening.score1': 'Some energy left for light tasks',
+  'question.evening.score2': 'Still active and productive tonight',
+  'question.mood.title': 'Mental clarity & mood',
+  'question.mood.short': 'Mood',
+  'question.mood.score0': 'Foggy, low mood, hard to focus',
+  'question.mood.score1': 'Fairly clear, mood was neutral',
+  'question.mood.score2': 'Sharp, positive, and motivated',
+} as const;
+
+export type TranslationKey = keyof typeof en;
