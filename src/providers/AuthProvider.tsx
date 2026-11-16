@@ -24,6 +24,8 @@ interface AuthValue {
   signInWithProvider(provider: OAuthProvider): Promise<void>;
   signOut(): Promise<void>;
   setPushEnabled(enabled: boolean): Promise<void>;
+  /** Saves the daily goal-planning and goal-review reminder times. */
+  setGoalTimes(patch: Partial<Pick<ProfileRow, 'goal_plan_time' | 'goal_review_time'>>): Promise<void>;
   refreshProfile(): Promise<void>;
   /** Emails a recovery link and a 6-digit code. */
   requestPasswordReset(email: string): Promise<void>;
@@ -345,6 +347,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [userId],
   );
 
+  const setGoalTimes = useCallback(
+    async (patch: Partial<Pick<ProfileRow, 'goal_plan_time' | 'goal_review_time'>>) => {
+      if (!userId) return;
+      const previous = profile;
+      setProfile((p) => (p ? { ...p, ...patch } : p));
+      const { error } = await supabase.from('profiles').update(patch).eq('id', userId);
+      if (error) {
+        setProfile(previous);
+        throw error;
+      }
+    },
+    [userId, profile],
+  );
+
   const value = useMemo<AuthValue>(
     () => ({
       session,
@@ -355,6 +371,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithProvider,
       signOut,
       setPushEnabled,
+      setGoalTimes,
       refreshProfile,
       requestPasswordReset,
       verifyRecovery,
@@ -373,6 +390,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithProvider,
       signOut,
       setPushEnabled,
+      setGoalTimes,
       refreshProfile,
       requestPasswordReset,
       verifyRecovery,

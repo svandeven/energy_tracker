@@ -3,30 +3,58 @@ import { useEffect, useRef } from 'react';
 import { useI18n } from '../i18n';
 import { useAuth } from '../providers/AuthProvider';
 import { useData } from '../providers/DataProvider';
+import { useGoals } from '../providers/GoalsProvider';
 import { syncReminders } from './notifications';
 
 /**
- * Re-schedules local reminders whenever the questions, their times, the push
- * toggle, or the language change. Keyed on a cheap signature so a re-render doesn't re-schedule.
+ * Re-schedules local reminders whenever the questions, goals, their times, the
+ * push toggle, the day or the language change. Keyed on a cheap signature so a
+ * re-render doesn't re-schedule.
  */
 export function useReminderSync() {
   const { profile } = useAuth();
   const { questions } = useData();
+  const { templates, todaysGoals, date, loading: goalsLoading } = useGoals();
   const { t, locale } = useI18n();
   const lastSignature = useRef<string | null>(null);
 
   const enabled = profile?.push_enabled ?? false;
   // Includes the locale so switching language re-schedules translated reminders.
-  const signature = `${enabled}|${locale}|${questions.map((q) => `${q.id}@${q.reminder_time}${q.reminder_next_day ? '+1' : ''}:${q.title}`).join(',')}`;
+  const signature = [
+    enabled,
+    locale,
+    date,
+    profile?.goal_plan_time,
+    profile?.goal_review_time,
+    questions.map((q) => `${q.id}@${q.reminder_time}${q.reminder_next_day ? '+1' : ''}:${q.title}`).join(','),
+    templates.map((tpl) => `${tpl.id}@${tpl.remind_at}/${tpl.repeat}:${tpl.title}`).join(','),
+    todaysGoals.map((g) => `${g.id}@${g.remind_at}${g.done_at ? '✓' : ''}:${g.title}`).join(','),
+  ].join('|');
 
   useEffect(() => {
-    if (!profile) return;
+    // Wait for the goals too, or the first pass would drop their reminders.
+    if (!profile || goalsLoading) return;
     if (lastSignature.current === signature) return;
     lastSignature.current = signature;
-    void syncReminders(questions, enabled, {
-      body: t('reminder.body'),
-      bodyNextDay: t('reminder.bodyNextDay'),
-      channelName: t('reminder.channel'),
+    void syncReminders({
+      enabled,
+      questions,
+      goalPlanTime: profile.goal_plan_time ?? null,
+      goalReviewTime: profile.goal_review_time ?? null,
+      templates,
+      todaysGoals,
+      today: date,
+      text: {
+        body: t('reminder.body'),
+        bodyNextDay: t('reminder.bodyNextDay'),
+        channelName: t('reminder.channel'),
+        goalPlanTitle: t('reminder.goalPlanTitle'),
+        goalPlanBody: t('reminder.goalPlanBody'),
+        goalReviewTitle: t('reminder.goalReviewTitle'),
+        goalReviewBody: t('reminder.goalReviewBody'),
+        goalBody: t('reminder.goalBody'),
+        doneAction: t('reminder.doneAction'),
+      },
     });
-  }, [signature, profile, questions, enabled, t]);
+  }, [signature, profile, goalsLoading, questions, templates, todaysGoals, date, enabled, t]);
 }

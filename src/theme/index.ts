@@ -22,6 +22,11 @@ export const colors = {
   inkMuted: '#616163',
   inkFaint: '#9A9A9E',
 
+  /** Warm cream page background of the tab screens (daily goals design). */
+  canvas: '#FFF5EC',
+  /** Muted sage green for ticked-off goals and answered questions. */
+  done: '#86B49A',
+
   white: '#FFFFFF',
   /** App background on non-white screens + inactive pills, inputs, dividers. */
   surface: '#F0F0F0',

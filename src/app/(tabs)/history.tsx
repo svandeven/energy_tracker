@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { AppHeader } from '../../components/AppHeader';
+import { BackLink } from '../../components/ScreenTop';
 import { EnergyChart, type ChartPoint } from '../../components/EnergyChart';
 import { Text } from '../../components/Text';
 import { colors, radii, totalColor } from '../../theme';
@@ -77,7 +77,7 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <AppHeader />
+      <BackLink inset />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -223,7 +223,7 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.white },
+  safe: { flex: 1, backgroundColor: colors.canvas },
   content: { paddingHorizontal: 20, paddingBottom: 32 },
   summary: {
     flexDirection: 'row',

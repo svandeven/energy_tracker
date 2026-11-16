@@ -53,8 +53,49 @@ export type ProfileRow = {
   push_enabled: boolean;
   /** Only a super admin can change this; a trigger in schema.sql enforces it. */
   role: UserRole;
+  /** When to remind the user to set today's goals ('HH:MM:SS'). */
+  goal_plan_time: string;
+  /** When to remind the user to tick off what they got done ('HH:MM:SS'). */
+  goal_review_time: string;
   created_at: string;
 };
+
+export type GoalRepeat = 'none' | 'daily' | 'weekdays';
+
+/**
+ * A goal the user keeps: repeating ones ('daily', 'weekdays') are copied onto
+ * each day they apply to; 'none' is a saved goal to pick again by hand.
+ */
+export type GoalTemplateRow = {
+  id: string;
+  user_id: string;
+  title: string;
+  repeat: GoalRepeat;
+  /** Reminder time with a Done button, or null for no reminder. */
+  remind_at: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+};
+
+/** One goal on one local day. */
+export type GoalRow = {
+  id: string;
+  user_id: string;
+  local_date: string;
+  template_id: string | null;
+  title: string;
+  remind_at: string | null;
+  /** Set when ticked off. */
+  done_at: string | null;
+  /** Removed for this day only (keeps a repeating goal from being re-added). */
+  hidden: boolean;
+  sort_order: number;
+  created_at: string;
+};
+
+/** What `goal_day_stats()` returns: one row per day that had goals. */
+export type GoalDayStat = { local_date: string; total: number; done: number };
 
 export type UserRole = 'user' | 'content_editor' | 'super_admin';
 
@@ -102,6 +143,20 @@ export type Database = {
         Update: Partial<CheckinRow>;
         Relationships: [];
       };
+      goal_templates: {
+        Row: GoalTemplateRow;
+        Insert: Omit<GoalTemplateRow, 'id' | 'created_at' | 'is_active' | 'sort_order'> &
+          Partial<Pick<GoalTemplateRow, 'id' | 'is_active' | 'sort_order'>>;
+        Update: Partial<GoalTemplateRow>;
+        Relationships: [];
+      };
+      goals: {
+        Row: GoalRow;
+        Insert: Omit<GoalRow, 'id' | 'created_at' | 'hidden' | 'done_at' | 'sort_order'> &
+          Partial<Pick<GoalRow, 'id' | 'hidden' | 'done_at' | 'sort_order'>>;
+        Update: Partial<GoalRow>;
+        Relationships: [];
+      };
       translations: {
         Row: TranslationRow;
         Insert: Pick<TranslationRow, 'key' | 'locale' | 'value'> & Partial<TranslationRow>;
@@ -117,6 +172,7 @@ export type Database = {
       delete_account: { Args: Record<string, never>; Returns: undefined };
       admin_list_users: { Args: Record<string, never>; Returns: AdminUserRow[] };
       admin_set_role: { Args: { target: string; new_role: UserRole }; Returns: undefined };
+      goal_day_stats: { Args: Record<string, never>; Returns: GoalDayStat[] };
     };
     Enums: Record<never, never>;
     CompositeTypes: Record<never, never>;
