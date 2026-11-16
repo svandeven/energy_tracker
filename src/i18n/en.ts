@@ -99,6 +99,10 @@ export const en = {
   'reset.failed': 'Could not update your password.',
   'reset.cancel': 'Cancel and sign out',
 
+  // Returning from Google/Apple sign-in or the confirmation email
+  'authCallback.signingIn': 'Signing you in…',
+  'authCallback.failed': 'Sign-in didn’t complete',
+
   // Tabs and header
   'tabs.home': 'Home',
   'tabs.history': 'History',

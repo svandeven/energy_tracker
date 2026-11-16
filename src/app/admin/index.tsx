@@ -27,6 +27,7 @@ const GROUPS: Record<string, string> = {
   signIn: 'Sign in',
   forgot: 'Forgot password',
   reset: 'Reset password',
+  authCallback: 'Signing in',
   tabs: 'Tabs',
   dashboard: 'Dashboard',
   checkIn: 'Check-in',

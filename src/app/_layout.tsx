@@ -57,7 +57,9 @@ function AuthGate() {
     if (initializing) return;
     const inAuthFlow = segments[0] === '(auth)';
     // Terms are linked from the sign-in screen, so they must open either way.
-    const isPublic = segments[0] === 'terms';
+    // The sign-in callback has no session yet while the code is exchanged, and
+    // navigates on by itself once it does.
+    const isPublic = segments[0] === 'terms' || segments[0] === 'auth-callback';
 
     // A recovery session is authenticated but still owes us a new password, so
     // it must not fall through to the normal "signed in -> dashboard" rule.
@@ -81,6 +83,7 @@ function AuthGate() {
       <Stack.Screen name="delete-account" options={{ presentation: 'card' }} />
       <Stack.Screen name="terms" options={{ presentation: 'card' }} />
       <Stack.Screen name="admin" />
+      <Stack.Screen name="auth-callback" />
     </Stack>
   );
 }

@@ -97,6 +97,10 @@ export const nl: Record<TranslationKey, string> = {
   'reset.failed': 'Je wachtwoord kon niet worden bijgewerkt.',
   'reset.cancel': 'Annuleren en uitloggen',
 
+  // Returning from Google/Apple sign-in or the confirmation email
+  'authCallback.signingIn': 'Je wordt ingelogd…',
+  'authCallback.failed': 'Inloggen is niet gelukt',
+
   // Tabs
   'tabs.home': 'Home',
   'tabs.history': 'Geschiedenis',
