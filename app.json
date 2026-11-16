@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Sun Steps",
-    "slug": "energy-score",
+    "slug": "sun-steps",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -13,7 +13,11 @@
       "bundleIdentifier": "eu.sunsteps.app",
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": true,
-        "CFBundleAllowMixedLocalizations": true
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": [
+          "en",
+          "nl"
+        ]
       }
     },
     "android": {
@@ -60,8 +64,14 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["en", "nl"],
-            "android": ["en", "nl"]
+            "ios": [
+              "en",
+              "nl"
+            ],
+            "android": [
+              "en",
+              "nl"
+            ]
           }
         }
       ]
@@ -73,7 +83,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "b62918ba-7439-418f-923d-ae04a029ac17"
+        "projectId": "7f4cab97-6fac-46f4-af39-475fbcdd441f"
       }
     },
     "owner": "svandeven",
