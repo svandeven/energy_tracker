@@ -8,7 +8,7 @@ import { Text } from './Text';
 
 /**
  * The persistent header from the mockups: history glyph on the left, the
- * logo + "Fettle" wordmark centered, settings gear on the right.
+ * logo + app-name wordmark centered, settings gear on the right.
  */
 export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' | 'surface' }) {
   const router = useRouter();
@@ -31,7 +31,7 @@ export function AppHeader({ onBackground = 'white' }: { onBackground?: 'white' |
 
       <View style={styles.wordmark}>
         <Image source={require('../../assets/images/logo.png')} style={styles.mark} />
-        <Text variant="bodyStrong">Fettle</Text>
+        <Text variant="bodyStrong">{t('common.appName')}</Text>
       </View>
 
       <Pressable

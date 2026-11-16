@@ -8,6 +8,8 @@
  */
 export const en = {
   // Shared
+  /** The name in the header and on the welcome and sign-in screens. */
+  'common.appName': 'Fettle',
   'common.continue': 'Continue',
   'common.cancel': 'Cancel',
   'common.save': 'Save',

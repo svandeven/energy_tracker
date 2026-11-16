@@ -6,6 +6,7 @@ import type { TranslationKey } from './en';
  */
 export const nl: Record<TranslationKey, string> = {
   // Shared
+  'common.appName': 'Lekker Bezig',
   'common.continue': 'Doorgaan',
   'common.cancel': 'Annuleren',
   'common.save': 'Opslaan',

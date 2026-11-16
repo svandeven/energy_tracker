@@ -18,7 +18,7 @@ export default function WelcomeScreen() {
       <View style={styles.topRow}>
         <View style={styles.wordmark}>
           <Ionicons name="sunny" size={16} color={colors.primary} style={styles.sun} />
-          <Text variant="bodyStrong">Fettle</Text>
+          <Text variant="bodyStrong">{t('common.appName')}</Text>
         </View>
         <View style={styles.language}>
           <LanguageSwitch />

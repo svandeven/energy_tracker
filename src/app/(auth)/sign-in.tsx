@@ -113,7 +113,7 @@ export default function SignInScreen() {
             accessibilityIgnoresInvertColors
           />
           <Text variant="title" center>
-            Fettle
+            {t('common.appName')}
           </Text>
           <Text variant="small" color={colors.inkMuted} center style={styles.tagline}>
             {t('signIn.tagline')}
