@@ -26,8 +26,8 @@ export type Overrides = Partial<Record<Locale, Partial<Record<string, string>>>>
 
 type Vars = Record<string, string | number>;
 
-const PREFERENCE_KEY = 'fettle.language';
-const CACHE_KEY = 'fettle.translations';
+const PREFERENCE_KEY = 'sunsteps.language';
+const CACHE_KEY = 'sunsteps.translations';
 
 const isLocale = (value: unknown): value is Locale =>
   typeof value === 'string' && (LOCALES as readonly string[]).includes(value);

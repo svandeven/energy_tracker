@@ -1,14 +1,21 @@
 // Serves the static web build (npm run build:web -> dist/) as a Cloudflare Worker.
+// worker/index.js redirects every host except sunsteps.eu to sunsteps.eu.
 {
-  "name": "fettle",
+  "name": "sunsteps",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-13",
   "workers_dev": true,
   "routes": [
+    { "pattern": "sunsteps.eu", "custom_domain": true },
+    { "pattern": "www.sunsteps.eu", "custom_domain": true },
     { "pattern": "fettle-life.com", "custom_domain": true },
     { "pattern": "www.fettle-life.com", "custom_domain": true }
   ],
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // Run the worker first so the redirect applies to every path, not just misses.
+    "run_worker_first": true,
     // output: "single" — every unknown path falls back to index.html
     "not_found_handling": "single-page-application"
   }

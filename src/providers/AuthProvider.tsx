@@ -63,7 +63,7 @@ const AuthContext = createContext<AuthValue | null>(null);
 
 /**
  * In Expo Go this resolves to an `exp://<lan-ip>:8081/--/auth-callback` URL; in a
- * dev or production build it uses the `fettle` scheme. Both must be listed
+ * dev or production build it uses the `sunsteps` scheme. Both must be listed
  * under Supabase -> Authentication -> URL Configuration -> Redirect URLs.
  */
 function oauthRedirectUri() {

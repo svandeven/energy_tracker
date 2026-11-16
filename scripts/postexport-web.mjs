@@ -30,7 +30,7 @@ const CSS = `
       #root { box-shadow: 0 0 0 1px #E6E6E8; }
     }
     /* The content admin (src/app/admin) is a desktop tool: use the full window. */
-    body.fettle-admin #root {
+    body.sunsteps-admin #root {
       max-width: none;
       box-shadow: none;
     }`;

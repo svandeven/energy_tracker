@@ -24,8 +24,8 @@ export default function AdminLayout() {
   // Lift the phone-width frame that scripts/postexport-web.mjs puts on #root.
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-    document.body.classList.add('fettle-admin');
-    return () => document.body.classList.remove('fettle-admin');
+    document.body.classList.add('sunsteps-admin');
+    return () => document.body.classList.remove('sunsteps-admin');
   }, []);
 
   const leave = () => router.replace('/settings');
@@ -34,7 +34,7 @@ export default function AdminLayout() {
     return (
       <Notice
         title="Open this on the web"
-        body="Content admin is available in a browser at fettle-life.com/admin."
+        body="Content admin is available in a browser at sunsteps.eu/admin."
         onBack={leave}
       />
     );

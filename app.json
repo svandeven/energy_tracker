@@ -5,19 +5,19 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "fettle",
+    "scheme": "sunsteps",
     "userInterfaceStyle": "light",
     "backgroundColor": "#FFFFFF",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.fettlelife.app",
+      "bundleIdentifier": "eu.sunsteps.app",
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": true,
         "CFBundleAllowMixedLocalizations": true
       }
     },
     "android": {
-      "package": "com.fettlelife.app",
+      "package": "eu.sunsteps.app",
       "adaptiveIcon": {
         "backgroundColor": "#FE9F4D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

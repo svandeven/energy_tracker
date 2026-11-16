@@ -6,7 +6,7 @@ A React Native (Expo) app for tracking daily energy across five quick check-ins,
 built from a design mockup that is kept locally and deliberately not committed
 (`design/` is gitignored).
 
-**Web version: https://fettle-life.com**
+**Web version: https://sunsteps.eu**
 
 Each of the five categories is scored **0, 1 or 2** once per day, so a full day
 totals **/10**. Add or remove categories in Settings and the denominator follows.
@@ -104,7 +104,7 @@ new-password screen. Two Supabase settings are required:
    ```
 
 2. **Authentication → URL Configuration → Redirect URLs** — add
-   `fettle://reset-password`, plus the `exp://…/--/reset-password` variant
+   `sunsteps://reset-password`, plus the `exp://…/--/reset-password` variant
    for Expo Go.
 
 In Expo Go the redirect is an `exp://` URL that changes every session, so the
@@ -125,7 +125,7 @@ SQL editor, or deletion fails with "Could not find the function".
 Settings, and opens signed out too. `CONTACT_EMAIL` in `src/app/terms.tsx` is
 support@fettle-life.com; have the text reviewed before you submit. App Store
 Connect also wants the privacy policy at a public URL — `/terms` on the web
-build (eventually `https://fettle-life.com/terms`).
+build (eventually `https://sunsteps.eu/terms`).
 
 ## Languages and content admin
 
@@ -168,13 +168,14 @@ bundle, widen the `locale` check on `translations` in `schema.sql`, and add it t
 npm run deploy:web               # build:web, then wrangler deploy
 ```
 
-Live at **https://fettle-life.com** and `www.fettle-life.com`, served as the
-Cloudflare Worker `fettle` (`wrangler.jsonc`; also at
-`fettle.susan-vandeven.workers.dev`). The first `wrangler` run opens a browser
+Live at **https://sunsteps.eu**, served as the Cloudflare Worker `sunsteps`
+(`wrangler.jsonc`; also at `sunsteps.susan-vandeven.workers.dev`).
+`worker/index.js` 301-redirects `www.sunsteps.eu`, `fettle-life.com` and
+`www.fettle-life.com` to `sunsteps.eu`, keeping the path. The first `wrangler` run opens a browser
 to log in to Cloudflare. The domains are registered at GoDaddy with their nameservers pointed
-at Cloudflare; `lekkerbezig.eu` redirects to `fettle-life.com` via a Cloudflare
-Redirect Rule. Supabase's Site URL is `https://fettle-life.com`, and
-`https://fettle-life.com/**` must stay in its Redirect URLs, or web sign-in and
+at Cloudflare; `lekkerbezig.eu` redirects via a Cloudflare
+Redirect Rule. Supabase's Site URL is `https://sunsteps.eu`, and
+`https://sunsteps.eu/**` must stay in its Redirect URLs, or web sign-in and
 password recovery break.
 
 `npm run build:web` runs `expo export --platform web` and then
@@ -206,7 +207,7 @@ Supabase's OAuth flow through an in-app browser, which needs two extra steps:
    (Google needs a Google Cloud OAuth client; Apple needs an Apple Services ID).
 2. **Allowlist the redirect URLs** under **Authentication → URL Configuration →
    Redirect URLs**. Add both:
-   - `fettle://auth-callback` — dev builds and production
+   - `sunsteps://auth-callback` — dev builds and production
    - `exp://127.0.0.1:8081/--/auth-callback` — Expo Go (swap in the LAN IP that
      `npx expo start` prints if you are on a device rather than the simulator)
 
