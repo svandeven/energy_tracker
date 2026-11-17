@@ -39,7 +39,7 @@ function resolveDate(raw: string | undefined): LocalDate {
 export default function CheckInScreen() {
   const router = useRouter();
   const { id, date: dateParam } = useLocalSearchParams<{ id: string; date?: string }>();
-  const { questions, checkins, saveScore } = useData();
+  const { questions, checkins, saveScore, clearScore } = useData();
   const { t, fmt, errorText } = useI18n();
 
   const date = resolveDate(dateParam);
@@ -53,6 +53,7 @@ export default function CheckInScreen() {
 
   const [selected, setSelected] = useState<number | null>(existingScore);
   const [saving, setSaving] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   if (!question) {
@@ -109,6 +110,21 @@ export default function CheckInScreen() {
       setError(errorText(e, 'checkIn.saveFailed'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  // Stays on this question, so a mistaken answer can be removed or re-picked.
+  const clear = async () => {
+    setClearing(true);
+    setError(null);
+    try {
+      await clearScore(question.id, date);
+      setSelected(null);
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch (e) {
+      setError(errorText(e, 'checkIn.clearFailed'));
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -175,9 +191,22 @@ export default function CheckInScreen() {
         </View>
 
         {existingScore != null && (
-          <Text variant="caption" color={colors.inkMuted} style={styles.existingNote}>
-            {t('checkIn.alreadyLogged', { score: existingScore })}
-          </Text>
+          <View style={styles.existingNote}>
+            <Text variant="caption" color={colors.inkMuted}>
+              {t('checkIn.alreadyLogged', { score: existingScore })}
+            </Text>
+            <Pressable
+              onPress={clear}
+              disabled={clearing}
+              hitSlop={8}
+              accessibilityRole="button"
+              style={clearing && styles.clearing}
+            >
+              <Text variant="smallStrong" color={colors.accent}>
+                {t('checkIn.clear')}
+              </Text>
+            </Pressable>
+          </View>
         )}
 
         {error && (
@@ -250,7 +279,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.border,
   },
-  existingNote: { marginTop: 14 },
+  existingNote: { marginTop: 14, gap: 6, alignItems: 'flex-start' },
+  clearing: { opacity: 0.5 },
   error: { marginTop: 14 },
   footer: { paddingHorizontal: 20, paddingBottom: 20, gap: 10 },
   backRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },

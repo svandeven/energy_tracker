@@ -143,6 +143,8 @@ export const en = {
   'checkIn.choose': 'Choose what best matches your day.',
   'checkIn.scoreFallback': 'Score {score}',
   'checkIn.alreadyLogged': 'Already logged as {score}. Saving replaces it.',
+  'checkIn.clear': 'Clear answer',
+  'checkIn.clearFailed': 'Could not clear that. Try again.',
   'checkIn.pickOne': 'Pick the option that best matches your day.',
   'checkIn.saveFailed': 'Could not save that. Try again.',
   'checkIn.notReady': 'Not ready?',

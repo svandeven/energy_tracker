@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 
-import type { GoalRow, GoalTemplateRow, QuestionRow } from '../lib/database.types';
+import type { CheckinRow, GoalRow, GoalTemplateRow, QuestionRow } from '../lib/database.types';
 import { type LocalDate, addDays, parseLocalDate, parseTime } from '../lib/dates';
 import { appliesOn, isRepeating } from '../lib/goals';
 import type { GoalNotificationData } from './goalsApi';
@@ -15,12 +15,13 @@ export const GOAL_CATEGORY = 'goal';
 export const GOAL_DONE_ACTION = 'done';
 
 /**
- * Repeating goal reminders are scheduled one day at a time for this many days
- * ahead (re-planned whenever the app opens), so a goal already ticked off
- * today doesn't still nag. iOS keeps at most 64 pending notifications.
+ * Question and repeating goal reminders are scheduled one day at a time for
+ * this many days ahead (re-planned whenever the app opens), so a question
+ * already answered or a goal already ticked off doesn't still nag.
  */
-const GOAL_DAYS_AHEAD = 7;
-const MAX_GOAL_REMINDERS = 45;
+const DAYS_AHEAD = 7;
+/** iOS keeps at most 64 pending notifications; the nearest ones win. */
+const MAX_PENDING = 64;
 
 /**
  * expo-notifications has no scheduling implementation on web — calling
@@ -69,6 +70,8 @@ export interface ReminderText {
 export interface ReminderPlan {
   enabled: boolean;
   questions: QuestionRow[];
+  /** Recent check-ins, to skip question reminders for days already answered. */
+  checkins: CheckinRow[];
   /** 'HH:MM:SS' from the profile. */
   goalPlanTime: string | null;
   goalReviewTime: string | null;
@@ -97,12 +100,43 @@ function at(date: LocalDate, time: string): Date {
   return d;
 }
 
+interface DatedReminder {
+  when: Date;
+  title: string;
+  body: string;
+  data: Record<string, unknown>;
+  categoryIdentifier?: string;
+}
+
+/**
+ * One reminder per question per day, for today and the next few days. A
+ * next-day question's reminder asks about the day before, so answering it on
+ * the day itself cancels the next morning's reminder.
+ */
+function questionReminders(plan: ReminderPlan): DatedReminder[] {
+  const answered = new Set(plan.checkins.map((c) => `${c.question_id}@${c.local_date}`));
+  const out: DatedReminder[] = [];
+  for (let offset = 0; offset < DAYS_AHEAD; offset++) {
+    const day = addDays(plan.today, offset);
+    for (const question of plan.questions) {
+      const date = question.reminder_next_day ? addDays(day, -1) : day;
+      if (answered.has(`${question.id}@${date}`)) continue;
+      out.push({
+        when: at(day, question.reminder_time),
+        title: question.title,
+        body: question.reminder_next_day ? plan.text.bodyNextDay : plan.text.body,
+        data: { kind: 'question', questionId: question.id, date },
+      });
+    }
+  }
+  return out;
+}
+
 /** One reminder per goal per day, for today and the next few days. */
-function goalReminders(plan: ReminderPlan) {
-  const now = new Date();
+function goalReminders(plan: ReminderPlan): DatedReminder[] {
   const out: { when: Date; title: string; data: GoalNotificationData }[] = [];
 
-  for (let offset = 0; offset < GOAL_DAYS_AHEAD; offset++) {
+  for (let offset = 0; offset < DAYS_AHEAD; offset++) {
     const date = addDays(plan.today, offset);
     for (const template of plan.templates) {
       if (!template.remind_at || !isRepeating(template) || !appliesOn(template, date)) continue;
@@ -128,14 +162,16 @@ function goalReminders(plan: ReminderPlan) {
       data: { kind: 'goal', date: plan.today, goalId: goal.id },
     });
   }
-  return out
-    .filter((r) => r.when > now)
-    .sort((a, b) => a.when.getTime() - b.when.getTime())
-    .slice(0, MAX_GOAL_REMINDERS);
+  return out.map((r) => ({
+    ...r,
+    body: plan.text.goalBody,
+    data: { ...r.data },
+    categoryIdentifier: GOAL_CATEGORY,
+  }));
 }
 
 /**
- * Replaces all scheduled reminders: one daily notification per question, the
+ * Replaces all scheduled reminders: one per unanswered question per day, the
  * morning "set your goals" and evening "what did you get done" nudges, and a
  * reminder with a Done button for each goal that has a time. Called whenever
  * any of those change — cheaper and less error-prone than diffing against
@@ -169,19 +205,6 @@ export async function syncReminders(plan: ReminderPlan) {
     },
   ]);
 
-  for (const question of plan.questions) {
-    const { hour, minute } = parseTime(question.reminder_time);
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: question.title,
-        body: question.reminder_next_day ? text.bodyNextDay : text.body,
-        data: { kind: 'question', questionId: question.id, nextDay: question.reminder_next_day },
-        ...channel(),
-      },
-      trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
-    });
-  }
-
   const daily = [
     { time: plan.goalPlanTime, title: text.goalPlanTitle, body: text.goalPlanBody, kind: 'goalPlan' },
     { time: plan.goalReviewTime, title: text.goalReviewTitle, body: text.goalReviewBody, kind: 'goalReview' },
@@ -195,13 +218,18 @@ export async function syncReminders(plan: ReminderPlan) {
     });
   }
 
-  for (const reminder of goalReminders(plan)) {
+  const now = new Date();
+  const dated = [...questionReminders(plan), ...goalReminders(plan)]
+    .filter((r) => r.when > now)
+    .sort((a, b) => a.when.getTime() - b.when.getTime())
+    .slice(0, MAX_PENDING - daily.filter((n) => n.time).length);
+  for (const reminder of dated) {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: reminder.title,
-        body: text.goalBody,
-        data: { ...reminder.data },
-        categoryIdentifier: GOAL_CATEGORY,
+        body: reminder.body,
+        data: reminder.data,
+        ...(reminder.categoryIdentifier ? { categoryIdentifier: reminder.categoryIdentifier } : {}),
         ...channel(),
       },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: reminder.when },
