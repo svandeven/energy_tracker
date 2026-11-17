@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -131,6 +132,32 @@ export default function SignInScreen() {
             />
           </View>
 
+          {/* Social sign-in first: on a small screen the email form would push it
+              out of view. Each platform's own provider leads. */}
+          <View style={styles.social}>
+            {(Platform.OS === 'android' ? (['google', 'apple'] as const) : (['apple', 'google'] as const)).map(
+              (provider) => (
+                <Button
+                  key={provider}
+                  label={t(provider === 'apple' ? 'signIn.apple' : 'signIn.google')}
+                  variant="secondary"
+                  icon={<AntDesign name={provider} size={18} color={colors.ink} />}
+                  loading={busy === provider}
+                  disabled={busy !== null && busy !== provider}
+                  onPress={() => oauth(provider)}
+                />
+              ),
+            )}
+          </View>
+
+          <View style={styles.dividerRow}>
+            <View style={styles.dividerLine} />
+            <Text variant="caption" color={colors.inkFaint}>
+              {t('signIn.orUseEmail')}
+            </Text>
+            <View style={styles.dividerLine} />
+          </View>
+
           <Field label={t('common.email')}>
             <Ionicons name="mail-outline" size={18} color={colors.inkFaint} />
             <TextInput
@@ -229,33 +256,6 @@ export default function SignInScreen() {
             disabled={busy !== null && busy !== 'email'}
             style={styles.continue}
           />
-
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <Text variant="caption" color={colors.inkFaint}>
-              {t('signIn.orContinueWith')}
-            </Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          <Button
-            label={t('signIn.apple')}
-            variant="secondary"
-            icon={<AntDesign name="apple" size={18} color={colors.ink} />}
-            loading={busy === 'apple'}
-            disabled={busy !== null && busy !== 'apple'}
-            onPress={() => oauth('apple')}
-          />
-          <Button
-            label={t('signIn.google')}
-            variant="secondary"
-            icon={<AntDesign name="google" size={18} color={colors.ink} />}
-            loading={busy === 'google'}
-            disabled={busy !== null && busy !== 'google'}
-            onPress={() => oauth('google')}
-            style={styles.googleButton}
-          />
-
           <Text variant="caption" color={colors.inkFaint} center style={styles.terms}>
             {t('signIn.agreePrefix')}{' '}
             <Text
@@ -322,13 +322,13 @@ const styles = StyleSheet.create({
     height: 64,
     marginBottom: 14,
   },
-  tagline: { marginTop: 4, marginBottom: 26 },
+  tagline: { marginTop: 4, marginBottom: 20 },
   segmented: {
     flexDirection: 'row',
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     padding: 4,
-    marginBottom: 22,
+    marginBottom: 18,
   },
   tab: { flex: 1, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 11 },
   tabActive: { backgroundColor: colors.white },
@@ -354,9 +354,9 @@ const styles = StyleSheet.create({
   },
   forgotLink: { alignSelf: 'flex-end', marginBottom: 14, paddingVertical: 2 },
   continue: { marginTop: 4 },
-  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 22 },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 18 },
   dividerLine: { flex: 1, height: 1, backgroundColor: colors.border },
-  googleButton: { marginTop: 12 },
+  social: { gap: 12 },
   terms: { marginTop: 22 },
   backLink: { marginTop: 14, paddingVertical: 6 },
 });
