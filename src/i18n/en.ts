@@ -70,7 +70,7 @@ export const en = {
   'signIn.confirmPassword': 'Confirm password',
   'signIn.checkEmail': 'Check {email} for a confirmation link, then come back and log in.',
   'signIn.forgot': 'Forgot password?',
-  'signIn.orContinueWith': 'or continue with',
+  'signIn.orUseEmail': 'or use your email',
   'signIn.apple': 'Continue with Apple',
   'signIn.google': 'Continue with Google',
   'signIn.agreePrefix': 'By continuing you agree to our',

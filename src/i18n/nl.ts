@@ -67,7 +67,7 @@ export const nl: Record<TranslationKey, string> = {
   'signIn.confirmPassword': 'Bevestig wachtwoord',
   'signIn.checkEmail': 'Kijk in {email} voor een bevestigingslink en log daarna hier in.',
   'signIn.forgot': 'Wachtwoord vergeten?',
-  'signIn.orContinueWith': 'of ga verder met',
+  'signIn.orUseEmail': 'of gebruik je e-mailadres',
   'signIn.apple': 'Doorgaan met Apple',
   'signIn.google': 'Doorgaan met Google',
   'signIn.agreePrefix': 'Door verder te gaan ga je akkoord met onze',
