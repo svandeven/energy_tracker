@@ -1,0 +1,118 @@
+<!doctype html>
+<!--
+  Where the sign-up confirmation email lands for app sign-ups (AuthProvider's
+  emailRedirectTo). Supabase has already confirmed the address by the time it
+  redirects here; this page only explains that and offers to hand the PKCE
+  ?code= to the app, which is the only place it can be exchanged.
+  Plain HTML on purpose: the web app's sign-in gate would bounce a signed-out
+  visitor, and a sunsteps:// redirect shows a blank page in mail apps.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#FE9F4D" />
+  <meta name="robots" content="noindex" />
+  <title>Sun Steps</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #F0F0F0;
+      color: #1C1C1E;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    main {
+      box-sizing: border-box;
+      width: calc(100% - 32px);
+      max-width: 420px;
+      background: #FFFFFF;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    header { background: #FE9F4D; padding: 20px 28px; font-size: 20px; font-weight: 700; }
+    section { padding: 28px; }
+    h1 { margin: 0 0 12px; font-size: 22px; line-height: 28px; }
+    p { margin: 0 0 16px; font-size: 16px; line-height: 24px; }
+    .button {
+      display: block;
+      margin: 24px 0 16px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: #FE9F4D;
+      color: #1C1C1E;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+    }
+    .muted { color: #6B6B70; font-size: 14px; line-height: 20px; margin: 0; }
+    a { color: #B5560A; }
+    [hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>&#9728;&#65039; <span data-t="name">Sun Steps</span></header>
+    <section>
+      <h1 data-t="title">Your email is confirmed</h1>
+      <p data-t="body">Your account is ready. Open the app to get started.</p>
+      <a class="button" id="open" href="sunsteps://auth-callback" data-t="open">Open Sun Steps</a>
+      <p class="muted">
+        <span data-t="fallback">Didn’t open? Open the app and log in with your email and password, or</span>
+        <a href="/sign-in?mode=login" id="web" data-t="web">continue on the web</a>.
+      </p>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var nl = (navigator.language || '').toLowerCase().indexOf('nl') === 0;
+      var text = nl
+        ? {
+            name: 'Lekker Bezig',
+            title: 'Je e-mailadres is bevestigd',
+            body: 'Je account is klaar. Open de app om te beginnen.',
+            open: 'Open Lekker Bezig',
+            fallback: 'Opent de app niet? Open hem zelf en log in met je e-mailadres en wachtwoord, of',
+            web: 'ga verder op het web',
+            expiredTitle: 'Deze link werkt niet meer',
+            expiredBody: 'Hij is verlopen of al gebruikt. Is je e-mailadres al bevestigd? Dan kun je gewoon inloggen in de app.',
+          }
+        : {
+            name: 'Sun Steps',
+            title: 'Your email is confirmed',
+            body: 'Your account is ready. Open the app to get started.',
+            open: 'Open Sun Steps',
+            fallback: 'Didn’t open? Open the app and log in with your email and password, or',
+            web: 'continue on the web',
+            expiredTitle: 'This link no longer works',
+            expiredBody: 'It has expired or was already used. If your email is already confirmed, just log in in the app.',
+          };
+
+      // Supabase reports a bad link as #error=…&error_code=otp_expired.
+      var hash = new URLSearchParams(location.hash.slice(1));
+      var query = new URLSearchParams(location.search);
+      if (hash.get('error') || query.get('error')) {
+        text.title = text.expiredTitle;
+        text.body = text.expiredBody;
+        document.getElementById('open').hidden = true;
+      }
+
+      document.documentElement.lang = nl ? 'nl' : 'en';
+      document.title = text.name;
+      document.querySelectorAll('[data-t]').forEach(function (el) {
+        el.textContent = text[el.getAttribute('data-t')];
+      });
+
+      // Signs straight in when this is the phone that signed up.
+      var code = query.get('code');
+      if (code) {
+        document.getElementById('open').href = 'sunsteps://auth-callback?code=' + encodeURIComponent(code);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!-- Language comes from the user metadata set at sign-up; anything but "nl" gets English. -->
+{{ if eq (print .Data.locale) "nl" }}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F0F0F0;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#FFFFFF;border-radius:16px;overflow:hidden;">
+      <tr><td style="background:#FE9F4D;padding:20px 28px;font-size:20px;font-weight:700;color:#1C1C1E;">&#9728;&#65039; Lekker Bezig</td></tr>
+      <tr><td style="padding:28px;color:#1C1C1E;font-size:16px;line-height:24px;">
+        <h1 style="margin:0 0 12px;font-size:22px;line-height:28px;">Bevestig je nieuwe e-mailadres</h1>
+        <p style="margin:0 0 24px;">Tik op de knop om {{ .NewEmail }} te gebruiken voor je Lekker Bezig-account.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="background:#FE9F4D;border-radius:999px;">
+          <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;color:#1C1C1E;font-weight:700;text-decoration:none;">Nieuw adres bevestigen</a>
+        </td></tr></table>
+      </td></tr>
+      <tr><td style="padding:0 28px 28px;color:#6B6B70;font-size:13px;line-height:20px;">
+        Heb je dit niet aangevraagd? Negeer dan deze mail; je account blijft ongewijzigd.<br><a href="https://sunsteps.eu" style="color:#B5560A;">sunsteps.eu</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+{{ else }}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F0F0F0;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#FFFFFF;border-radius:16px;overflow:hidden;">
+      <tr><td style="background:#FE9F4D;padding:20px 28px;font-size:20px;font-weight:700;color:#1C1C1E;">&#9728;&#65039; Sun Steps</td></tr>
+      <tr><td style="padding:28px;color:#1C1C1E;font-size:16px;line-height:24px;">
+        <h1 style="margin:0 0 12px;font-size:22px;line-height:28px;">Confirm your new email</h1>
+        <p style="margin:0 0 24px;">Tap the button to use {{ .NewEmail }} for your Sun Steps account.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="background:#FE9F4D;border-radius:999px;">
+          <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;color:#1C1C1E;font-weight:700;text-decoration:none;">Confirm new email</a>
+        </td></tr></table>
+      </td></tr>
+      <tr><td style="padding:0 28px 28px;color:#6B6B70;font-size:13px;line-height:20px;">
+        Didn’t ask for this? Ignore this email and your account stays as it is.<br><a href="https://sunsteps.eu" style="color:#B5560A;">sunsteps.eu</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+{{ end }}

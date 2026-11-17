@@ -10,7 +10,7 @@ import { isSupabaseConfigured } from '../lib/env';
 import { cancelReminders } from '../features/notifications';
 import { removeAvatars, uploadAvatar } from '../features/avatar';
 import type { ProfileRow } from '../lib/database.types';
-import { LocalizedError } from '../i18n';
+import { LocalizedError, useI18n } from '../i18n';
 
 export type OAuthProvider = 'google' | 'apple';
 
@@ -76,12 +76,24 @@ function oauthRedirectUri() {
   return AuthSession.makeRedirectUri({ path: 'auth-callback' });
 }
 
+/**
+ * Where the sign-up confirmation link lands. On native that's a page on the
+ * website rather than a sunsteps:// link, which mail apps and other devices
+ * can't open and show as a blank page; it offers to hand the code to the app.
+ * Must be listed under Supabase -> Authentication -> URL Configuration ->
+ * Redirect URLs.
+ */
+function confirmationRedirectUri() {
+  return Platform.OS === 'web' ? oauthRedirectUri() : 'https://sunsteps.eu/email-confirmed';
+}
+
 /** Where the emailed password-recovery link should land. */
 function recoveryRedirectUri() {
   return AuthSession.makeRedirectUri({ path: 'reset-password' });
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { locale } = useI18n();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [recovering, setRecovering] = useState(false);
@@ -177,15 +189,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: trimmed,
       password,
       options: {
-        emailRedirectTo: oauthRedirectUri(),
-        data: { display_name: trimmed.split('@')[0] },
+        emailRedirectTo: confirmationRedirectUri(),
+        // `locale` picks the language of the emails (see supabase/templates).
+        data: { display_name: trimmed.split('@')[0], locale },
       },
     });
     if (error) throw error;
     // With "Confirm email" on (the Supabase default) there is a user but no
     // session until the emailed link is opened.
     return { needsConfirmation: !data.session };
-  }, []);
+  }, [locale]);
 
   const signInWithProvider = useCallback(async (provider: OAuthProvider) => {
     const redirectTo = oauthRedirectUri();
