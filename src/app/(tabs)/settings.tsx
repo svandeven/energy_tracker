@@ -1,7 +1,9 @@
-import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
 import { Avatar } from '../../components/Avatar';
 import { BackLink } from '../../components/ScreenTop';
@@ -13,6 +15,7 @@ import { useData } from '../../providers/DataProvider';
 import { LOCALES, LOCALE_NAMES, type Locale, useI18n } from '../../i18n';
 
 const DANGER = '#C4342B';
+const SUPPORT_EMAIL = 'support@sunsteps.eu';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -22,6 +25,26 @@ export default function SettingsScreen() {
   // The editing screens are built for a desktop browser, so only link them there.
   const canEditContent =
     Platform.OS === 'web' && (profile?.role === 'content_editor' || profile?.role === 'super_admin');
+  const [noMailApp, setNoMailApp] = useState(false);
+
+  // Opens the mail app with the version and device filled in, which is most of
+  // what's needed to follow up on a bug report.
+  const sendFeedback = async () => {
+    const details = [
+      `${t('common.appName')} ${Constants.expoConfig?.version ?? ''}`,
+      `${Platform.OS} ${Platform.Version}`,
+    ].join(' · ');
+    const url =
+      `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(t('settings.feedbackSubject'))}` +
+      `&body=${encodeURIComponent(`\n\n\n— ${details}`)}`;
+    try {
+      await Linking.openURL(url);
+      setNoMailApp(false);
+    } catch {
+      setNoMailApp(true);
+    }
+  };
+
   const languageOptions: { value: Locale | null; label: string }[] = [
     { value: null, label: t('settings.languageSystem') },
     ...LOCALES.map((l) => ({ value: l, label: LOCALE_NAMES[l] })),
@@ -82,6 +105,25 @@ export default function SettingsScreen() {
               <Text variant="bodyStrong">{t('settings.goalReminders')}</Text>
               <Text variant="small" color={colors.inkMuted}>
                 {t('settings.goalRemindersSub')}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
+          </Pressable>
+        </Card>
+
+        <Card padded={false} style={styles.questionsCard}>
+          <Pressable
+            onPress={sendFeedback}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.accountRow, pressed && styles.pressed]}
+          >
+            <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.accent} />
+            <View style={styles.accountText}>
+              <Text variant="bodyStrong">{t('settings.feedback')}</Text>
+              <Text variant="small" color={noMailApp ? DANGER : colors.inkMuted}>
+                {noMailApp
+                  ? t('settings.feedbackNoMailApp', { email: SUPPORT_EMAIL })
+                  : t('settings.feedbackSub', { email: SUPPORT_EMAIL })}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />

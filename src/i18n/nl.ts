@@ -471,6 +471,10 @@ export const nl: Record<TranslationKey, string> = {
 
   'settings.goalReminders': 'Herinneringen voor doelen',
   'settings.goalRemindersSub': 'Plannen, terugblikken en tijden per doel',
+  'settings.feedback': 'Feedback sturen',
+  'settings.feedbackSub': 'Ideeën, fouten of vragen: mail {email}',
+  'settings.feedbackNoMailApp': 'Geen e-mailapp gevonden. Mail ons op {email}',
+  'settings.feedbackSubject': 'Feedback Lekker Bezig',
 
   'reminder.goalPlanTitle': 'Plan je dag',
   'reminder.goalPlanBody': 'Wat maakt vandaag een goede dag? Kies je doelen.',

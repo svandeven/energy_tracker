@@ -474,6 +474,10 @@ export const en = {
 
   'settings.goalReminders': 'Goal reminders',
   'settings.goalRemindersSub': 'Planning, review and goal times',
+  'settings.feedback': 'Send feedback',
+  'settings.feedbackSub': 'Ideas, bugs or questions: email {email}',
+  'settings.feedbackNoMailApp': 'No email app found. Email us at {email}',
+  'settings.feedbackSubject': 'Sun Steps feedback',
 
   'reminder.goalPlanTitle': 'Plan your day',
   'reminder.goalPlanBody': 'What would make today a good day? Set your goals.',
