@@ -48,11 +48,12 @@ export function useNotificationResponses() {
         return;
       }
       if (typeof data?.questionId === 'string') {
+        // Reminders name the day they ask about; ones scheduled before that
+        // only say whether it's the day before.
         const delivered = toLocalDate(new Date(notification.date));
-        router.push({
-          pathname: '/check-in/[id]',
-          params: { id: data.questionId, date: data.nextDay ? addDays(delivered, -1) : delivered },
-        });
+        const date =
+          typeof data.date === 'string' ? data.date : data.nextDay ? addDays(delivered, -1) : delivered;
+        router.push({ pathname: '/check-in/[id]', params: { id: data.questionId, date } });
       }
     };
 

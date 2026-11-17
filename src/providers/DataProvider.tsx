@@ -25,6 +25,8 @@ interface DataValue {
   reload(): Promise<void>;
   /** Upserts today's (or a given day's) score for one question. */
   saveScore(questionId: string, score: number, date?: LocalDate): Promise<void>;
+  /** Removes the answer for one question on a day, e.g. one logged on the wrong day. */
+  clearScore(questionId: string, date: LocalDate): Promise<void>;
   updateQuestion(id: string, patch: Partial<QuestionRow>): Promise<void>;
   addQuestion(): Promise<QuestionRow | null>;
   deleteQuestion(id: string): Promise<void>;
@@ -116,6 +118,21 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         );
         return [data, ...rest];
       });
+    },
+    [userId],
+  );
+
+  const clearScore = useCallback(
+    async (questionId: string, date: LocalDate) => {
+      if (!userId) return;
+      const { error: deleteError } = await supabase
+        .from('checkins')
+        .delete()
+        .eq('user_id', userId)
+        .eq('question_id', questionId)
+        .eq('local_date', date);
+      if (deleteError) throw deleteError;
+      setCheckins((prev) => prev.filter((c) => !(c.question_id === questionId && c.local_date === date)));
     },
     [userId],
   );
@@ -223,6 +240,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       error: loadError == null ? null : errorText(loadError, 'error.loadData'),
       reload,
       saveScore,
+      clearScore,
       updateQuestion,
       addQuestion,
       deleteQuestion,
@@ -236,6 +254,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       errorText,
       reload,
       saveScore,
+      clearScore,
       updateQuestion,
       addQuestion,
       deleteQuestion,

@@ -140,6 +140,8 @@ export const nl: Record<TranslationKey, string> = {
   'checkIn.choose': 'Kies wat het best bij je dag past.',
   'checkIn.scoreFallback': 'Score {score}',
   'checkIn.alreadyLogged': 'Al ingevuld als {score}. Opslaan vervangt dit.',
+  'checkIn.clear': 'Antwoord wissen',
+  'checkIn.clearFailed': 'Wissen is niet gelukt. Probeer het opnieuw.',
   'checkIn.pickOne': 'Kies de optie die het best bij je dag past.',
   'checkIn.saveFailed': 'Opslaan is niet gelukt. Probeer het opnieuw.',
   'checkIn.notReady': 'Nog niet klaar?',
