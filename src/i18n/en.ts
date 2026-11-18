@@ -73,7 +73,7 @@ export const en = {
   'signIn.orUseEmail': 'or use your email',
   'signIn.apple': 'Continue with Apple',
   'signIn.google': 'Continue with Google',
-  'signIn.agreePrefix': 'By continuing you agree to our',
+  'signIn.agreePrefix': 'By continuing you confirm you meet the minimum age and agree to our',
   'signIn.agreeLink': 'Terms & Privacy Policy',
   'signIn.backToWelcome': 'Back to welcome',
 
@@ -315,7 +315,7 @@ export const en = {
   'terms.privacyHeading': 'Privacy Policy',
   'terms.storeTitle': 'What we store',
   'terms.storeBody':
-    '• Your email address, and a display name derived from it or from your Apple or Google profile\n• The check-in questions you set up, their score descriptions and reminder times\n• The scores you log, with the date you logged them for\n• Whether you have reminders switched on',
+    '• Your email address, and a display name derived from it or from your Apple or Google profile\n• The check-in questions you set up, their score descriptions and reminder times\n• The scores you log, with the date you logged them for\n• A profile photo, if you choose to add one\n• Whether you have reminders switched on',
   'terms.dontTitle': 'What we don’t collect',
   'terms.dontBody':
     'No location, contacts, health-app data, advertising identifiers or analytics. Reminders are scheduled on your device itself; their content never leaves it.',
