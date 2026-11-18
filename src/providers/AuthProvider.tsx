@@ -6,9 +6,11 @@ import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
 import { supabase } from '../lib/supabase';
-import { isSupabaseConfigured } from '../lib/env';
+import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID, isSupabaseConfigured } from '../lib/env';
 import { cancelReminders } from '../features/notifications';
 import { removeAvatars, uploadAvatar } from '../features/avatar';
+import { appleIdToken } from '../features/appleSignIn';
+import { googleIdToken, googleSignOut } from '../features/googleSignIn';
 import type { ProfileRow } from '../lib/database.types';
 import { LocalizedError, useI18n } from '../i18n';
 
@@ -214,6 +216,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return; // the tab is already on its way to the provider
     }
 
+    // Apple on iOS: the system Sign in with Apple sheet, as App Review expects.
+    if (provider === 'apple' && appleIdToken) {
+      const apple = await appleIdToken();
+      if (!apple) return; // sheet dismissed
+      const { error } = await supabase.auth.signInWithIdToken({ provider: 'apple', ...apple });
+      if (error) throw error;
+      return;
+    }
+
+    // Google on a phone: the native account picker, then hand Google's token
+    // to Supabase. No browser, so Google names the app, not the Supabase domain.
+    // iOS also needs its own client ID.
+    if (provider === 'google' && GOOGLE_WEB_CLIENT_ID && (Platform.OS !== 'ios' || GOOGLE_IOS_CLIENT_ID)) {
+      const token = await googleIdToken();
+      if (!token) return; // picker dismissed
+      const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token });
+      if (error) throw error;
+      return;
+    }
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo, skipBrowserRedirect: true },
@@ -319,6 +341,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
+    await googleSignOut();
     setProfile(null);
     setRecovering(false);
   }, []);

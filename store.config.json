@@ -1,0 +1,59 @@
+{
+  "configVersion": 0,
+  "apple": {
+    "copyright": "2026 Susan van de Ven",
+    "categories": [
+      "HEALTH_AND_FITNESS",
+      "LIFESTYLE"
+    ],
+    "info": {
+      "en-US": {
+        "title": "Sun Steps: Energy & Goals",
+        "subtitle": "Small steps. Promises kept.",
+        "promoText": "Check in with your energy each day, set goals that fit your life, and watch small steps add up to real progress. Start today, one step at a time.",
+        "description": "Sun Steps helps you build healthier habits, one small step at a time.\n\nEach day, take a moment to check in with how your energy feels. Set goals that fit your life, like moving more, sleeping better or getting outside, and let Sun Steps keep you on track with friendly reminders. Over time you'll see how small daily steps turn into real progress.\n\nAt the end of the day, Sun Steps is about one simple feeling: you kept a promise to yourself.\n\nDAILY ENERGY CHECK-IN\n• Log how you feel in seconds\n• See how your energy changes over days and weeks\n\nGOALS THAT FIT YOUR LIFE\n• Set fitness and lifestyle goals that work for you\n• Start small and build up at your own pace\n\nFRIENDLY REMINDERS\n• Gentle nudges at times that suit you\n• Encouragement, not pressure\n\nAWARDS & ACHIEVEMENTS\n• Earn awards as you reach your goals\n• Celebrate every milestone, big and small\n\nSEE YOUR PROGRESS\n• Your progress at a glance\n• Look back and see how far your small steps have taken you\n\nWhether you're starting a new fitness routine, building healthier habits or just want more energy for the things you love, Sun Steps is there to cheer you on.\n\nSmall steps. Promises kept.",
+        "keywords": [
+          "energy",
+          "tracker",
+          "habit",
+          "goals",
+          "fitness",
+          "wellbeing",
+          "motivation",
+          "check-in",
+          "routine",
+          "progress",
+          "daily",
+          "healthy"
+        ],
+        "releaseNotes": "The first release of Sun Steps.",
+        "marketingUrl": "https://sunsteps.eu",
+        "supportUrl": "https://sunsteps.eu",
+        "privacyPolicyUrl": "https://sunsteps.eu/terms"
+      },
+      "nl-NL": {
+        "title": "Lekker Bezig: Energie & Doelen",
+        "subtitle": "Elke dag een stapje verder",
+        "promoText": "Check elke dag je energie, stel doelen die bij je passen en zie hoe kleine stappen optellen tot echte vooruitgang. Begin vandaag, stapje voor stapje.",
+        "description": "Lekker Bezig helpt je om stap voor stap gezondere gewoontes op te bouwen.\n\nNeem elke dag even een moment om te checken hoe het met je energie gaat. Stel doelen die bij jouw leven passen, zoals meer bewegen, beter slapen of vaker naar buiten, en laat Lekker Bezig je op koers houden met vriendelijke herinneringen. Zo zie je hoe kleine dagelijkse stappen uitgroeien tot echte vooruitgang.\n\nAan het eind van de dag draait Lekker Bezig om één simpel gevoel: je bent een belofte aan jezelf nagekomen.\n\nDAGELIJKSE ENERGIECHECK\n• Leg in een paar seconden vast hoe je je voelt\n• Zie hoe je energie verandert over dagen en weken\n\nDOELEN DIE BIJ JE PASSEN\n• Stel fitness- en leefstijldoelen die voor jou werken\n• Begin klein en bouw op in je eigen tempo\n\nVRIENDELIJKE HERINNERINGEN\n• Een zetje op momenten die jou uitkomen\n• Aanmoediging, geen druk\n\nBELONINGEN & PRESTATIES\n• Verdien beloningen als je je doelen haalt\n• Vier elke mijlpaal, groot en klein\n\nZIE JE VOORUITGANG\n• Je voortgang in één oogopslag\n• Kijk terug en zie hoe ver je kleine stappen je hebben gebracht\n\nOf je nu begint met sporten, gezondere gewoontes wilt opbouwen of gewoon meer energie wilt voor de dingen waar je van houdt: Lekker Bezig moedigt je aan.\n\nElke dag een stapje verder. Lekker bezig!",
+        "keywords": [
+          "energie",
+          "tracker",
+          "gewoontes",
+          "doelen",
+          "fitness",
+          "welzijn",
+          "motivatie",
+          "routine",
+          "voortgang",
+          "dagelijks",
+          "gezond"
+        ],
+        "releaseNotes": "De eerste versie van Lekker Bezig.",
+        "marketingUrl": "https://sunsteps.eu",
+        "supportUrl": "https://sunsteps.eu",
+        "privacyPolicyUrl": "https://sunsteps.eu/terms"
+      }
+    }
+  }
+}

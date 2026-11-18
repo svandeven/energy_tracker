@@ -15,3 +15,11 @@ export const isSupabaseConfigured =
   Boolean(SUPABASE_URL && SUPABASE_ANON_KEY) &&
   !PLACEHOLDERS.includes(SUPABASE_URL) &&
   !PLACEHOLDERS.includes(SUPABASE_ANON_KEY);
+
+/**
+ * OAuth client IDs from Google Cloud for native Google sign-in. Like the anon
+ * key these are public identifiers, not secrets. Without the web client ID the
+ * app falls back to the browser sign-in flow.
+ */
+export const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
+export const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || undefined;
