@@ -70,7 +70,7 @@ export const nl: Record<TranslationKey, string> = {
   'signIn.orUseEmail': 'of gebruik je e-mailadres',
   'signIn.apple': 'Doorgaan met Apple',
   'signIn.google': 'Doorgaan met Google',
-  'signIn.agreePrefix': 'Door verder te gaan ga je akkoord met onze',
+  'signIn.agreePrefix': 'Door verder te gaan bevestig je dat je de minimumleeftijd hebt en ga je akkoord met onze',
   'signIn.agreeLink': 'voorwaarden en privacybeleid',
   'signIn.backToWelcome': 'Terug naar welkom',
 
@@ -312,7 +312,7 @@ export const nl: Record<TranslationKey, string> = {
   'terms.privacyHeading': 'Privacybeleid',
   'terms.storeTitle': 'Wat we opslaan',
   'terms.storeBody':
-    '• Je e-mailadres, en een weergavenaam die daarvan of van je Apple- of Google-profiel is afgeleid\n• De check-in-vragen die je instelt, met hun score-omschrijvingen en herinneringstijden\n• De scores die je invult, met de datum waarvoor je ze invulde\n• Of je herinneringen aan hebt staan',
+    '• Je e-mailadres, en een weergavenaam die daarvan of van je Apple- of Google-profiel is afgeleid\n• De check-in-vragen die je instelt, met hun score-omschrijvingen en herinneringstijden\n• De scores die je invult, met de datum waarvoor je ze invulde\n• Een profielfoto, als je die toevoegt\n• Of je herinneringen aan hebt staan',
   'terms.dontTitle': 'Wat we niet verzamelen',
   'terms.dontBody':
     'Geen locatie, contacten, gegevens uit gezondheidsapps, advertentie-ID’s of analytics. Herinneringen worden op je eigen apparaat ingepland; de inhoud ervan verlaat het apparaat nooit.',
