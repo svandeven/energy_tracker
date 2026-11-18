@@ -11,8 +11,9 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "eu.sunsteps.app",
+      "usesAppleSignIn": true,
       "infoPlist": {
-        "UIViewControllerBasedStatusBarAppearance": true,
+        "UIViewControllerBasedStatusBarAppearance": false,
         "CFBundleAllowMixedLocalizations": true,
         "CFBundleLocalizations": [
           "en",
@@ -75,7 +76,15 @@
             ]
           }
         }
-      ]
+      ],
+      "expo-apple-authentication",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.598614990655-6it4j6q6ncji1jmju60ilrgr234qflpr"
+        }
+      ],
+      "./plugins/withSceneDelegate"
     ],
     "experiments": {
       "typedRoutes": true,
