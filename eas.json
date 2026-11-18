@@ -16,7 +16,8 @@
     },
     "production": {
       "environment": "production",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "ios": { "image": "latest" }
     }
   },
   "submit": {
