@@ -95,6 +95,66 @@ export default function AddGoalScreen() {
           autoFocus
         />
 
+        {saved.length > 0 ? (
+          <>
+            <Text variant="label" style={styles.label}>
+              {t('addGoal.saved')}
+            </Text>
+            <View style={styles.chips}>
+              {saved.map((tpl) => (
+                <View
+                  key={tpl.id}
+                  style={[styles.chip, templateId === tpl.id && styles.chipActive]}
+                >
+                  <Pressable
+                    onPress={() =>
+                      pick({ title: tpl.title, templateId: tpl.id, remindAt: tpl.remind_at })
+                    }
+                    accessibilityRole="button"
+                  >
+                    <Text variant="caption" color={colors.onTint}>
+                      {tpl.title}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      if (templateId === tpl.id) setTemplateId(undefined);
+                      void forgetTemplate(tpl);
+                    }}
+                    hitSlop={8}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('addGoal.forgetA11y', { title: tpl.title })}
+                  >
+                    <Ionicons name="close" size={14} color={colors.onTint} />
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          </>
+        ) : (
+          templates.length === 0 && (
+            <>
+              <Text variant="label" style={styles.label}>
+                {t('addGoal.ideas')}
+              </Text>
+              <View style={styles.chips}>
+                {IDEAS.map((key) => (
+                  <Pressable
+                    key={key}
+                    onPress={() => pick({ title: t(key) })}
+                    accessibilityRole="button"
+                    style={styles.chip}
+                  >
+                    <Text variant="caption" color={colors.onTint}>
+                      {t(key)}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </>
+          )
+        )}
+
         <Text variant="label" style={styles.label}>
           {t('addGoal.repeat')}
         </Text>
@@ -167,66 +227,6 @@ export default function AddGoalScreen() {
             </Pressable>
           )}
         </View>
-
-        {saved.length > 0 ? (
-          <>
-            <Text variant="label" style={styles.label}>
-              {t('addGoal.saved')}
-            </Text>
-            <View style={styles.chips}>
-              {saved.map((tpl) => (
-                <View
-                  key={tpl.id}
-                  style={[styles.chip, templateId === tpl.id && styles.chipActive]}
-                >
-                  <Pressable
-                    onPress={() =>
-                      pick({ title: tpl.title, templateId: tpl.id, remindAt: tpl.remind_at })
-                    }
-                    accessibilityRole="button"
-                  >
-                    <Text variant="caption" color={colors.onTint}>
-                      {tpl.title}
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      if (templateId === tpl.id) setTemplateId(undefined);
-                      void forgetTemplate(tpl);
-                    }}
-                    hitSlop={8}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('addGoal.forgetA11y', { title: tpl.title })}
-                  >
-                    <Ionicons name="close" size={14} color={colors.onTint} />
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          </>
-        ) : (
-          templates.length === 0 && (
-            <>
-              <Text variant="label" style={styles.label}>
-                {t('addGoal.ideas')}
-              </Text>
-              <View style={styles.chips}>
-                {IDEAS.map((key) => (
-                  <Pressable
-                    key={key}
-                    onPress={() => pick({ title: t(key) })}
-                    accessibilityRole="button"
-                    style={styles.chip}
-                  >
-                    <Text variant="caption" color={colors.onTint}>
-                      {t(key)}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </>
-          )
-        )}
 
         {error && (
           <Text variant="small" color="#C4342B" style={styles.error}>
