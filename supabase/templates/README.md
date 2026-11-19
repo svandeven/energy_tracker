@@ -23,21 +23,24 @@ Supabase's built-in mailer always sends as `Supabase Auth
 <noreply@mail.app.supabase.io>` and is rate-limited, so the sender comes from
 custom SMTP: **Authentication → Emails → SMTP Settings**.
 
-Microsoft 365 (sunsteps.eu):
+Resend, with sunsteps.eu verified in region eu-west-1. The DNS records
+(DKIM `resend._domainkey`, MX and SPF on `send`, CNAME `rsend`) are in
+Cloudflare; the root SPF and DMARC records are untouched because Resend sends
+from the `send` subdomain.
 
-| Field         | Value                                        |
-| ------------- | -------------------------------------------- |
-| Host          | `smtp.office365.com`                         |
-| Port          | `587`                                        |
-| Username      | the mailbox that sends, e.g. `hello@sunsteps.eu` |
-| Password      | that mailbox's password, typed into the dashboard only |
-| Sender email  | the same address, or an alias it can send as |
-| Sender name   | `Sun Steps`                                  |
+| Field         | Value                                                  |
+| ------------- | ------------------------------------------------------ |
+| Host          | `smtp.resend.com`                                      |
+| Port          | `465`                                                  |
+| Username      | `resend`                                               |
+| Password      | a Resend API key with sending access to sunsteps.eu, typed into the dashboard only |
+| Sender email  | `hello@sunsteps.eu`                                    |
+| Sender name   | `Sun Steps`                                            |
 
-The mailbox needs **Authenticated SMTP** turned on (Microsoft 365 admin
-center → Users → the user → Mail → Manage email apps). Microsoft is retiring
-password-based SMTP AUTH for Exchange Online, so this may stop working; Resend
-or another transactional provider is the longer-term option.
+With custom SMTP, Supabase also caps sign-up emails per hour: raise
+**Authentication → Rate Limits → Rate limit for sending emails** if testing hits
+"email rate limit exceeded". A wrong port makes sign-up hang until the gateway
+returns 504 rather than failing with an SMTP error.
 
 After saving, sign up with a test address in both languages and check the
 sender, subject and button link.
