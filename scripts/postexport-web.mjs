@@ -38,6 +38,8 @@ const CSS = `
 const META = [
   '<meta name="theme-color" content="#FE9F4D" />',
   '<meta name="description" content="Track your daily energy in five quick check-ins." />',
+  // Safari on iOS shows its own "Open / Get" banner for the native app.
+  '<meta name="apple-itunes-app" content="app-id=6836455569" />',
 ].join('\n    ');
 
 let html = readFileSync(FILE, 'utf8');

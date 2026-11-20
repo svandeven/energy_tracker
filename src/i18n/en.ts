@@ -61,6 +61,7 @@ export const en = {
   'welcome.getStarted': 'Get started',
   'welcome.haveAccount': 'I already have an account',
   'welcome.privacy': 'Your data stays private.',
+  'welcome.appStore': 'Download on the App Store',
 
   // Sign in / create account
   'signIn.tagline': 'Track your daily energy, calmly.',

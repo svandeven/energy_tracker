@@ -1,4 +1,4 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,9 +9,16 @@ import { Text } from '../../components/Text';
 import { useI18n } from '../../i18n';
 import { colors, radii } from '../../theme';
 
+const APP_STORE_URL = 'https://apps.apple.com/app/id6836455569';
+
+// The web build points visitors at the iOS app. Android browsers skip it until
+// there's a Play listing to link to.
+const SHOW_APP_STORE_BADGE =
+  Platform.OS === 'web' && typeof navigator !== 'undefined' && !/android/i.test(navigator.userAgent);
+
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -59,6 +66,21 @@ export default function WelcomeScreen() {
             {t('welcome.privacy')}
           </Text>
         </View>
+        {SHOW_APP_STORE_BADGE && (
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel={t('welcome.appStore')}
+            onPress={() => void Linking.openURL(APP_STORE_URL)}
+            style={styles.badgeLink}
+          >
+            {/* Apple's official badges (public/), used unmodified per their guidelines. */}
+            <Image
+              source={{ uri: `/app-store-badge-${locale === 'nl' ? 'nl-nl' : 'en-us'}.svg` }}
+              style={styles.badge}
+              resizeMode="contain"
+            />
+          </Pressable>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -94,4 +116,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: 6,
   },
+  badgeLink: { alignSelf: 'center', marginTop: 4 },
+  // The badges' own 119.66 x 40 ratio.
+  badge: { width: 120, height: 40 },
 });
