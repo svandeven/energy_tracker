@@ -58,6 +58,7 @@ export const nl: Record<TranslationKey, string> = {
   'welcome.getStarted': 'Aan de slag',
   'welcome.haveAccount': 'Ik heb al een account',
   'welcome.privacy': 'Je gegevens blijven privé.',
+  'welcome.appStore': 'Download in de App Store',
 
   // Sign in / create account
   'signIn.tagline': 'Volg je dagelijkse energie, rustig aan.',
