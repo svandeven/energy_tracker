@@ -8,11 +8,12 @@ import { useI18n } from '../../i18n';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
-const icon =
-  (active: IconName, idle: IconName) =>
-  ({ color, focused }: { color: ColorValue; focused: boolean }) => (
+const icon = (active: IconName, idle: IconName) => {
+  const TabIcon = ({ color, focused }: { color: ColorValue; focused: boolean }) => (
     <Ionicons name={focused ? active : idle} size={22} color={color as string} />
   );
+  return TabIcon;
+};
 
 export default function TabsLayout() {
   // Keeps the OS-level reminders in step with the user's questions, goals and toggle.
