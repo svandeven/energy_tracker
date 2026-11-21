@@ -148,6 +148,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches from Supabase; showing it's loading straight away is intended
     void reloadOverrides();
   }, [reloadOverrides]);
 

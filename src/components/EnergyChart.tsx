@@ -56,20 +56,14 @@ export function EnergyChart({ points, max }: EnergyChartProps) {
     return runs;
   };
 
-  const dailySegments = useMemo(
-    () => (width ? segments((p) => p.total) : []),
-    [points, width, max],
-  );
-  const averageSegments = useMemo(
-    () => (width ? segments((p) => p.average) : []),
-    [points, width, max],
-  );
+  const dailySegments = width ? segments((p) => p.total) : [];
+  const averageSegments = width ? segments((p) => p.average) : [];
 
   // Four evenly spaced x-axis ticks, matching the mockup's May 1 / 8 / 15 / 22.
   const tickIndices = useMemo(() => {
     if (points.length < 2) return points.map((_, i) => i);
     return [0, 1, 2, 3].map((n) => Math.round((n / 3) * (points.length - 1)));
-  }, [points.length]);
+  }, [points]);
 
   const selectedPoint = selected != null ? points[selected] : null;
 
