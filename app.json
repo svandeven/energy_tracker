@@ -3,6 +3,12 @@
     "name": "Sun Steps",
     "slug": "sun-steps",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7f4cab97-6fac-46f4-af39-475fbcdd441f"
+    },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sunsteps",
