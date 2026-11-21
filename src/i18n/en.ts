@@ -316,7 +316,7 @@ export const en = {
   'terms.privacyHeading': 'Privacy Policy',
   'terms.storeTitle': 'What we store',
   'terms.storeBody':
-    '• Your email address, and a display name derived from it or from your Apple or Google profile\n• The check-in questions you set up, their score descriptions and reminder times\n• The scores you log, with the date you logged them for\n• A profile photo, if you choose to add one\n• Whether you have reminders switched on',
+    '• Your email address, and a display name derived from it or from your Apple or Google profile\n• The check-in questions you set up, their score descriptions and reminder times\n• The scores you log, with the date you logged them for\n• The goals you set, their reminder times, and when you tick them off\n• A profile photo, if you choose to add one\n• Whether you have reminders switched on, and the times for your morning and evening goal reminders',
   'terms.dontTitle': 'What we don’t collect',
   'terms.dontBody':
     'No location, contacts, health-app data, advertising identifiers or analytics. Reminders are scheduled on your device itself; their content never leaves it.',
@@ -328,7 +328,7 @@ export const en = {
     'Your data is stored with our hosting provider, Supabase, which processes it on our behalf. Access is restricted so that each account can only ever read its own rows. If you sign in with Apple or Google, they confirm who you are; we receive your email address and name from them and nothing else.',
   'terms.choicesTitle': 'Your choices',
   'terms.choicesBody':
-    'You can edit or remove questions and switch reminders off in Settings. Deleting your account erases your profile, questions and every check-in from our servers immediately. For a copy of your data or any other privacy request, email us and we will respond within 30 days.',
+    'You can edit or remove questions, goals and your profile photo, clear any score, and switch reminders off in the app. Deleting your account erases your profile, photo, questions, goals and every check-in from our servers immediately. For a copy of your data or any other privacy request, email us and we will respond within 30 days.',
   'terms.contactTitle': 'Contact',
   'terms.contactBody': 'Questions about these terms or your data?',
 

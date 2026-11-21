@@ -313,7 +313,7 @@ export const nl: Record<TranslationKey, string> = {
   'terms.privacyHeading': 'Privacybeleid',
   'terms.storeTitle': 'Wat we opslaan',
   'terms.storeBody':
-    '• Je e-mailadres, en een weergavenaam die daarvan of van je Apple- of Google-profiel is afgeleid\n• De check-in-vragen die je instelt, met hun score-omschrijvingen en herinneringstijden\n• De scores die je invult, met de datum waarvoor je ze invulde\n• Een profielfoto, als je die toevoegt\n• Of je herinneringen aan hebt staan',
+    '• Je e-mailadres, en een weergavenaam die daarvan of van je Apple- of Google-profiel is afgeleid\n• De check-in-vragen die je instelt, met hun score-omschrijvingen en herinneringstijden\n• De scores die je invult, met de datum waarvoor je ze invulde\n• De doelen die je stelt, hun herinneringstijden, en wanneer je ze afvinkt\n• Een profielfoto, als je die toevoegt\n• Of je herinneringen aan hebt staan, en de tijden van je ochtend- en avondherinnering voor doelen',
   'terms.dontTitle': 'Wat we niet verzamelen',
   'terms.dontBody':
     'Geen locatie, contacten, gegevens uit gezondheidsapps, advertentie-ID’s of analytics. Herinneringen worden op je eigen apparaat ingepland; de inhoud ervan verlaat het apparaat nooit.',
@@ -325,7 +325,7 @@ export const nl: Record<TranslationKey, string> = {
     'Je gegevens staan bij onze hostingpartij Supabase, die ze namens ons verwerkt. De toegang is zo ingericht dat elk account alleen zijn eigen gegevens kan lezen. Log je in met Apple of Google, dan bevestigen zij wie je bent; we krijgen van hen alleen je e-mailadres en naam.',
   'terms.choicesTitle': 'Jouw keuzes',
   'terms.choicesBody':
-    'In Instellingen kun je vragen aanpassen of verwijderen en herinneringen uitzetten. Als je je account verwijdert, worden je profiel, vragen en alle check-ins direct van onze servers gewist. Wil je een kopie van je gegevens of heb je een ander privacyverzoek, mail ons dan; we reageren binnen 30 dagen.',
+    'In de app kun je vragen, doelen en je profielfoto aanpassen of verwijderen, scores wissen en herinneringen uitzetten. Als je je account verwijdert, worden je profiel, foto, vragen, doelen en alle check-ins direct van onze servers gewist. Wil je een kopie van je gegevens of heb je een ander privacyverzoek, mail ons dan; we reageren binnen 30 dagen.',
   'terms.contactTitle': 'Contact',
   'terms.contactBody': 'Vragen over deze voorwaarden of je gegevens?',
 
