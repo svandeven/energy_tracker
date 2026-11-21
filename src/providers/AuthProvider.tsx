@@ -96,15 +96,13 @@ function recoveryRedirectUri() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { locale } = useI18n();
-  const [session, setSession] = useState<Session | null | undefined>(undefined);
+  // Without Supabase there's nothing to wait for: signed out from the start.
+  const [session, setSession] = useState<Session | null | undefined>(isSupabaseConfigured ? undefined : null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [recovering, setRecovering] = useState(false);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setSession(null);
-      return;
-    }
+    if (!isSupabaseConfigured) return;
     supabase.auth.getSession().then(({ data }) => setSession(data.session ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
       setSession(next ?? null);
@@ -174,6 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [userId, session?.user]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches from Supabase; showing it's loading straight away is intended
     void refreshProfile();
   }, [refreshProfile]);
 

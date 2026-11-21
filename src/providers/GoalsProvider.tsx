@@ -111,6 +111,7 @@ export function GoalsProvider({ children }: { children: React.ReactNode }) {
   }, [userId, date]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches from Supabase; showing it's loading straight away is intended
     void reload();
   }, [reload]);
 

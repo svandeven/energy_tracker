@@ -4,6 +4,7 @@
  *
  *   node scripts/verify-backend.mjs
  */
+import { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 
 const PLACEHOLDERS = ['https://your-project-ref.supabase.co', 'your-anon-key'];
