@@ -90,7 +90,8 @@
           "iosUrlScheme": "com.googleusercontent.apps.598614990655-6it4j6q6ncji1jmju60ilrgr234qflpr"
         }
       ],
-      "./plugins/withSceneDelegate"
+      "./plugins/withSceneDelegate",
+      "./plugins/withOptionalPortrait"
     ],
     "experiments": {
       "typedRoutes": true,
