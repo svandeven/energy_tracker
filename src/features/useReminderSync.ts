@@ -29,7 +29,9 @@ export function useReminderSync() {
     date,
     profile?.goal_plan_time,
     profile?.goal_review_time,
-    questions.map((q) => `${q.id}@${q.reminder_time}${q.reminder_next_day ? '+1' : ''}:${q.title}`).join(','),
+    questions
+      .map((q) => `${q.id}@${q.reminder_time}${q.reminder_next_day ? '+1' : ''}:${q.title}/${q.score_labels.join('/')}`)
+      .join(','),
     recentCheckins.map((c) => `${c.question_id}@${c.local_date}`).sort().join(','),
     templates.map((tpl) => `${tpl.id}@${tpl.remind_at}/${tpl.repeat}:${tpl.title}`).join(','),
     todaysGoals.map((g) => `${g.id}@${g.remind_at}${g.done_at ? '✓' : ''}:${g.title}`).join(','),
@@ -59,6 +61,7 @@ export function useReminderSync() {
         goalReviewBody: t('reminder.goalReviewBody'),
         goalBody: t('reminder.goalBody'),
         doneAction: t('reminder.doneAction'),
+        scoreFallback: (score) => t('checkIn.scoreFallback', { score }),
       },
     });
   }, [signature, profile, goalsLoading, questions, recentCheckins, templates, todaysGoals, date, enabled, t]);

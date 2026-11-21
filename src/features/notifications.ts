@@ -15,6 +15,21 @@ export const GOAL_CATEGORY = 'goal';
 export const GOAL_DONE_ACTION = 'done';
 
 /**
+ * Each question gets its own category, because its score buttons carry that
+ * question's own labels. Buttons go best-first, as on the check-in screen.
+ */
+const questionCategory = (questionId: string) => `question-${questionId}`;
+const SCORE_ORDER = [2, 1, 0] as const;
+const SCORE_ACTION_PREFIX = 'score-';
+
+/** The score a reminder's button stands for, or null for any other tap. */
+export function scoreFromAction(actionIdentifier: string): number | null {
+  if (!actionIdentifier.startsWith(SCORE_ACTION_PREFIX)) return null;
+  const score = Number(actionIdentifier.slice(SCORE_ACTION_PREFIX.length));
+  return (SCORE_ORDER as readonly number[]).includes(score) ? score : null;
+}
+
+/**
  * Question and repeating goal reminders are scheduled one day at a time for
  * this many days ahead (re-planned whenever the app opens), so a question
  * already answered or a goal already ticked off doesn't still nag.
@@ -65,6 +80,8 @@ export interface ReminderText {
   goalReviewBody: string;
   goalBody: string;
   doneAction: string;
+  /** Button title for a score whose label the user left empty. */
+  scoreFallback(score: number): string;
 }
 
 export interface ReminderPlan {
@@ -126,6 +143,7 @@ function questionReminders(plan: ReminderPlan): DatedReminder[] {
         title: question.title,
         body: question.reminder_next_day ? plan.text.bodyNextDay : plan.text.body,
         data: { kind: 'question', questionId: question.id, date },
+        categoryIdentifier: questionCategory(question.id),
       });
     }
   }
@@ -200,10 +218,21 @@ export async function syncReminders(plan: ReminderPlan) {
       identifier: GOAL_DONE_ACTION,
       buttonTitle: text.doneAction,
       // iOS only hands the tap to JavaScript if the app opens (or is still in
-      // memory); Android runs it in the background (see goalNotificationTask).
+      // memory); Android runs it in the background (see notificationActionTask).
       options: { opensAppToForeground: Platform.OS === 'ios' },
     },
   ]);
+  for (const question of plan.questions) {
+    await Notifications.setNotificationCategoryAsync(
+      questionCategory(question.id),
+      SCORE_ORDER.map((score) => ({
+        identifier: `${SCORE_ACTION_PREFIX}${score}`,
+        buttonTitle: question.score_labels[score] || text.scoreFallback(score),
+        // Same split as the Done button above.
+        options: { opensAppToForeground: Platform.OS === 'ios' },
+      })),
+    );
+  }
 
   const daily = [
     { time: plan.goalPlanTime, title: text.goalPlanTitle, body: text.goalPlanBody, kind: 'goalPlan' },

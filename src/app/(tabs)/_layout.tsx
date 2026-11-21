@@ -3,23 +3,21 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors, fonts } from '../../theme';
-import { useNotificationResponses } from '../../features/useNotificationResponses';
 import { useReminderSync } from '../../features/useReminderSync';
 import { useI18n } from '../../i18n';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
-const icon =
-  (active: IconName, idle: IconName) =>
-  ({ color, focused }: { color: ColorValue; focused: boolean }) => (
+const icon = (active: IconName, idle: IconName) => {
+  const TabIcon = ({ color, focused }: { color: ColorValue; focused: boolean }) => (
     <Ionicons name={focused ? active : idle} size={22} color={color as string} />
   );
+  return TabIcon;
+};
 
 export default function TabsLayout() {
   // Keeps the OS-level reminders in step with the user's questions, goals and toggle.
   useReminderSync();
-  // Done buttons and taps on those reminders.
-  useNotificationResponses();
   const { t } = useI18n();
 
   return (

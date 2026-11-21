@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,6 +11,7 @@ import { GoalsProvider } from '../providers/GoalsProvider';
 import { useAppFonts } from '../theme/fonts';
 import { isSupabaseConfigured } from '../lib/env';
 import { SetupNotice } from '../components/SetupNotice';
+import { useNotificationResponses } from '../features/useNotificationResponses';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -55,6 +56,14 @@ function AuthGate() {
   const { session, initializing, recovering } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const navigationReady = useRootNavigationState()?.key != null;
+
+  // Done buttons and taps on reminders. Lives here rather than in the tabs so
+  // it's mounted whichever screen is open, and waits until a tap can actually
+  // land: navigator up, signed in, and not about to be bounced off an auth screen.
+  useNotificationResponses(
+    navigationReady && !initializing && !recovering && session != null && segments[0] !== '(auth)',
+  );
 
   useEffect(() => {
     if (initializing) return;
