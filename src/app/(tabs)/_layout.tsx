@@ -3,7 +3,6 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors, fonts } from '../../theme';
-import { useNotificationResponses } from '../../features/useNotificationResponses';
 import { useReminderSync } from '../../features/useReminderSync';
 import { useI18n } from '../../i18n';
 
@@ -18,8 +17,6 @@ const icon =
 export default function TabsLayout() {
   // Keeps the OS-level reminders in step with the user's questions, goals and toggle.
   useReminderSync();
-  // Done buttons and taps on those reminders.
-  useNotificationResponses();
   const { t } = useI18n();
 
   return (
