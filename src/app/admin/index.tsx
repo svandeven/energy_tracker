@@ -230,6 +230,7 @@ function LocaleField({
         value={value}
         onChangeText={setDraft}
         multiline
+        maxLength={2000}
         editable={!busy}
         style={[styles.input, styles.field, dirty && styles.fieldDirty]}
       />

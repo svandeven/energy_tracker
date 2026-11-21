@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       null;
     const { data: created } = await supabase
       .from('profiles')
-      .upsert({ id: userId, display_name: fallbackName })
+      .upsert({ id: userId, display_name: fallbackName?.slice(0, 100) ?? null })
       .select()
       .maybeSingle();
     setProfile(created ?? null);

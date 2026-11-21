@@ -118,12 +118,13 @@ begin
   insert into public.profiles (id, display_name)
   values (
     new.id,
-    coalesce(
+    -- Capped to fit profiles_display_name_len, so a long name can't block sign-up.
+    left(coalesce(
       new.raw_user_meta_data ->> 'display_name',
       new.raw_user_meta_data ->> 'full_name',
       new.raw_user_meta_data ->> 'name',
       split_part(new.email, '@', 1)
-    )
+    ), 100)
   )
   on conflict (id) do nothing;
 
@@ -474,3 +475,34 @@ create policy "own avatar update" on storage.objects
 create policy "own avatar delete" on storage.objects
   for delete to authenticated
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ---------------------------------------------------------------------------
+-- Length limits on free text, so a direct API call can't store huge strings.
+--   The app's inputs stop at (or below) the same lengths. NOT VALID: existing
+--   rows aren't checked, so this always runs; every new write is.
+-- ---------------------------------------------------------------------------
+alter table public.profiles drop constraint if exists profiles_display_name_len;
+alter table public.profiles
+  add constraint profiles_display_name_len check (length(display_name) <= 100) not valid;
+alter table public.profiles drop constraint if exists profiles_avatar_url_len;
+alter table public.profiles
+  add constraint profiles_avatar_url_len check (length(avatar_url) <= 1000) not valid;
+
+alter table public.questions drop constraint if exists questions_title_len;
+alter table public.questions
+  add constraint questions_title_len check (length(btrim(title)) between 1 and 200) not valid;
+alter table public.questions drop constraint if exists questions_icon_len;
+alter table public.questions
+  add constraint questions_icon_len check (length(icon) <= 40) not valid;
+alter table public.questions drop constraint if exists questions_score_labels_text_len;
+alter table public.questions
+  add constraint questions_score_labels_text_len check (
+    length(score_labels[1]) <= 200 and length(score_labels[2]) <= 200 and length(score_labels[3]) <= 200
+  ) not valid;
+
+alter table public.translations drop constraint if exists translations_key_len;
+alter table public.translations
+  add constraint translations_key_len check (length(key) <= 200) not valid;
+alter table public.translations drop constraint if exists translations_value_len;
+alter table public.translations
+  add constraint translations_value_len check (length(value) <= 2000) not valid;
