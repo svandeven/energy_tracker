@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { type Href, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Button } from '../components/Button';
 import { Text } from '../components/Text';
 import { colors } from '../theme';
 import { useI18n } from '../i18n';
 import { useAuth } from '../providers/AuthProvider';
+import { takeReturnTo } from '../lib/returnTo';
 
 /** How long to wait for the code exchange before offering a way out. */
 const TIMEOUT_MS = 10_000;
@@ -26,7 +27,7 @@ export default function AuthCallbackScreen() {
   const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
-    if (session) router.replace('/');
+    if (session) router.replace((takeReturnTo() ?? '/') as Href);
   }, [session, router]);
 
   useEffect(() => {

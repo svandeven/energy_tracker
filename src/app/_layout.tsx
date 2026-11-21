@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
+import { type Href, Stack, usePathname, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,6 +11,7 @@ import { DataProvider } from '../providers/DataProvider';
 import { GoalsProvider } from '../providers/GoalsProvider';
 import { useAppFonts } from '../theme/fonts';
 import { isSupabaseConfigured } from '../lib/env';
+import { rememberReturnTo, takeReturnTo } from '../lib/returnTo';
 import { SetupNotice } from '../components/SetupNotice';
 import { UpdateRequired } from '../components/UpdateRequired';
 import { useUpdateRequired } from '../features/useUpdateRequired';
@@ -81,7 +82,10 @@ function UpdateGate({ children }: { children: React.ReactNode }) {
 function AuthGate() {
   const { session, initializing, recovering } = useAuth();
   const segments = useSegments();
+  const pathname = usePathname();
   const router = useRouter();
+  // Someone who signs out shouldn't be sent back to where they signed out from.
+  const hadSession = useRef(false);
   const navigationReady = useRootNavigationState()?.key != null;
 
   // Done buttons and taps on reminders. Lives here rather than in the tabs so
@@ -93,6 +97,7 @@ function AuthGate() {
 
   useEffect(() => {
     if (initializing) return;
+    if (session) hadSession.current = true;
     const inAuthFlow = segments[0] === '(auth)';
     // Terms are linked from the sign-in screen, so they must open either way.
     // The sign-in callback has no session yet while the code is exchanged, and
@@ -107,9 +112,13 @@ function AuthGate() {
     }
 
     if (isPublic) return;
-    if (!session && !inAuthFlow) router.replace('/welcome');
-    else if (session && inAuthFlow) router.replace('/');
-  }, [session, initializing, recovering, segments, router]);
+    if (!session && !inAuthFlow) {
+      if (!hadSession.current) rememberReturnTo(pathname);
+      router.replace('/welcome');
+    } else if (session && inAuthFlow) {
+      router.replace((takeReturnTo() ?? '/') as Href);
+    }
+  }, [session, initializing, recovering, segments, pathname, router]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
