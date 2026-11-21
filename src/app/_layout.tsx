@@ -1,16 +1,19 @@
 import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 
-import { I18nProvider } from '../i18n';
+import { I18nProvider, useI18n } from '../i18n';
 import { AuthProvider, useAuth } from '../providers/AuthProvider';
 import { DataProvider } from '../providers/DataProvider';
 import { GoalsProvider } from '../providers/GoalsProvider';
 import { useAppFonts } from '../theme/fonts';
 import { isSupabaseConfigured } from '../lib/env';
 import { SetupNotice } from '../components/SetupNotice';
+import { UpdateRequired } from '../components/UpdateRequired';
+import { useUpdateRequired } from '../features/useUpdateRequired';
 import { useNotificationResponses } from '../features/useNotificationResponses';
 
 void SplashScreen.preventAutoHideAsync();
@@ -39,15 +42,38 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <StatusBar style="dark" />
       <I18nProvider>
-        <AuthProvider>
-          <DataProvider>
-            <GoalsProvider>
-              <AuthGate />
-            </GoalsProvider>
-          </DataProvider>
-        </AuthProvider>
+        <UpdateGate>
+          <AuthProvider>
+            <DataProvider>
+              <GoalsProvider>
+                <AuthGate />
+              </GoalsProvider>
+            </DataProvider>
+          </AuthProvider>
+        </UpdateGate>
       </I18nProvider>
     </SafeAreaProvider>
+  );
+}
+
+/**
+ * Covers the whole app with an "update now" screen when this version has been
+ * switched off. Sits outside the auth and data providers so it still shows if
+ * the backend this version talks to is gone, and covers rather than replaces
+ * the navigator, which expo-router expects to stay mounted.
+ */
+function UpdateGate({ children }: { children: React.ReactNode }) {
+  const { locale } = useI18n();
+  const required = useUpdateRequired(locale);
+  return (
+    <>
+      {children}
+      {required && (
+        <View style={StyleSheet.absoluteFill}>
+          <UpdateRequired message={required.message} />
+        </View>
+      )}
+    </>
   );
 }
 

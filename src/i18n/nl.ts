@@ -483,4 +483,7 @@ export const nl: Record<TranslationKey, string> = {
   'reminder.goalReviewBody': 'Vink af wat je gedaan hebt.',
   'reminder.goalBody': 'Tik op Klaar als het gelukt is.',
   'reminder.doneAction': 'Klaar',
+  'update.title': 'Tijd voor een update',
+  'update.body': 'Deze versie van Lekker Bezig werkt niet meer. Update naar de nieuwste versie om verder te gaan.',
+  'update.button': 'Updaten',
 };

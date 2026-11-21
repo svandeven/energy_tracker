@@ -486,6 +486,9 @@ export const en = {
   'reminder.goalReviewBody': 'Tick off what you got done.',
   'reminder.goalBody': 'Tap Done when it’s finished.',
   'reminder.doneAction': 'Done',
+  'update.title': 'Time to update',
+  'update.body': 'This version of Sun Steps no longer works. Update to the latest version to keep tracking.',
+  'update.button': 'Update',
 } as const;
 
 export type TranslationKey = keyof typeof en;
