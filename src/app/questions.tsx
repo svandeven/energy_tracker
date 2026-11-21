@@ -223,6 +223,7 @@ function QuestionEditor({
         style={[styles.textField, styles.textFieldCentered]}
         placeholder={t('settings.questionPlaceholder')}
         placeholderTextColor={colors.inkFaint}
+        maxLength={200}
       />
 
       <Text variant="label" color={colors.inkMuted} style={styles.fieldLabel}>
@@ -247,6 +248,7 @@ function QuestionEditor({
             style={[styles.textField, styles.textFieldCentered, styles.labelField]}
             placeholder={t('settings.describeScore', { score })}
             placeholderTextColor={colors.inkFaint}
+            maxLength={200}
           />
         </View>
       ))}
