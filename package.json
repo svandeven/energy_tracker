@@ -61,7 +61,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "build:web": "expo export --platform web && node scripts/postexport-web.mjs",
+    "build:web": "expo export --clear --platform web && node scripts/postexport-web.mjs",
     "verify:backend": "node scripts/verify-backend.mjs",
     "deploy:web": "npm run build:web && wrangler deploy"
   },
