@@ -1,7 +1,7 @@
 {
   "configVersion": 0,
   "apple": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "copyright": "2026 Susan van de Ven",
     "categories": [
       "HEALTH_AND_FITNESS",
@@ -27,7 +27,7 @@
           "daily",
           "healthy"
         ],
-        "releaseNotes": "The first release of Sun Steps.",
+        "releaseNotes": "• Score a check-in straight from its reminder\n• Tapping a reminder now opens the right question\n• After saving a score, you only move on to questions whose reminder time has passed\n• Goal suggestions are easier to reach while you type\n• Progress charts now show finished days, so today doesn’t pull your average down\n• Go straight back from Energy history to Goal progress\n• See your app version in Settings\n• Smaller fixes, and improvements can now reach you faster",
         "marketingUrl": "https://sunsteps.eu",
         "supportUrl": "https://sunsteps.eu",
         "privacyPolicyUrl": "https://sunsteps.eu/terms"
@@ -50,7 +50,7 @@
           "dagelijks",
           "gezond"
         ],
-        "releaseNotes": "De eerste versie van Lekker Bezig.",
+        "releaseNotes": "• Geef je score direct vanuit de herinnering\n• Tik op een herinnering en je komt meteen bij de juiste vraag\n• Na het opslaan ga je alleen door naar vragen waarvan de herinneringstijd voorbij is\n• Suggesties voor doelen zijn beter bereikbaar tijdens het typen\n• Grafieken tonen alleen afgeronde dagen, zodat vandaag je gemiddelde niet omlaag trekt\n• Ga vanuit Energiegeschiedenis direct terug naar Voortgang doelen\n• Bekijk je appversie bij Instellingen\n• Kleine verbeteringen, en updates bereiken je voortaan sneller",
         "marketingUrl": "https://sunsteps.eu",
         "supportUrl": "https://sunsteps.eu",
         "privacyPolicyUrl": "https://sunsteps.eu/terms"

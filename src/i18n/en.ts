@@ -451,7 +451,6 @@ export const en = {
   'progress.last7': 'Last 7 days',
   'progress.daily': 'Daily',
   'progress.averageLegend': '7 day average',
-  'progress.today': 'Today',
   'progress.reliable': 'Most reliable goals',
   'progress.reliableEmpty': 'Goals you’ve had on 3 days or more show up here.',
   'progress.noData': 'No goals yet. Add some on the Goals tab to see how often you hit them.',

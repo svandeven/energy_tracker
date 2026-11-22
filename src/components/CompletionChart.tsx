@@ -4,7 +4,6 @@ import Svg, { Line, Polyline, Rect, Text as SvgText } from 'react-native-svg';
 
 import { colors, fonts } from '../theme';
 import { useI18n } from '../i18n';
-import { isToday } from '../lib/dates';
 import type { CompletionPoint } from '../lib/goals';
 import { Text } from './Text';
 
@@ -55,7 +54,7 @@ export function CompletionChart({ points }: { points: CompletionPoint[] }) {
                   width={barWidth}
                   height={h}
                   rx={4}
-                  fill={isToday(p.date) ? colors.primary : colors.tint}
+                  fill={colors.tint}
                 />
               );
             })}
@@ -72,7 +71,7 @@ export function CompletionChart({ points }: { points: CompletionPoint[] }) {
                 fill={colors.inkMuted}
                 textAnchor="middle"
               >
-                {isToday(p.date) ? t('progress.today') : fmt.weekday(p.date)}
+                {fmt.weekday(p.date)}
               </SvgText>
             ))}
           </Svg>

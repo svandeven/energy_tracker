@@ -8,6 +8,7 @@ import { CompletionChart } from '../../components/CompletionChart';
 import { ScreenTop } from '../../components/ScreenTop';
 import { Text } from '../../components/Text';
 import { cardShadow, colors, radii } from '../../theme';
+import { addDays } from '../../lib/dates';
 import { completionSeries, currentStreak, reliableGoals } from '../../lib/goals';
 import { useI18n } from '../../i18n';
 import { useGoals } from '../../providers/GoalsProvider';
@@ -22,7 +23,8 @@ export default function ProgressScreen() {
   const { t } = useI18n();
   const { date, goals, stats, loading, reload } = useGoals();
 
-  const series = useMemo(() => completionSeries(stats, date), [stats, date]);
+  // Today is still in progress, so the chart and its average end yesterday.
+  const series = useMemo(() => completionSeries(stats, addDays(date, -1)), [stats, date]);
   const average = series[series.length - 1]?.average ?? null;
   const streak = useMemo(() => currentStreak(stats, date), [stats, date]);
   const reliable = useMemo(() => reliableGoals(goals, date), [goals, date]);

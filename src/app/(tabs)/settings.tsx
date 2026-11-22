@@ -3,6 +3,7 @@ import { Linking, Platform, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 
 import { AppVersion } from '../../components/AppVersion';
@@ -31,8 +32,10 @@ export default function SettingsScreen() {
   // Opens the mail app with the version and device filled in, which is most of
   // what's needed to follow up on a bug report.
   const sendFeedback = async () => {
+    // iOS has its own version (ios.version), so ask the installed app first.
+    const version = Application.nativeApplicationVersion ?? Constants.expoConfig?.version ?? '';
     const details = [
-      `${t('common.appName')} ${Constants.expoConfig?.version ?? ''}`,
+      `${t('common.appName')} ${version}`,
       `${Platform.OS} ${Platform.Version}`,
     ].join(' · ');
     const url =
