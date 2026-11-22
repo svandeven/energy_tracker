@@ -1,5 +1,5 @@
 import type { CheckinRow, QuestionRow } from './database.types';
-import { type LocalDate, addDays, today } from './dates';
+import { type LocalDate, addDays, atTime, today } from './dates';
 
 /**
  * Whether a question is expected to be answered for `date` yet. Next-day
@@ -8,6 +8,20 @@ import { type LocalDate, addDays, today } from './dates';
  */
 export function isDue(question: QuestionRow, date: LocalDate, now: LocalDate = today()): boolean {
   return !question.reminder_next_day || date < now;
+}
+
+/**
+ * Whether the reminder asking about `date` has had its time yet, which for a
+ * next-day question is the morning after. Goes by the clock alone, so it holds
+ * with notifications switched off too.
+ */
+export function isReminderTimePast(
+  question: QuestionRow,
+  date: LocalDate,
+  now: Date = new Date(),
+): boolean {
+  const day = question.reminder_next_day ? addDays(date, 1) : date;
+  return atTime(day, question.reminder_time) <= now;
 }
 
 /** Each question contributes 0–2, so a full day is 2 x (active questions). */

@@ -17,7 +17,7 @@ import {
   today,
   type LocalDate,
 } from '../../lib/dates';
-import { isDue, scoresForDate } from '../../lib/scoring';
+import { isReminderTimePast, scoresForDate } from '../../lib/scoring';
 import { HISTORY_WINDOW_DAYS, useData } from '../../providers/DataProvider';
 import { useI18n } from '../../i18n';
 
@@ -92,12 +92,11 @@ export default function CheckInScreen() {
     try {
       await saveScore(question.id, selected, date);
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      // Walk to the next unanswered category for *this* day, then to its
-      // summary — the same chain whether you're logging today or backfilling.
+      // Walk to the next unanswered category for *this* day whose reminder time
+      // has passed, then to its summary. Later ones wait for their own reminder.
       const answered = scoresForDate(checkins, date);
       answered.set(question.id, selected);
-      // Optional next-day questions are skipped; they're offered tomorrow morning.
-      const next = questions.find((q) => !answered.has(q.id) && isDue(q, date));
+      const next = questions.find((q) => !answered.has(q.id) && isReminderTimePast(q, date));
       // Object form rather than a template string: expo-router's typed routes
       // reject interpolated paths.
       const carry = backfilling ? { date } : {};

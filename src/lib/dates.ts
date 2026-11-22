@@ -60,3 +60,11 @@ export function parseTime(time: string): { hour: number; minute: number } {
   const [h, m] = time.split(':').map(Number);
   return { hour: h, minute: m || 0 };
 }
+
+/** The local moment at which the clock reads `time` on `date`. */
+export function atTime(date: LocalDate, time: string): Date {
+  const { hour, minute } = parseTime(time);
+  const d = parseLocalDate(date);
+  d.setHours(hour, minute, 0, 0);
+  return d;
+}
