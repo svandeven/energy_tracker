@@ -316,6 +316,11 @@ supabase/schema.sql    run once in the Supabase SQL editor
   instead of dipping.
 - **Deleting a question is a soft delete** (`is_active = false`) so past
   check-ins stay meaningful in History.
+- **Settings shows which code is running.** The native build number comes from
+  EAS; the update number is the git commit count, added by `app.config.js` when
+  `eas update` or the web export runs. Commit before publishing, or the number
+  gets a `+`. `build:web` exports with `--clear` because Metro would otherwise
+  cache an old number.
 - **The check-in flow only chains to what's due.** Saving a score jumps to the
   next unanswered category whose reminder time has passed for that day (for a
   next-day question, that time the morning after), and otherwise to the summary.

@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 
+import { AppVersion } from '../../components/AppVersion';
 import { Avatar } from '../../components/Avatar';
 import { BackLink } from '../../components/ScreenTop';
 import { Card } from '../../components/Card';
@@ -226,6 +227,8 @@ export default function SettingsScreen() {
             <Ionicons name="chevron-forward" size={18} color={colors.inkFaint} />
           </Pressable>
         </Card>
+
+        <AppVersion />
 
         <Pressable
           onPress={() => void signOut()}
