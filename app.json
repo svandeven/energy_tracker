@@ -17,6 +17,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "eu.sunsteps.app",
+      "version": "1.0.1",
       "usesAppleSignIn": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": false,

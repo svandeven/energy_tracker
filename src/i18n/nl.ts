@@ -448,7 +448,6 @@ export const nl: Record<TranslationKey, string> = {
   'progress.last7': 'Laatste 7 dagen',
   'progress.daily': 'Per dag',
   'progress.averageLegend': 'Gemiddelde 7 dagen',
-  'progress.today': 'Vandaag',
   'progress.reliable': 'Meest gehaalde doelen',
   'progress.reliableEmpty': 'Doelen die je 3 dagen of vaker had, verschijnen hier.',
   'progress.noData': 'Nog geen doelen. Voeg ze toe bij Doelen om te zien hoe vaak je ze haalt.',

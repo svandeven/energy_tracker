@@ -314,6 +314,8 @@ supabase/schema.sql    run once in the Supabase SQL editor
 - **Missing days are not zeros.** Averages and the chart skip days with no
   check-ins rather than treating them as a score of 0, so the trend line breaks
   instead of dipping.
+- **Charts end yesterday.** The goal and energy charts and their 7-day averages
+  leave out today until it's over. Streaks and History's day list include it.
 - **Deleting a question is a soft delete** (`is_active = false`) so past
   check-ins stay meaningful in History.
 - **Settings shows which code is running.** The native build number comes from
@@ -321,6 +323,10 @@ supabase/schema.sql    run once in the Supabase SQL editor
   `eas update` or the web export runs. Commit before publishing, or the number
   gets a `+`. `build:web` exports with `--clear` because Metro would otherwise
   cache an old number.
+- **iOS and Android have separate versions.** `ios.version` in app.json is the
+  iOS one; Android uses the top-level `version`. Each platform's version is also
+  its update runtime, so raise one only for a new store build of that platform:
+  updates published afterwards don't reach its older builds.
 - **The check-in flow only chains to what's due.** Saving a score jumps to the
   next unanswered category whose reminder time has passed for that day (for a
   next-day question, that time the morning after), and otherwise to the summary.

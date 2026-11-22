@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { BackHandler, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { BackLink } from '../../components/ScreenTop';
 import { EnergyChart, type ChartPoint } from '../../components/EnergyChart';
 import { Text } from '../../components/Text';
 import { colors, radii, totalColor } from '../../theme';
-import { today } from '../../lib/dates';
+import { addDays, today } from '../../lib/dates';
 import { useI18n } from '../../i18n';
 import { shortLabel } from '../../i18n/questions';
 import {
@@ -34,6 +34,20 @@ export default function HistoryScreen() {
   const [expanded, setExpanded] = useState(false);
 
   const date = today();
+  // Today is still in progress, so the chart and averages end yesterday.
+  const lastFullDay = addDays(date, -1);
+
+  // This screen is a tab without a button, so back would go to Home rather
+  // than to Progress, where it's opened from.
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        router.navigate('/progress');
+        return true;
+      });
+      return () => sub.remove();
+    }, [router]),
+  );
   const max = maxDailyScore(questions);
 
   // 36 days so the oldest chart point still has a full 7-day window behind it.
@@ -46,17 +60,20 @@ export default function HistoryScreen() {
   const chartPoints = useMemo<ChartPoint[]>(
     () =>
       series
-        .slice(0, CHART_DAYS)
         .map((day, i) => ({
           date: day.date,
           total: day.answered > 0 ? day.total : null,
           average: averages[i],
         }))
+        .slice(1, CHART_DAYS + 1) // series[0] is today
         .reverse(), // chart plots oldest -> newest
     [series, averages],
   );
 
-  const week = useMemo(() => compareWeeks(checkins, questions, date), [checkins, questions, date]);
+  const week = useMemo(
+    () => compareWeeks(checkins, questions, lastFullDay),
+    [checkins, questions, lastFullDay],
+  );
 
   // Every day in the window, gaps included — a missing day is a row you can fill.
   const days = series.slice(0, expanded ? HISTORY_WINDOW_DAYS : RECENT_DAYS);
@@ -77,7 +94,7 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <BackLink inset />
+      <BackLink inset to={{ href: '/progress', label: t('progress.title') }} />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { type Href, useRouter } from 'expo-router';
 
 import { colors } from '../theme';
 import { useI18n } from '../i18n';
@@ -24,20 +24,27 @@ interface ScreenTopProps {
   };
 }
 
-/** "‹ Back", falling back to Home when the screen was opened directly. */
-export function BackLink({ inset }: { inset?: boolean }) {
+/**
+ * "‹ Back", falling back to Home when the screen was opened directly. `to`
+ * names a fixed screen to go back to instead.
+ */
+export function BackLink({ inset, to }: { inset?: boolean; to?: { href: Href; label: string } }) {
   const router = useRouter();
   const { t } = useI18n();
   return (
     <Pressable
-      onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      onPress={() => {
+        if (to) router.navigate(to.href);
+        else if (router.canGoBack()) router.back();
+        else router.replace('/');
+      }}
       accessibilityRole="button"
       hitSlop={10}
       style={[styles.back, inset && styles.inset]}
     >
       <Ionicons name="chevron-back" size={16} color={colors.inkMuted} />
       <Text variant="small" color={colors.inkMuted}>
-        {t('common.back')}
+        {to?.label ?? t('common.back')}
       </Text>
     </Pressable>
   );
