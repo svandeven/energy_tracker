@@ -11,7 +11,7 @@ import { TimePicker } from '../../components/TimePicker';
 import { cardShadow, colors, fonts, radii } from '../../theme';
 import type { GoalRepeat } from '../../lib/database.types';
 import { appliesOn } from '../../lib/goals';
-import { type TranslationKey, useI18n } from '../../i18n';
+import { BUNDLED, LOCALES, type TranslationKey, useI18n } from '../../i18n';
 import { useGoals } from '../../providers/GoalsProvider';
 
 const REPEATS: { value: GoalRepeat; label: TranslationKey }[] = [
@@ -27,6 +27,7 @@ const IDEAS: TranslationKey[] = [
   'addGoal.idea4',
 ];
 const DEFAULT_REMINDER = '14:00:00';
+const normalise = (title: string) => title.trim().toLowerCase();
 
 export default function AddGoalScreen() {
   const router = useRouter();
@@ -45,12 +46,24 @@ export default function AddGoalScreen() {
   // Saved goals that aren't on today's list already.
   const onToday = new Set(todaysGoals.map((g) => g.template_id));
   const saved = templates.filter((tpl) => tpl.repeat === 'none' && !onToday.has(tpl.id));
+  // Ideas that aren't a goal already, in any language: titles are stored as picked.
+  const taken = new Set([...templates, ...todaysGoals].map((g) => normalise(g.title)));
+  const ideas = IDEAS.filter(
+    (key) =>
+      ![t(key), ...LOCALES.map((l) => BUNDLED[l][key])].some((text) => taken.has(normalise(text))),
+  );
   const startsMonday = repeat === 'weekdays' && !appliesOn({ repeat }, date);
 
   const pick = (next: { title: string; templateId?: string; remindAt?: string | null }) => {
     setTitle(next.title);
     setTemplateId(next.templateId);
-    if (next.templateId) setSave(true);
+    if (next.templateId) {
+      setSave(true);
+    } else if (templateId) {
+      // An idea picked over a saved goal doesn't inherit its settings.
+      setSave(false);
+      setRemindAt(null);
+    }
     if (next.remindAt !== undefined) setRemindAt(next.remindAt);
     setError(null);
   };
@@ -95,7 +108,7 @@ export default function AddGoalScreen() {
           autoFocus
         />
 
-        {saved.length > 0 ? (
+        {saved.length > 0 && (
           <>
             <Text variant="label" style={styles.label}>
               {t('addGoal.saved')}
@@ -131,28 +144,28 @@ export default function AddGoalScreen() {
               ))}
             </View>
           </>
-        ) : (
-          templates.length === 0 && (
-            <>
-              <Text variant="label" style={styles.label}>
-                {t('addGoal.ideas')}
-              </Text>
-              <View style={styles.chips}>
-                {IDEAS.map((key) => (
-                  <Pressable
-                    key={key}
-                    onPress={() => pick({ title: t(key) })}
-                    accessibilityRole="button"
-                    style={styles.chip}
-                  >
-                    <Text variant="caption" color={colors.onTint}>
-                      {t(key)}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </>
-          )
+        )}
+
+        {ideas.length > 0 && (
+          <>
+            <Text variant="label" style={styles.label}>
+              {t('addGoal.ideas')}
+            </Text>
+            <View style={styles.chips}>
+              {ideas.map((key) => (
+                <Pressable
+                  key={key}
+                  onPress={() => pick({ title: t(key) })}
+                  accessibilityRole="button"
+                  style={styles.chip}
+                >
+                  <Text variant="caption" color={colors.onTint}>
+                    {t(key)}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </>
         )}
 
         <Text variant="label" style={styles.label}>
