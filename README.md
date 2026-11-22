@@ -316,9 +316,10 @@ supabase/schema.sql    run once in the Supabase SQL editor
   instead of dipping.
 - **Deleting a question is a soft delete** (`is_active = false`) so past
   check-ins stay meaningful in History.
-- **The check-in flow chains.** Saving a score jumps to the next unanswered
-  category, and to the summary after the last one — the mockup's "Category 5 of
-  5" flow.
+- **The check-in flow only chains to what's due.** Saving a score jumps to the
+  next unanswered category whose reminder time has passed for that day (for a
+  next-day question, that time the morning after), and otherwise to the summary.
+  Categories with a later reminder time can still be opened by hand.
 - **Past days can be backfilled.** History lists every day in the window, not
   only logged ones; missing days get an "Add" affordance and tapping any row
   opens that date's check-in flow. Bounded to `HISTORY_WINDOW_DAYS` (45) because

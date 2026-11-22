@@ -3,7 +3,7 @@ import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 
 import type { CheckinRow, GoalRow, GoalTemplateRow, QuestionRow } from '../lib/database.types';
-import { type LocalDate, addDays, parseLocalDate, parseTime } from '../lib/dates';
+import { type LocalDate, addDays, atTime, parseTime } from '../lib/dates';
 import { appliesOn, isRepeating } from '../lib/goals';
 import type { GoalNotificationData } from './goalsApi';
 
@@ -110,13 +110,6 @@ async function ensureAndroidChannel(name: string) {
 
 const channel = () => (Platform.OS === 'android' ? { channelId: CHANNEL_ID } : {});
 
-function at(date: LocalDate, time: string): Date {
-  const { hour, minute } = parseTime(time);
-  const d = parseLocalDate(date);
-  d.setHours(hour, minute, 0, 0);
-  return d;
-}
-
 interface DatedReminder {
   when: Date;
   title: string;
@@ -139,7 +132,7 @@ function questionReminders(plan: ReminderPlan): DatedReminder[] {
       const date = question.reminder_next_day ? addDays(day, -1) : day;
       if (answered.has(`${question.id}@${date}`)) continue;
       out.push({
-        when: at(day, question.reminder_time),
+        when: atTime(day, question.reminder_time),
         title: question.title,
         body: question.reminder_next_day ? plan.text.bodyNextDay : plan.text.body,
         data: { kind: 'question', questionId: question.id, date },
@@ -164,7 +157,7 @@ function goalReminders(plan: ReminderPlan): DatedReminder[] {
         if (!goal || goal.done_at || goal.hidden) continue;
       }
       out.push({
-        when: at(date, template.remind_at),
+        when: atTime(date, template.remind_at),
         title: template.title,
         data: { kind: 'goal', date, templateId: template.id },
       });
@@ -175,7 +168,7 @@ function goalReminders(plan: ReminderPlan): DatedReminder[] {
     const template = plan.templates.find((t) => t.id === goal.template_id);
     if (!goal.remind_at || goal.done_at || goal.hidden || isRepeating(template)) continue;
     out.push({
-      when: at(plan.today, goal.remind_at),
+      when: atTime(plan.today, goal.remind_at),
       title: goal.title,
       data: { kind: 'goal', date: plan.today, goalId: goal.id },
     });
